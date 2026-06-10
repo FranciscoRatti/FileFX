@@ -47,7 +47,8 @@ public class FileLabel extends Label {
                     extension.equals("gif") ||
                     extension.equals("jpeg") ||
                     extension.equals("jpg") ||
-                    extension.equals("png")
+                    extension.equals("png") ||
+                    extension.equals("svg")
             )) {
                 setGraphic(icon = new ImageView("file://"+file.getAbsolutePath()));
             } else if (new File(Lib.ABSOLUTE_PATH+"share/filefx/icons/center/file/"+extension+".png").exists()) {

@@ -90,7 +90,7 @@
 
     -fx-text-fill: white;
     -fx-font-family: "Noto Sans Mono";
-    -fx-font-size: 14;
+    -fx-font-size: 13;
 
     -fx-padding: 1 2 1 2;
 }
@@ -103,20 +103,6 @@
 
     -fx-padding: 0 0 0 10;
 }
-
-#permissions_check_box > .box{
-    -fx-background-color: #373737;
-
-    -fx-border-color: #505050;
-    -fx-border-style: solid;
-    -fx-border-radius: 2;
-    -fx-border-width: 1;
-
-    -fx-pref-height: 13;
-    -fx-pref-width: 13;
-}
-#permissions_check_box > .box:hover {-fx-border-color: white;}
-#permissions_check_box:selected > .box > .mark {-fx-background-color: white;}
 
 
 #left_label_title {
@@ -186,4 +172,10 @@
 #center_label_focus_b1:hover, #center_label_focus_b2:hover {
     -fx-background-color: #41aeff;
     -fx-font-size: 12;
+}
+
+/* OTHERS STAGE ----------------------------------------------------------------------------------------------------- */
+
+#other_button {
+
 }

@@ -1,12 +1,18 @@
 package main;
 
+import entity.DesktopApplication;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import panel.MainPane;
+import scene.OthersApplicationsScene;
 import scene.Scene;
 
 import java.awt.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Properties;
 
 import static main.Lib.*;
@@ -14,6 +20,8 @@ import static main.Lib.*;
 public class Main extends javafx.application.Application {
     public static Properties config;
     public static boolean DISABLE_MENU_ITEM;
+    public static ArrayList<DesktopApplication> desktopApplications;
+    public static Stage othersApplicationsStage;
 
     public static MainPane mainPane;
     public static Scene normalScene;
@@ -43,15 +51,10 @@ public class Main extends javafx.application.Application {
         printInfo("Cargando path inicial");
         if (path.equals("")) {
             String initDirectory = config.getProperty("init_directory");
-            String[] directories = config.getProperty("init_directory").split("/");
-            for (String value: directories) {
-                if (value != null) {
-                    if (value.charAt(0) == '$') {
-                        path += System.getenv(value.substring(1));
-                    } else {
-                        path += "/"+value;
-                    }
-                }
+            if (initDirectory.charAt(0) == '~') {
+                path = HOME+(initDirectory.substring(1));
+            } else {
+                path = initDirectory;
             }
         }
         printInfo("Path inicial: '"+BLUE+path+RESET+"'");
@@ -59,7 +62,7 @@ public class Main extends javafx.application.Application {
         printInfo("Cargando portapapeles");
         clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-        printInfo("Cargando scene.normal.panel principal");
+        printInfo("Cargando panel principal");
         mainPane = new MainPane();
         updateAll();
 
@@ -72,7 +75,13 @@ public class Main extends javafx.application.Application {
 
         stage.setScene(normalScene);
         printInfo("Mostrando escenario");
-        stage.show();
+        stage.showAndWait();
         printOk("Aplicacion iniciada con exito");
+
+        Platform.runLater(() -> {
+            printInfo("Cargando applicaciones para abrir con");
+            othersApplicationsStage = new Stage();
+            othersApplicationsStage.setScene(new OthersApplicationsScene());
+        });
     }
 }

@@ -59,7 +59,7 @@ public class Scene extends javafx.scene.Scene {
                     case SPACE -> mainPane.changeShowRightPane();
 
                     case LEFT, BACK_SPACE -> {if (!isAnyFocus()) parent();}
-                    case RIGHT, ENTER -> {if (!isAnyFocus()) openSelected();}
+                    case RIGHT, ENTER -> {if (!isAnyFocus()) mainPane.centerPane.openSelected();}
 
                     case UP -> {if (!isAnyFocus()) mainPane.centerPane.changeSelectKey(false, -1);}
                     case DOWN -> {if (!isAnyFocus()) mainPane.centerPane.changeSelectKey(false, 1);}

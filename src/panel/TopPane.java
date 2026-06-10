@@ -47,14 +47,14 @@ public class TopPane extends HBox {
                     Lib.showAlert(new Alert(Alert.AlertType.ERROR), "El archivo o directorio "+text+" no existe", "ERROR");
                 } else {
                     Lib.printInfo("Actualizando path a '"+Lib.BLUE+Main.path+Lib.RESET+"'");
-                    Main.path = text.charAt(text.length()-1) == '/' ? text.substring(0, text.length()-1) : text;
+                    Main.path = text;
                     MainPane.deselectAll();
                     Lib.updateAll(true, true, true, false, true);
                 }
             }
         });
 
-        reload = new TopButton("reload", "Recargar", e -> {Lib.updateAll(false, true, false, false, true);});
+        reload = new TopButton("reload", "Recargar", e -> {Lib.updateAll(true, true, true, true, true);});
 
         getChildren().addAll(back,forward, parent, search, reload);
     }

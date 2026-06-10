@@ -41,7 +41,7 @@ public class LeftPane extends VBox {
 
                 PlaceLabel homeDirectory = new PlaceLabel("Home", "home", Lib.HOME);
                 PlaceLabel desktopDirectory = new PlaceLabel("Escritorio", "desktop", Lib.HOME + "/Desktop");
-                PlaceLabel downloadDirectory = new PlaceLabel("Descargas", "download", Lib.HOME + "/Download");
+                PlaceLabel downloadDirectory = new PlaceLabel("Descargas", "download", Lib.HOME + "/Downloads");
                 PlaceLabel documentsDirectory = new PlaceLabel("Documentos", "documents", Lib.HOME + "/Documents");
                 PlaceLabel.PlaceMenu mediaDirectory = new PlaceLabel.PlaceMenu("Media      ▶", "media",
                         new PlaceLabel("Imagenes", "image", Lib.HOME + "/Images"),

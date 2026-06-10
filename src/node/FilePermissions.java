@@ -19,35 +19,8 @@ public class FilePermissions extends VBox {
         char[] otherPermissions = FileProperties.getOtherPermissions();
         permissionsOctal = toOctal(ownerPermissions)*100 + toOctal(groupPermissions)*10 + toOctal(otherPermissions);
 
-        FileField titleLabel = new FileField("Permisos :", new String(ownerPermissions)+new String(groupPermissions)+new String(otherPermissions));
+        FileField titleLabel = new FileField("Permisos :", new String(ownerPermissions)+new String(groupPermissions)+new String(otherPermissions), false);
 
-        /*
-        CheckBoxPermission[] owner = new CheckBoxPermission[]{
-                new CheckBoxPermission(ownerPermissions[0], 400),
-                new CheckBoxPermission(ownerPermissions[1], 200),
-                new CheckBoxPermission(ownerPermissions[2], 100)
-        };
-
-        CheckBoxPermission[] group = new CheckBoxPermission[]{
-                new CheckBoxPermission(groupPermissions[0], 40),
-                new CheckBoxPermission(groupPermissions[1], 20),
-                new CheckBoxPermission(groupPermissions[2], 10)
-        };
-
-        CheckBoxPermission[] other = new CheckBoxPermission[]{
-                new CheckBoxPermission(otherPermissions[0], 4),
-                new CheckBoxPermission(otherPermissions[1], 2),
-                new CheckBoxPermission(otherPermissions[2], 1)
-        };
-
-        HBox checkPane = new HBox(new Separator((int) 20, Orientation.VERTICAL),
-                owner[0], owner[1], owner[2],
-                group[0], group[1], group[2],
-                other[0], other[1], other[2]
-        );
-
-        checkPane.setAlignment(Pos.CENTER_LEFT);
-        */
         getChildren().addAll(titleLabel);
     }
 

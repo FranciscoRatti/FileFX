@@ -1,5 +1,8 @@
 package main;
 
+import entity.DesktopApplication;
+import entity.FileProperties;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.control.Dialog;
@@ -9,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import panel.CenterPane;
 import panel.MainPane;
 import panel.RightPane;
 
@@ -19,13 +23,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Optional;
 
 import static main.Main.*;
-import static panel.MainPane.selectedItem;
-import static panel.MainPane.selectedItems;
+import static panel.MainPane.*;
 
 public class Lib {
 
@@ -65,11 +69,14 @@ public class Lib {
         return dialog.showAndWait();
     }
     public static ContextMenu createContextMenu(
-            boolean createFile, boolean createDirectory, boolean rename, boolean copy, boolean cut, boolean paste, boolean trash, boolean remove, boolean shell
+            boolean open, boolean openWith, boolean createFile, boolean createDirectory, boolean rename, boolean copy, boolean cut, boolean paste, boolean trash, boolean remove, boolean shell
     ) {
         ContextMenu contextMenu = new ContextMenu();
         ObservableList<MenuItem> contextMenuItems = contextMenu.getItems();
         MenuItem pasteItem;
+
+        if (open) contextMenuItems.add(createNewOpenItem());
+        if (openWith) contextMenuItems.add(createNewOpenWithItem());
 
         if (createFile) contextMenuItems.add(createNewFileItem());
         if (createDirectory) contextMenuItems.add(createNewDirectoryItem());
@@ -106,7 +113,60 @@ public class Lib {
 
         return contextMenu;
     }
-    private static MenuItem createNewFileItem() {
+
+    private static MenuItem createNewOpenItem() {
+        MenuItem item = new MenuItem("Abrir");
+        item.setOnAction(e -> {
+            if (selectedItem != null) {
+                mainPane.centerPane.openSelected();
+            }
+        });
+        return item;
+    }
+    private static Menu createNewOpenWithItem() {
+        Menu menu = new Menu("Abrir con");
+        ObservableList<MenuItem> childrens = menu.getItems();
+
+        Platform.runLater(() -> {
+            menu.getParentPopup().setOnShowing(e -> {
+                childrens.clear();
+
+                String mimeType = FileProperties.getMimeType();
+
+                for (DesktopApplication app : desktopApplications) {
+                    boolean isMimeTypeEqual = false;
+
+                    for (String mimeTypeApp : app.getMimeTypes()) {
+                        if (mimeType.equals(mimeTypeApp)) {
+                            isMimeTypeEqual = true;
+                            break;
+                        }
+                    }
+
+                    if (isMimeTypeEqual) {
+                        ImageView icon = new ImageView(app.getIcon());
+                        icon.setPreserveRatio(true);
+                        icon.setFitHeight(20);
+
+                        MenuItem item = new MenuItem(app.getName(), icon);
+                        item.setOnAction(ev -> {
+                            app.openWith(selectedItem);
+                        });
+                        childrens.add(item);
+                    }
+                }
+
+                MenuItem others = new MenuItem("Otra...");
+                others.setOnAction(ev -> {
+                    othersApplicationsStage.showAndWait();
+                });
+                childrens.add(others);
+            });
+        });
+
+        return menu;
+    }
+    private static Menu createNewFileItem() {
         MenuItem item = new MenuItem("Sin formato");
         item.setOnAction(e -> {
             Optional<String> result = showAlert(new TextInputDialog(), "Ingrese nombre del archivo", null);
@@ -176,11 +236,14 @@ public class Lib {
         return item;
     }
     private static MenuItem createPasteItem() {
+        clipboardFiles = Boolean.parseBoolean(config.getProperty("check_clipboard_paste")) ?
+                getClipboardFiles() : null;
+
         MenuItem item = new MenuItem("Pegar", new ImageView("file://"+ABSOLUTE_PATH+"share/filefx/icons/context_menu/paste.png"));
         item.setAccelerator(CTRL_V);
         item.setOnAction(e -> {
-            if (clipboardFiles == null) pasteFiles(getClipboardFiles());
-            else pasteFiles(clipboardFiles);
+            if (clipboardFiles == null) clipboardFiles = getClipboardFiles();
+            pasteFiles(clipboardFiles);
         });
         return item;
     }
@@ -253,8 +316,11 @@ public class Lib {
             printExecute("Retrocediendo");
             forwardBuffer.add(path);
             path = backBuffer.removeLast();
-            mainPane.centerPane.update();
-            mainPane.topPane.update();
+            selectedItem=null;
+            selectedItems.clear();
+            selectedFile=null;
+
+            updateAll(true, true, false, false, true);
         }
     }
     public static void forward() {
@@ -262,21 +328,31 @@ public class Lib {
             printExecute("Volviendo");
             backBuffer.add(path);
             path = forwardBuffer.removeLast();
-            mainPane.centerPane.update();
-            mainPane.topPane.update();
+            selectedItem=null;
+            selectedItems.clear();
+            selectedFile=null;
+
+            updateAll(true, true, false, false, true);
         }
     }
     public static void parent() {
-        if (path != null && !path.equals("/")) {
+        if (!path.equals("/")) {
             printExecute("Yendo al parent");
             forwardBuffer.clear();
             backBuffer.add(path);
-            while (path.charAt(path.length()-1) != '/') {
-                path = path.substring(0, path.length()-1);
+            selectedItem=null;
+            selectedItems.clear();
+            selectedFile=null;
+
+            int length = path.length();
+            if (length > 1) {
+                do {
+                    path = path.substring(0, length-1);
+                    length = path.length();
+                } while(!path.endsWith("/"));
             }
-            path = path.length() > 1 ? path.substring(0, path.length()-1) : "/";
-            mainPane.centerPane.update();
-            mainPane.topPane.update();
+
+            updateAll(true, true, false, true, true);
         }
     }
 

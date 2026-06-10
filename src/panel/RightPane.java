@@ -23,12 +23,7 @@ import static panel.MainPane.*;
 import node.*;
 
 public class RightPane extends ScrollPane {
-    private static ImageView miniatura;
     private static FileField nameNode;
-    private static FileField sizeNode;
-    private static FilePermissions permissionsNode;
-    private static FileField ownerNode;
-    private static FileField groupNode;
 
     private VBox pane;
 
@@ -56,6 +51,7 @@ public class RightPane extends ScrollPane {
             Main.mainPane.changeShowRightPane(false);
         });
 
+        ImageView miniatura;
         if (MainPane.selectedItem != null) {
             String extensionText = selectedItem.getExtension();
 
@@ -116,14 +112,17 @@ public class RightPane extends ScrollPane {
                 sizeText = sizeText.substring(0, sizeText.length()-12)+","+sizeText.substring(sizeTextLenght-12, sizeTextLenght-10);
             } else unit = "B";
 
-            sizeNode = new FileField("Tamaño :", sizeText+" "+unit, false);
+            FileField sizeNode = new FileField("Tamaño :", sizeText + " " + unit, false);
+
+            // Tipo mime
+            FileField tipeNode = new FileField("Tipo   :", FileProperties.getMimeType(), false);
 
             // Permisos
-            permissionsNode = new FilePermissions(selectedFile);
+            FilePermissions permissionsNode = new FilePermissions(selectedFile);
 
             // Usuario y grupo
-            ownerNode = new FileField("Usuario :", FileProperties.getOwner(), true);
-            groupNode = new FileField("Grupo   :", FileProperties.getGroup(), true);
+            FileField ownerNode = new FileField("Usuario :", FileProperties.getOwner(), true);
+            FileField groupNode = new FileField("Grupo   :", FileProperties.getGroup(), true);
 
             pane.getChildren().addAll(
                     close,
@@ -131,6 +130,7 @@ public class RightPane extends ScrollPane {
                     new Separator(10, Orientation.HORIZONTAL),
                     nameNode,
                     sizeNode,
+                    tipeNode,
                     new Separator(20, Orientation.HORIZONTAL),
                     permissionsNode,
                     new Separator(20, Orientation.HORIZONTAL),

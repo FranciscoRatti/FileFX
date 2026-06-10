@@ -14,6 +14,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -46,11 +47,11 @@ public class CenterPane extends ScrollPane {
         fileLabels = new ArrayList<>();
         MainPane.selectedItems = new ArrayList<>();
 
-        menu =          createContextMenu(true , true , false, false, false, true , false, false, true );
-        menuFile =      createContextMenu(false, false, true , true , true , true , true , true , true );
-        menuDirectory = createContextMenu(true , true , true , true , true , true , true , true , true );
-        menuMultiple =  createContextMenu(false, false, false, true , true , true , true , true , true );
-        menuCreate =    createContextMenu(true , true , false, false, false, false, false, false, false);
+        menu =          createContextMenu(false, false, true , true , false, false, false, true , false, false, true );
+        menuFile =      createContextMenu(true , true , false, false, true , true , true , true , true , true , true );
+        menuDirectory = createContextMenu(true , true , true , true , true , true , true , true , true , true , true );
+        menuMultiple =  createContextMenu(true , true , false, false, false, true , true , true , true , true , true );
+        menuCreate =    createContextMenu(false, false, true , true , false, false, false, false, false, false, false);
 
         pane = new VBox();
 
@@ -326,34 +327,32 @@ public class CenterPane extends ScrollPane {
         }
     }
 
-    public static void openSelected() {
+    public void openSelected() {
         if (selectedItem != null) {
             File file = selectedItem.getFile();
-            String fileName = file.getName();
+            String absolutePath = file.getAbsolutePath();
 
             // Si es directorio
             if (file.isDirectory()) {
-                Lib.forwardBuffer.clear();
-                Lib.backBuffer.add(Main.path);
-                Main.path+="/"+fileName;
+                forwardBuffer.clear();
+                backBuffer.add(Main.path);
+                path=absolutePath+"/";
+                selectedItems.clear();
+                selectedItem = null;
+                selectedFile = null;
 
-                MainPane.selectedItems.clear();
-                MainPane.selectedItem = null;
-                MainPane.selectedFile = null;
+                printInfo("Actualizando path a '"+Lib.BLUE+Main.path+Lib.RESET+"'");
 
-                Lib.printInfo("Actualizando path a '"+Lib.BLUE+Main.path+Lib.RESET+"'");
-
-                Main.mainPane.centerPane.update();
-                topPane.update();
+                updateAll(true, true, false, false, true);
 
             // Si es archivo
             } else {
                 try {
-                    Lib.printExecute("Abriendo '"+Lib.YELLOW+Main.path+"/"+fileName+Lib.RESET+"'");
-                    ProcessBuilder pb = new ProcessBuilder("open", Main.path+"/"+fileName);
+                    printExecute("Abriendo '"+Lib.YELLOW+absolutePath+Lib.RESET+"'");
+                    ProcessBuilder pb = new ProcessBuilder("open", absolutePath);
                     pb.start();
                 } catch (IOException ex) {
-                    Lib.printError("No se puede abrir el archivo "+Main.path+"/"+fileName, ex);
+                    Lib.printError("No se puede abrir el archivo "+absolutePath, ex);
                 }
             }
 

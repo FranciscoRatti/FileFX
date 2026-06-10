@@ -13,7 +13,10 @@ public class FileField extends HBox {
         super(10);
         setAlignment(Pos.CENTER_LEFT);
         setMaxWidth(Double.MAX_VALUE);
-        createLabel(title);
+        label = new Label(title);
+        label.setId("right_label");
+        label.setMinWidth(Region.USE_PREF_SIZE);
+        getChildren().add(label);
 
         textField = new TextField(text);
         textField.setId("right_component");
@@ -22,26 +25,5 @@ public class FileField extends HBox {
         setHgrow(textField, Priority.ALWAYS);
 
         getChildren().add(textField);
-    }
-
-    public FileField(String title, String text) {
-        super(10);
-        setAlignment(Pos.CENTER_LEFT);
-        createLabel(title);
-
-        textField = new TextField(text);
-        textField.setId("right_component");
-        textField.setEditable(false);
-        textField.setMaxWidth(Double.MAX_VALUE);
-        setHgrow(textField, Priority.ALWAYS);
-
-        getChildren().add(textField);
-    }
-
-    private void createLabel(String text) {
-        label = new Label(text);
-        label.setId("right_label");
-        label.setMinWidth(Region.USE_PREF_SIZE);
-        getChildren().add(label);
     }
 }
