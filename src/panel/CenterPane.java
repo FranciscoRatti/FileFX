@@ -1,5 +1,6 @@
 package panel;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventTarget;
 import javafx.geometry.Bounds;
@@ -80,7 +81,10 @@ public class CenterPane extends ScrollPane {
                     changeSelectMouse(isShiftDown, isControlDown, e,(FileLabel) target);
                 } else {
                     if (isAnyShow()) hideAll();
-                    else deselectAll();
+                    else {
+                        deselectAll();
+                        updateAll(false, true, false, false, false);
+                    }
                 }
             } else if (button.equals(MouseButton.SECONDARY)) {
                 showMenu(this);
@@ -307,7 +311,7 @@ public class CenterPane extends ScrollPane {
                 double topThreshold = visibleTop + (viewportHeight / 6.0);
                 double bottomThreshold = visibleBottom - (viewportHeight / 6.0);
 
-                double labelsToScroll = Math.max(1, Math.abs(step));
+                double labelsToScroll = Math.abs(step);
                 double scrollByPixels = labelBounds.getHeight() * labelsToScroll;
 
                 if (step > 0) {
@@ -344,6 +348,7 @@ public class CenterPane extends ScrollPane {
                 printInfo("Actualizando path a '"+Lib.BLUE+Main.path+Lib.RESET+"'");
 
                 updateAll(true, true, false, false, true);
+                if (!fileLabels.isEmpty()) fileLabels.getFirst().setSelected(true);
 
             // Si es archivo
             } else {
@@ -357,7 +362,23 @@ public class CenterPane extends ScrollPane {
             }
 
 
-            Lib.updateAll(false, true , false ,false, false);
+            updateAll(false, true , false ,false, false);
+        }
+    }
+
+    public void setSelectedOnCenter() {
+        if (selectedItem != null) {
+            Platform.runLater(() -> {
+                double contentHeight = pane.getBoundsInLocal().getHeight();
+                double viewportHeight = getViewportBounds().getHeight();
+                double scrollRange = contentHeight - viewportHeight;
+
+                if (scrollRange > 0) {
+                    setVvalue(
+                            (selectedItem.getBoundsInParent().getCenterY() - (viewportHeight / 2.0))
+                                    / scrollRange);
+                }
+            });
         }
     }
 }

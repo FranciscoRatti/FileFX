@@ -1,17 +1,16 @@
 package scene;
 
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Pane;
 import panel.CenterPane;
 
 import static main.Lib.*;
 import static main.Main.*;
-import static panel.CenterPane.*;
 import static panel.MainPane.*;
-import main.Main;
-import panel.RightPane;
-import panel.TopPane;
+import main.*;
+import panel.*;
 
 public class Scene extends javafx.scene.Scene {
     public Scene() {
@@ -20,56 +19,57 @@ public class Scene extends javafx.scene.Scene {
         printInfo("Cargando hoja de estilos");
         getStylesheets().add("file://"+ABSOLUTE_PATH+"share/filefx/style.css");
 
+        updateKeyBinding();
+    }
+
+    public void updateKeyBinding() {
         addEventFilter(KeyEvent.KEY_PRESSED, e -> {
-            KeyCode keyCode = e.getCode();
+            try {
+                if (!isAnyFocus()) e.consume();
 
-            if (e.isControlDown()) {
-                switch (keyCode) {
-                    case X -> copyFilesToClipBoard(parseFileLabelsToFiles(selectedItems), true);
-                    case C -> copyFilesToClipBoard(parseFileLabelsToFiles(selectedItems), false);
-                    case V -> pasteFiles(getClipboardFiles());
-                    case N -> CenterPane.showMenuCreate();
+                KeyCombination key =
+                        e.isControlDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.CONTROL_DOWN) :
+                                e.isShiftDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.SHIFT_DOWN) :
+                                e.isAltDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.ALT_DOWN) :
+                                e.isMetaDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.META_DOWN) :
+                                e.isShortcutDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.SHORTCUT_DOWN) :
+                                new KeyCodeCombination(e.getCode());
 
-                    case DELETE -> removeFiles(parseFileLabelsToFiles(selectedItems));
+                if (key.equals(cut)) copyFilesToClipBoard(parseFileLabelsToFiles(selectedItems), true);
+                if (key.equals(copy)) copyFilesToClipBoard(parseFileLabelsToFiles(selectedItems), false);
+                if (key.equals(paste)) pasteFiles(getClipboardFiles());
+                if (key.equals(remove)) removeFiles(parseFileLabelsToFiles(selectedItems));
+                if (key.equals(trash)) trashFiles(parseFileLabelsToFiles(selectedItems));
+                if (key.equals(rename)) RightPane.focusName();
 
-                    case Z -> back();
-                    case Y -> forward();
-                    case L -> {if (!isAnyFocus()) TopPane.focusSearch();}
+                if (key.equals(up)) centerPane.changeSelectKey(false, -1);
+                if (key.equals(open)) if (!isAnyFocus()) centerPane.openSelected();
+                if (key.equals(down)) centerPane.changeSelectKey(false, 1);
+                if (key.equals(parent)) if (!isAnyFocus()) parent();
+                if (key.equals(up_step)) if (!isAnyFocus()) centerPane.changeSelectKey(false, -3);
+                if (key.equals(down_step)) if (!isAnyFocus()) centerPane.changeSelectKey(false, 3);
 
-                    case T -> openShell();
+                if (key.equals(select_up)) if (!isAnyFocus()) centerPane.changeSelectKey(true, -1);
+                if (key.equals(select_down)) if (!isAnyFocus()) centerPane.changeSelectKey(true, 1);
+                if (key.equals(select_up_step)) if (!isAnyFocus()) centerPane.changeSelectKey(true, -5);
+                if (key.equals(select_down_step)) if (!isAnyFocus()) centerPane.changeSelectKey(true, 5);
+
+                if (key.equals(back)) back();
+                if (key.equals(forward)) forward();
+
+                if (key.equals(open_shell)) openShell();
+                if (key.equals(show_menu)) CenterPane.showMenu(mainPane);
+                if (key.equals(show_menu_create)) CenterPane.showMenuCreate();
+                if (key.equals(focus_path)) if (!isAnyFocus()) TopPane.focusSearch();
+
+                if (key.equals(deselect_all)) {
+                    if (TopPane.isSearchFocus()) updateAll(true, false, false, false, false);
+                    else if (deselectAll()) updateAll(false, true, false, false, false);
                 }
-            } else if (e.isShiftDown()) {
-                switch (keyCode) {
-                    case UP -> mainPane.centerPane.changeSelectKey(true, -1);
-                    case DOWN -> mainPane.centerPane.changeSelectKey(true, 1);
-                    case PAGE_UP -> {if (!isAnyFocus()) mainPane.centerPane.changeSelectKey(true, -3);}
-                    case PAGE_DOWN -> {if (!isAnyFocus()) mainPane.centerPane.changeSelectKey(true, 3);}
-                }
-            } else {
-                switch (keyCode) {
-                    case DELETE -> trashFiles(parseFileLabelsToFiles(selectedItems));
-                    case CONTEXT_MENU -> CenterPane.showMenu(mainPane);
-                    case ESCAPE -> {
-                        if (TopPane.isSearchFocus()) updateAll(true, false, false, false, false);
-                        else if (deselectAll()) updateAll(false, true, false, false, false);
-                    }
-
-                    case F5 -> updateAll(false, true, false, false, true);
-                    case F4 -> RightPane.focusName();
-                    case SPACE -> mainPane.changeShowRightPane();
-
-                    case LEFT, BACK_SPACE -> {if (!isAnyFocus()) parent();}
-                    case RIGHT, ENTER -> {if (!isAnyFocus()) mainPane.centerPane.openSelected();}
-
-                    case UP -> {if (!isAnyFocus()) mainPane.centerPane.changeSelectKey(false, -1);}
-                    case DOWN -> {if (!isAnyFocus()) mainPane.centerPane.changeSelectKey(false, 1);}
-                    case PAGE_UP -> {if (!isAnyFocus()) mainPane.centerPane.changeSelectKey(false, -5);}
-                    case PAGE_DOWN -> {if (!isAnyFocus()) mainPane.centerPane.changeSelectKey(false, 5);}
-                }
-            }
-            if (!isAnyFocus()) e.consume();
+                if (key.equals(update_all)) updateAll(false, true, false, false, true);
+                if (key.equals(change_show_right_pane)) mainPane.changeShowRightPane();
+            } catch (IllegalArgumentException ignored) {}
         });
-
     }
 
     public static boolean isAnyFocus() {

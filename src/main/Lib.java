@@ -1,35 +1,21 @@
 package main;
 
-import entity.DesktopApplication;
-import entity.FileProperties;
+import entity.*;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import panel.CenterPane;
-import panel.MainPane;
-import panel.RightPane;
+import node.FileLabel;
+import panel.*;
 
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.awt.datatransfer.*;
+import java.io.*;
 import java.time.LocalDateTime;
-import java.util.LinkedList;
-import java.util.Optional;
+import java.util.*;
 
 import static main.Main.*;
 import static panel.MainPane.*;
+import static panel.CenterPane.*;
 
 public class Lib {
 
@@ -45,14 +31,6 @@ public class Lib {
     public static final String GREEN = "\u001B[32m";
     public static final String YELLOW = "\u001B[33m";
     public static final String BLUE = "\u001B[34m";
-
-    public static final KeyCombination CTRL_X = new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_DOWN);
-    public static final KeyCombination CTRL_C = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN);
-    public static final KeyCombination CTRL_V = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN);
-    public static final KeyCombination SUPR = new KeyCodeCombination(KeyCode.DELETE);
-    public static final KeyCombination CTRL_SUPR = new KeyCodeCombination(KeyCode.DELETE, KeyCombination.CONTROL_DOWN);
-    public static final KeyCombination F4= new KeyCodeCombination(KeyCode.F4);
-    public static final KeyCombination CTRL_T= new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);
 
     public static LinkedList<String> backBuffer = new LinkedList<>();
     public static LinkedList<String> forwardBuffer = new LinkedList<>();
@@ -84,17 +62,15 @@ public class Lib {
 
         if (copy) contextMenuItems.addAll(new SeparatorMenuItem(), createCopyItem());
         if (cut) contextMenuItems.add(createCutItem());
-        if (paste) {
-            pasteItem = createPasteItem();
-            contextMenuItems.add(pasteItem);
-        } else pasteItem = null;
+        if (paste) {contextMenuItems.add(pasteItem = createPasteItem());}
+        else pasteItem = null;
 
         if (trash) contextMenuItems.addAll(new SeparatorMenuItem(), createTrashItem());
         if (remove) contextMenuItems.add(createRemoveItem());
 
         if (shell) contextMenuItems.addAll(new SeparatorMenuItem(), createOpenShellItem());
 
-        if (DISABLE_MENU_ITEM) {
+        if (Boolean.parseBoolean(config.getProperty("check_clipboard_paste"))) {
             contextMenu.setOnShowing(e -> {
                 if (pasteItem != null) {
                     clipboardFiles = getClipboardFiles();
@@ -118,7 +94,7 @@ public class Lib {
         MenuItem item = new MenuItem("Abrir");
         item.setOnAction(e -> {
             if (selectedItem != null) {
-                mainPane.centerPane.openSelected();
+                centerPane.openSelected();
             }
         });
         return item;
@@ -213,7 +189,7 @@ public class Lib {
     }
     private static MenuItem createRenameItem() {
         MenuItem item = new MenuItem("Renombrar", new ImageView("file://"+ABSOLUTE_PATH+"share/filefx/icons/context_menu/rename.png"));
-        item.setAccelerator(F4);
+        item.setAccelerator(rename);
         item.setOnAction(e -> {
             RightPane.focusName();
         });
@@ -221,7 +197,7 @@ public class Lib {
     }
     private static MenuItem createCopyItem() {
         MenuItem item = new MenuItem("Copiar", new ImageView("file://"+ABSOLUTE_PATH+"share/filefx/icons/context_menu/copy.png"));
-        item.setAccelerator(CTRL_C);
+        item.setAccelerator(copy);
         item.setOnAction(e -> {
             copyFilesToClipBoard(MainPane.parseFileLabelsToFiles(selectedItems), false);
         });
@@ -229,7 +205,7 @@ public class Lib {
     }
     private static MenuItem createCutItem() {
         MenuItem item = new MenuItem("Cortar", new ImageView("file://"+ABSOLUTE_PATH+"share/filefx/icons/context_menu/cut.png"));
-        item.setAccelerator(CTRL_X);
+        item.setAccelerator(cut);
         item.setOnAction(e -> {
             copyFilesToClipBoard(MainPane.parseFileLabelsToFiles(selectedItems), true);
         });
@@ -240,7 +216,7 @@ public class Lib {
                 getClipboardFiles() : null;
 
         MenuItem item = new MenuItem("Pegar", new ImageView("file://"+ABSOLUTE_PATH+"share/filefx/icons/context_menu/paste.png"));
-        item.setAccelerator(CTRL_V);
+        item.setAccelerator(paste);
         item.setOnAction(e -> {
             if (clipboardFiles == null) clipboardFiles = getClipboardFiles();
             pasteFiles(clipboardFiles);
@@ -249,7 +225,7 @@ public class Lib {
     }
     private static MenuItem createTrashItem() {
         MenuItem item = new MenuItem("Enviar a papelera", new ImageView("file://"+ABSOLUTE_PATH+"share/filefx/icons/context_menu/trash.png"));
-        item.setAccelerator(SUPR);
+        item.setAccelerator(trash);
         item.setOnAction(e -> {
             trashFiles(MainPane.parseFileLabelsToFiles(selectedItems));
         });
@@ -257,7 +233,7 @@ public class Lib {
     }
     private static MenuItem createRemoveItem() {
         MenuItem item = new MenuItem("Eliminar", new ImageView("file://"+ABSOLUTE_PATH+"share/filefx/icons/context_menu/remove.png"));
-        item.setAccelerator(CTRL_SUPR);
+        item.setAccelerator(remove);
         item.setOnAction(e -> {
             removeFiles(MainPane.parseFileLabelsToFiles(selectedItems));
         });
@@ -265,7 +241,7 @@ public class Lib {
     }
     private static MenuItem createOpenShellItem() {
         MenuItem item = new MenuItem("Abrir una terminal  ", new ImageView("file://"+ABSOLUTE_PATH+"share/filefx/icons/context_menu/shell.png"));
-        item.setAccelerator(CTRL_T);
+        item.setAccelerator(open_shell);
         item.setOnAction(e -> {
             openShell();
         });
@@ -273,11 +249,11 @@ public class Lib {
     }
     
     public static void updateAll(boolean topPane, boolean rightPane, boolean bottomPane, boolean leftPane, boolean centerPane) {
-        if (topPane) mainPane.topPane.update();
-        if (rightPane) mainPane.rightPane.update();
+        if (topPane) MainPane.topPane.update();
+        if (rightPane) MainPane.rightPane.update();
         if (bottomPane) ;
-        if (leftPane) mainPane.leftPane.update();
-        if (centerPane) mainPane.centerPane.update();
+        if (leftPane) MainPane.leftPane.update();
+        if (centerPane) MainPane.centerPane.update();
     }
     public static void updateAll() {updateAll(true, true, true, true, true);}
 
@@ -344,6 +320,8 @@ public class Lib {
             selectedItems.clear();
             selectedFile=null;
 
+            String oldPath = path.substring(0, path.length()-1);
+
             int length = path.length();
             if (length > 1) {
                 do {
@@ -353,6 +331,16 @@ public class Lib {
             }
 
             updateAll(true, true, false, true, true);
+
+            Platform.runLater(() -> {
+                for (FileLabel label : fileLabels) {
+                    if (label.getFile().getAbsolutePath().equals(oldPath)) {
+                        label.setSelected(true);
+                        centerPane.setSelectedOnCenter();
+                        break;
+                    }
+                }
+            });
         }
     }
 
@@ -363,7 +351,7 @@ public class Lib {
         } catch (Exception ex) {
             printError("No se pudo crear el archivo "+file, ex);
         }
-        mainPane.centerPane.update();
+        centerPane.update();
     }
     public static void createNewDirectory(File directory) {
         try {
@@ -372,7 +360,7 @@ public class Lib {
         } catch (Exception ex) {
             printError("No se pudo crear el directorio "+directory, ex);
         }
-        mainPane.centerPane.update();
+        centerPane.update();
     }
 
     public static void renameFile(File file, String newName) {

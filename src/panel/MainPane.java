@@ -13,7 +13,7 @@ import node.FileLabel;
 import static main.Lib.printInfo;
 
 public class MainPane extends BorderPane {
-    public CenterPane centerPane;
+    public static CenterPane centerPane;
     public static TopPane topPane;
     public static RightPane rightPane;
     public static LeftPane leftPane;
