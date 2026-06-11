@@ -2,6 +2,7 @@ package scene;
 
 import entity.DesktopApplication;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -16,7 +17,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import static main.Lib.ABSOLUTE_PATH;
+import static main.Lib.printOk;
 import static main.Main.desktopApplications;
+import static main.Main.isApplicationsSucceded;
 import static panel.MainPane.selectedItem;
 import static panel.MainPane.selectedItems;
 
@@ -43,42 +46,51 @@ public class OthersApplicationsScene extends Scene {
             }
         }
 
-        desktopApplications = new ArrayList<>();
+        // Hilo
+        Task<Void> task = new Task<Void>() {
+            protected Void call() throws Exception {
+                desktopApplications = new ArrayList<>();
 
-        for (File file : desktopFiles) {
-            if (file.isDirectory()) {
-                for (File childrenFile : file.listFiles()) {
-                    DesktopApplication app = new DesktopApplication(childrenFile);
-                    if (app.hasParameter() && app.isDisplay() && app.getMimeTypes() != null) {
-                        desktopApplications.add(app);
+                for (File file : desktopFiles) {
+                    if (file.isDirectory()) {
+                        for (File childrenFile : file.listFiles()) {
+                            DesktopApplication app = new DesktopApplication(childrenFile);
+                            if (app.hasParameter() && app.isDisplay() && app.getMimeTypes() != null) {
+                                desktopApplications.add(app);
+                            }
+                        }
+                    } else {
+                        DesktopApplication app = new DesktopApplication(file);
+                        if (app.hasParameter() && app.isDisplay() && app.getMimeTypes() != null) {
+                            desktopApplications.add(app);
+                        }
                     }
                 }
-            } else {
-                DesktopApplication app = new DesktopApplication(file);
-                if (app.hasParameter() && app.isDisplay() && app.getMimeTypes() != null) {
-                    desktopApplications.add(app);
+
+                desktopApplications.sort(Comparator.comparing(DesktopApplication::getName, String.CASE_INSENSITIVE_ORDER));
+
+                // Crear botones
+                ObservableList<Node> childrens = pane.getChildren();
+                for (DesktopApplication app : desktopApplications) {
+                    ImageView icon = new ImageView(app.getIcon());
+                    icon.setPreserveRatio(true);
+                    icon.setFitHeight(24);
+
+                    Button button = new Button(app.getName(), icon);
+                    button.setId("other_button");
+                    button.setOnAction(e -> {
+                        if (selectedItems != null && !selectedItems.isEmpty()) {
+                            Main.othersApplicationsStage.close();
+                            app.openWith(selectedItem);
+                        }
+                    });
+                    childrens.add(button);
                 }
+                isApplicationsSucceded = true;
+                printOk("Applicaciones para abrir con cargadas con exito");
+                return null;
             }
-        }
-
-        desktopApplications.sort(Comparator.comparing(DesktopApplication::getName, String.CASE_INSENSITIVE_ORDER));
-
-        // Crear botones
-        ObservableList<Node> childrens = pane.getChildren();
-        for (DesktopApplication app : desktopApplications) {
-            ImageView icon = new ImageView(app.getIcon());
-            icon.setPreserveRatio(true);
-            icon.setFitHeight(24);
-
-            Button button = new Button(app.getName(), icon);
-            button.setId("other_button");
-            button.setOnAction(e -> {
-                if (selectedItems != null && !selectedItems.isEmpty()) {
-                    Main.othersApplicationsStage.close();
-                    app.openWith(selectedItem);
-                }
-            });
-            childrens.add(button);
-        }
+        };
+        new Thread(task).start();
     }
 }

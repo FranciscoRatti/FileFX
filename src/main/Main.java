@@ -2,6 +2,7 @@ package main;
 
 import entity.DesktopApplication;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -20,15 +21,15 @@ import static main.Lib.*;
 public class Main extends javafx.application.Application {
     public static Properties config;
     public static Properties keyBinding;
+    public static volatile boolean isApplicationsSucceded = false;
 
     public static ArrayList<DesktopApplication> desktopApplications;
     public static Stage othersApplicationsStage;
+    public static String path = "";
 
     public static MainPane mainPane;
     public static Scene scene;
     public static Stage stage;
-
-    public static String path = "";
 
     public static void main(String[] args) {
         if (args.length > 0) path = args[0];
@@ -90,11 +91,10 @@ public class Main extends javafx.application.Application {
         stage.show();
         printOk("Aplicacion iniciada con exito");
 
-        Platform.runLater(() -> {
-            printInfo("Cargando applicaciones para abrir con");
-            othersApplicationsStage = new Stage();
-            othersApplicationsStage.setScene(new OthersApplicationsScene());
-        });
+        printInfo("Cargando applicaciones para abrir con");
+        othersApplicationsStage = new Stage();
+        othersApplicationsStage.setScene(new OthersApplicationsScene());
+        isApplicationsSucceded = true;
     }
 
     public static void updateKeyBinding() {

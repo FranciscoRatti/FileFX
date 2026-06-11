@@ -105,6 +105,10 @@ public class Lib {
 
         Platform.runLater(() -> {
             menu.getParentPopup().setOnShowing(e -> {
+                while (!isApplicationsSucceded) {
+                    Thread.onSpinWait();
+                }
+
                 childrens.clear();
 
                 String mimeType = FileProperties.getMimeType();
@@ -258,9 +262,7 @@ public class Lib {
     public static void updateAll() {updateAll(true, true, true, true, true);}
 
     // Imprimir informacion
-    public static void printInfo(String message) {
-        System.out.println("[" + BLUE + "INFO" + RESET + "]     "+message);
-    }
+    public static void printInfo(String message) {System.out.println("[" + BLUE + "INFO" + RESET + "]     "+message);}
     public static void printError(String message, Exception e) {
         System.out.println("[" + RED + "ERROR" + RESET + "]    "+message);
 
@@ -279,12 +281,8 @@ public class Lib {
             }
         }
     }
-    public static void printOk(String message) {
-        System.out.println("[" + GREEN + " OK " + RESET + "]     "+message);
-    }
-    public static void printExecute(String message) {
-        System.out.println("[" + YELLOW + "EXEC" + RESET + "]     "+message);
-    }
+    public static void printOk(String message) {System.out.println("[" + GREEN + " OK " + RESET + "]     "+GREEN+message+RESET);}
+    public static void printExecute(String message) {System.out.println("[" + YELLOW + "EXEC" + RESET + "]     "+message);}
 
     // Acciones
     public static void back() {
