@@ -14,12 +14,16 @@ import panel.*;
 
 public class Scene extends javafx.scene.Scene {
     public Scene() {
-        super(mainPane, Integer.parseInt(Main.config.getProperty("width")), Integer.parseInt(Main.config.getProperty("height")));
+        super(mainPane, Double.parseDouble(dynamicValues.getProperty("width")), Double.parseDouble(dynamicValues.getProperty("height")));
 
         printInfo("Cargando hoja de estilos");
         getStylesheets().add("file://"+ABSOLUTE_PATH+"share/filefx/style.css");
 
         updateKeyBinding();
+    }
+
+    public static boolean isAnyFocus() {
+        return  TopPane.isSearchFocus() || RightPane.isNameFocus();
     }
 
     public void updateKeyBinding() {
@@ -35,44 +39,48 @@ public class Scene extends javafx.scene.Scene {
                                 e.isShortcutDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.SHORTCUT_DOWN) :
                                 new KeyCodeCombination(e.getCode());
 
-                if (key.equals(cut)) copyFilesToClipBoard(parseFileLabelsToFiles(selectedItems), true);
-                if (key.equals(copy)) copyFilesToClipBoard(parseFileLabelsToFiles(selectedItems), false);
-                if (key.equals(paste)) pasteFiles(getClipboardFiles());
-                if (key.equals(remove)) removeFiles(parseFileLabelsToFiles(selectedItems));
-                if (key.equals(trash)) trashFiles(parseFileLabelsToFiles(selectedItems));
-                if (key.equals(rename)) RightPane.focusName();
+                setKeyBindAction(cut, key, () -> copyFilesToClipBoard(parseFileLabelsToFiles(selectedItems), true));
+                setKeyBindAction(copy, key, () -> copyFilesToClipBoard(parseFileLabelsToFiles(selectedItems), false));
+                setKeyBindAction(paste, key, () -> pasteFiles(getClipboardFiles()));
+                setKeyBindAction(remove, key, () -> removeFiles(parseFileLabelsToFiles(selectedItems)));
+                setKeyBindAction(trash, key, () -> trashFiles(parseFileLabelsToFiles(selectedItems)));
+                setKeyBindAction(rename, key, () -> RightPane.focusName());
 
-                if (key.equals(up)) centerPane.changeSelectKey(false, -1);
-                if (key.equals(open)) if (!isAnyFocus()) centerPane.openSelected();
-                if (key.equals(down)) centerPane.changeSelectKey(false, 1);
-                if (key.equals(parent)) if (!isAnyFocus()) parent();
-                if (key.equals(up_step)) if (!isAnyFocus()) centerPane.changeSelectKey(false, -3);
-                if (key.equals(down_step)) if (!isAnyFocus()) centerPane.changeSelectKey(false, 3);
+                setKeyBindAction(up, key, () -> centerPane.changeSelectKey(false, -1));
+                setKeyBindAction(open, key, () -> {if (!isAnyFocus()) centerPane.openSelected();});
+                setKeyBindAction(down, key, () -> centerPane.changeSelectKey(false, 1));
+                setKeyBindAction(parent, key, () -> {if (!isAnyFocus()) parent();});
+                setKeyBindAction(up_step, key, () -> {if (!isAnyFocus()) centerPane.changeSelectKey(false, -3);});
+                setKeyBindAction(down_step, key, () -> {if (!isAnyFocus()) centerPane.changeSelectKey(false, 3);});
 
-                if (key.equals(select_up)) if (!isAnyFocus()) centerPane.changeSelectKey(true, -1);
-                if (key.equals(select_down)) if (!isAnyFocus()) centerPane.changeSelectKey(true, 1);
-                if (key.equals(select_up_step)) if (!isAnyFocus()) centerPane.changeSelectKey(true, -5);
-                if (key.equals(select_down_step)) if (!isAnyFocus()) centerPane.changeSelectKey(true, 5);
+                setKeyBindAction(select_up, key, () -> { if (!isAnyFocus()) centerPane.changeSelectKey(true, -1); });
+                setKeyBindAction(select_down, key, () -> { if (!isAnyFocus()) centerPane.changeSelectKey(true, 1); });
+                setKeyBindAction(select_up_step, key, () -> { if (!isAnyFocus()) centerPane.changeSelectKey(true, -5); });
+                setKeyBindAction(select_down_step, key, () -> { if (!isAnyFocus()) centerPane.changeSelectKey(true, 5); });
 
-                if (key.equals(back)) back();
-                if (key.equals(forward)) forward();
+                setKeyBindAction(back, key, () -> back());
+                setKeyBindAction(forward, key, () -> forward());
 
-                if (key.equals(open_shell)) openShell();
-                if (key.equals(show_menu)) CenterPane.showMenu(mainPane);
-                if (key.equals(show_menu_create)) CenterPane.showMenuCreate();
-                if (key.equals(focus_path)) if (!isAnyFocus()) TopPane.focusSearch();
+                setKeyBindAction(open_shell, key, () -> openShell());
+                setKeyBindAction(show_menu, key, () -> CenterPane.showMenu(mainPane));
+                setKeyBindAction(show_menu_create, key, () -> CenterPane.showMenuCreate());
+                setKeyBindAction(focus_path, key, () -> { if (!isAnyFocus()) TopPane.focusSearch(); });
 
-                if (key.equals(deselect_all)) {
-                    if (TopPane.isSearchFocus()) updateAll(true, false, false, false, false);
-                    else if (deselectAll()) updateAll(false, true, false, false, false);
-                }
-                if (key.equals(update_all)) updateAll(false, true, false, false, true);
-                if (key.equals(change_show_right_pane)) mainPane.changeShowRightPane();
+                setKeyBindAction(deselect_all, key, () -> {
+                    if (TopPane.isSearchFocus()) updateTop();
+                    else deselectAll();
+                });
+
+                setKeyBindAction(update_all, key, () -> updateAll());
+                setKeyBindAction(change_show_right_pane, key, () -> mainPane.changeShowRightPane());
             } catch (IllegalArgumentException ignored) {}
         });
     }
-
-    public static boolean isAnyFocus() {
-        return  TopPane.isSearchFocus() || RightPane.isNameFocus();
+    public void setKeyBindAction(KeyCombination[] keyCombinations, KeyCombination actualKey, Runnable action) {
+        for (KeyCombination keyCombination : keyCombinations) {
+            if (keyCombination.equals(actualKey)) {
+                action.run();
+            }
+        }
     }
 }

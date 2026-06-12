@@ -11,28 +11,35 @@ import java.io.File;
 
 import main.Main;
 import main.Lib;
+import static panel.MainPane.*;
+import static main.Main.*;
+import static main.Lib.*;
 
 public class TopPane extends HBox {
-    private static Button back;
-    private static Button forward;
-    private static Button parent;
     private static TextField search;
-    private static Button reload;
 
     public TopPane() {
         super(10);
         setId("top_pane");
+
+        update();
     }
 
     public void update() {
-        Lib.printInfo("Actualizando panel superior");
-        Lib.printInfo("Actualizando path a '"+Lib.BLUE+Main.path+Lib.RESET+"'");
+        printInfo("Actualizando panel superior");
+        printInfo("Actualizando path a '"+Lib.BLUE+Main.path+Lib.RESET+"'");
 
         getChildren().clear();
 
-        back = new TopButton("back", "Deshacer", e -> {Lib.back();});
-        forward = new TopButton("forward", "Rehacer", e -> {Lib.forward();});
-        parent = new TopButton("parent", "Ir arriba", e -> {Lib.parent();});
+        Button back = new TopButton("back", "Deshacer", e -> {
+            back();
+        });
+        Button forward = new TopButton("forward", "Rehacer", e -> {
+            forward();
+        });
+        Button parent = new TopButton("parent", "Ir arriba", e -> {
+            parent();
+        });
 
         search = new TextField(Main.path);
         search.setId("top_text_field");
@@ -43,20 +50,27 @@ public class TopPane extends HBox {
             if (key.equals(KeyCode.ENTER)) {
                 String text = search.getText();
                 if (!new File(text).exists()) {
-                    Lib.printError("El archivo o directorio "+text+" no existe", null);
-                    Lib.showAlert(new Alert(Alert.AlertType.ERROR), "El archivo o directorio "+text+" no existe", "ERROR");
+                    printError("El archivo o directorio "+text+" no existe", null);
+                    showAlert(new Alert(Alert.AlertType.ERROR), "El archivo o directorio "+text+" no existe", "ERROR");
                 } else {
-                    Lib.printInfo("Actualizando path a '"+Lib.BLUE+Main.path+Lib.RESET+"'");
-                    Main.path = text;
-                    MainPane.deselectAll();
-                    Lib.updateAll(true, true, true, false, true);
+                    printInfo("Actualizando path a '"+Lib.BLUE+Main.path+Lib.RESET+"'");
+                    path = text;
+                    deselectAll();
+
+                    updateCenter();
+                    updateTop();
+                    updateRight();
                 }
             }
         });
 
-        reload = new TopButton("reload", "Recargar", e -> {Lib.updateAll(true, true, true, true, true);});
+        Button reload = new TopButton("reload", "Recargar", e -> {
+            updateCenter();
+            updateTop();
+            updateRight();
+        });
 
-        getChildren().addAll(back,forward, parent, search, reload);
+        getChildren().addAll(back, forward, parent, search, reload);
     }
 
     public static void focusSearch() {

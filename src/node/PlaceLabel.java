@@ -1,20 +1,15 @@
 package node;
 
-import javafx.animation.PauseTransition;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Side;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 
-import javafx.util.Duration;
 import main.Main;
 import main.Lib;
-
-import javax.naming.Context;
+import static main.Main.*;
+import static main.Lib.*;
 
 public class PlaceLabel extends Label {
     private String path;
@@ -27,10 +22,13 @@ public class PlaceLabel extends Label {
 
         setOnMouseClicked(e -> {
             if (e.getButton().equals(MouseButton.PRIMARY)) {
-                Lib.forwardBuffer.clear();
-                Lib.backBuffer.add(path);
+                forwardBuffer.clear();
+                backBuffer.add(path);
                 Main.path = path;
-                Lib.updateAll(true, true, true, false, true);
+
+                updateCenter();
+                updateTop();
+                updateRight();
             }
         });
 
@@ -53,10 +51,13 @@ public class PlaceLabel extends Label {
             for (PlaceLabel label : labels) {
                 MenuItem item = new MenuItem(label.getText(), label.getGraphic());
                 item.setOnAction(e -> {
-                    Lib.forwardBuffer.clear();
-                    Lib.backBuffer.add(Main.path);
+                    forwardBuffer.clear();
+                    backBuffer.add(Main.path);
                     Main.path = label.path;
-                    Lib.updateAll(true, true, true, false, true);
+
+                    updateCenter();
+                    updateTop();
+                    updateRight();
                 });
                 observableList.add(item);
             }

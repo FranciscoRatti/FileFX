@@ -28,16 +28,17 @@ public class RightPane extends ScrollPane {
     private VBox pane;
 
     public RightPane() {
-
         pane = new VBox();
         pane.setId("right_pane");
-        pane.setPrefWidth(Integer.parseInt(config.getProperty("right_pref_width")));
+        pane.setPrefWidth(Integer.parseInt(config.getProperty("right_width")));
 
         setHbarPolicy(ScrollBarPolicy.NEVER);
         setId("right_scroll_pane");
         setStyle("-fx-background: transparent; -fx-background-color: transparent;");
         setFitToWidth(true);
         setContent(pane);
+
+        update();
     }
 
     public void update() {

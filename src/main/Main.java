@@ -21,6 +21,7 @@ import static main.Lib.*;
 public class Main extends javafx.application.Application {
     public static Properties config;
     public static Properties keyBinding;
+    public static Properties dynamicValues;
     public static volatile boolean isApplicationsSucceded = false;
 
     public static ArrayList<DesktopApplication> desktopApplications;
@@ -39,8 +40,7 @@ public class Main extends javafx.application.Application {
     @Override
     public void start(Stage s) {
         printInfo("Cargando archivo de configuracion");
-        try (FileInputStream fileInputStream = new FileInputStream(ABSOLUTE_PATH+"share/filefx/config.properties")) {
-        //try (FileInputStream fileInputStream = new FileInputStream(HOME+"/.config/filefx/config.properties")) {
+        try (FileInputStream fileInputStream = new FileInputStream(CONFIG_PATH+"config.properties")) {
             config = new Properties();
             config.load(fileInputStream);
         } catch (IOException e) {
@@ -48,8 +48,32 @@ public class Main extends javafx.application.Application {
             System.exit(0);
         }
 
-        if (path.equals("")) {
-            String initDirectory = config.getProperty("init_path");
+        printInfo("Cargando archivo de combinaciones de teclado");
+        try (FileInputStream fileInputStream = new FileInputStream(CONFIG_PATH+"key_binding.properties")) {
+            keyBinding = new Properties();
+            keyBinding.load(fileInputStream);
+        } catch (IOException e) {
+            printError("No se pudo leer el archivo de combinaciones de teclado", e);
+            System.exit(0);
+        }
+
+        printInfo("Cargando archivo de valores dinamicos");
+        try (FileInputStream fileInputStream = new FileInputStream(CONFIG_PATH+"dynamic_values.properties")) {
+            dynamicValues = new Properties();
+            dynamicValues.load(fileInputStream);
+        } catch (IOException e) {
+            printError("No se pudo leer el archivo de combinaciones de teclado", e);
+            System.exit(0);
+        }
+
+        printInfo("Verificando que existan valores dinamicos");
+        if (dynamicValues.getProperty("width") == null) dynamicValues.put("width", "1200");
+        if (dynamicValues.getProperty("height") == null) dynamicValues.put("height", "700");
+        if (dynamicValues.getProperty("init_path") == null) dynamicValues.put("init_path", "~/");
+        if (dynamicValues.getProperty("init_selection") == null) dynamicValues.put("init_selection", "");
+
+        String initDirectory = dynamicValues.getProperty("init_path");
+        if (initDirectory != null) {
             if (initDirectory.charAt(0) == '~') {
                 path = HOME+(initDirectory.substring(1));
             } else {
@@ -57,17 +81,6 @@ public class Main extends javafx.application.Application {
             }
         }
         printInfo("Path inicial: '"+BLUE+path+RESET+"'");
-
-
-        printInfo("Cargando archivo de combinaciones de teclado");
-        try (FileInputStream fileInputStream = new FileInputStream(ABSOLUTE_PATH+"share/filefx/key_binding.properties")) {
-        //try (FileInputStream fileInputStream = new FileInputStream(HOME+"/.config/filefx/key_binding.properties")) {
-            keyBinding = new Properties();
-            keyBinding.load(fileInputStream);
-        } catch (IOException e) {
-            printError("No se pudo leer el archivo de combinaciones de teclado", e);
-            System.exit(0);
-        }
 
         printInfo("Cargando combinaciones de tecla");
         updateKeyBinding();
@@ -77,7 +90,6 @@ public class Main extends javafx.application.Application {
 
         printInfo("Cargando panel principal");
         mainPane = new MainPane();
-        updateAll();
 
         printInfo("Cargando escena principal");
         scene = new Scene();
@@ -85,6 +97,26 @@ public class Main extends javafx.application.Application {
         printInfo("Cargando escenario principal");
         stage=s;
         stage.getIcons().add(new Image("file://"+ABSOLUTE_PATH+"share/filefx/icons/icon.png"));
+        stage.setOnCloseRequest(e -> {
+            boolean isSaveBounds = Boolean.parseBoolean(config.getProperty("save_bounds"));
+            boolean isSavePath = Boolean.parseBoolean(config.getProperty("save_path"));
+            boolean isSaveSelection = Boolean.parseBoolean(config.getProperty("save_selection"));
+
+            if (isSaveBounds || isSavePath || isSaveSelection) {
+                printInfo("Actualizando valores dinamicos");
+                try (FileOutputStream output = new FileOutputStream(CONFIG_PATH+"dynamic_values.properties")) {
+                    if (isSaveBounds) {
+                        dynamicValues.replace("width", String.valueOf(stage.getWidth()));
+                        dynamicValues.replace("height", String.valueOf(stage.getHeight()));
+                    }
+                    if (isSavePath) dynamicValues.replace("init_path", path);
+                    if (isSaveSelection) dynamicValues.replace("init_selection", MainPane.selectedItem == null ? "" : MainPane.selectedItem.getName());
+                    dynamicValues.store(output, "");
+                } catch (IOException ex) {
+                    printError("Error al actualizar datos en dynamic_values.properties", ex);
+                }
+            }
+        });
 
         stage.setScene(scene);
         printInfo("Mostrando escenario");
@@ -98,67 +130,81 @@ public class Main extends javafx.application.Application {
     }
 
     public static void updateKeyBinding() {
-        cut = KeyCodeCombination.valueOf(keyBinding.getProperty("cut"));
-        copy = KeyCodeCombination.valueOf(keyBinding.getProperty("copy"));
-        paste = KeyCodeCombination.valueOf(keyBinding.getProperty("paste"));
-        remove = KeyCodeCombination.valueOf(keyBinding.getProperty("remove"));
-        trash = KeyCodeCombination.valueOf(keyBinding.getProperty("trash"));
-        rename = KeyCodeCombination.valueOf(keyBinding.getProperty("rename"));
+        cut = getKeyCombination("cut");
+        copy = getKeyCombination("copy");
+        paste = getKeyCombination("paste");
+        remove = getKeyCombination("remove");
+        trash = getKeyCombination("trash");
+        rename = getKeyCombination("rename");
 
-        up = KeyCodeCombination.valueOf(keyBinding.getProperty("up"));
-        open = KeyCodeCombination.valueOf(keyBinding.getProperty("open"));
-        down = KeyCodeCombination.valueOf(keyBinding.getProperty("down"));
-        parent = KeyCodeCombination.valueOf(keyBinding.getProperty("parent"));
-        up_step = KeyCodeCombination.valueOf(keyBinding.getProperty("up_step"));
-        down_step = KeyCodeCombination.valueOf(keyBinding.getProperty("down_step"));
+        up = getKeyCombination("up");
+        open = getKeyCombination("open");
+        down = getKeyCombination("down");
+        parent = getKeyCombination("parent");
+        up_step = getKeyCombination("up_step");
+        down_step = getKeyCombination("down_step");
 
-        select_up = KeyCodeCombination.valueOf(keyBinding.getProperty("select_up"));
-        select_down = KeyCodeCombination.valueOf(keyBinding.getProperty("select_down"));
-        select_up_step = KeyCodeCombination.valueOf(keyBinding.getProperty("select_up_step"));
-        select_down_step = KeyCodeCombination.valueOf(keyBinding.getProperty("select_down_step"));
+        select_up = getKeyCombination("select_up");
+        select_down = getKeyCombination("select_down");
+        select_up_step = getKeyCombination("select_up_step");
+        select_down_step = getKeyCombination("select_down_step");
 
-        back = KeyCodeCombination.valueOf(keyBinding.getProperty("back"));
-        forward = KeyCodeCombination.valueOf(keyBinding.getProperty("forward"));
+        back = getKeyCombination("back");
+        forward = getKeyCombination("forward");
 
-        open_shell = KeyCodeCombination.valueOf(keyBinding.getProperty("open_shell"));
-        show_menu = KeyCodeCombination.valueOf(keyBinding.getProperty("show_menu"));
-        show_menu_create = KeyCodeCombination.valueOf(keyBinding.getProperty("show_menu_create"));
-        focus_path = KeyCodeCombination.valueOf(keyBinding.getProperty("focus_path"));
+        open_shell = getKeyCombination("open_shell");
+        show_menu = getKeyCombination("show_menu");
+        show_menu_create = getKeyCombination("show_menu_create");
+        focus_path = getKeyCombination("focus_path");
 
-        deselect_all = KeyCodeCombination.valueOf(keyBinding.getProperty("deselect_all"));
-        update_all = KeyCodeCombination.valueOf(keyBinding.getProperty("update_all"));
-        change_show_right_pane = KeyCodeCombination.valueOf(keyBinding.getProperty("change_show_right_pane"));
+        deselect_all = getKeyCombination("deselect_all");
+        update_all = getKeyCombination("update_all");
+        change_show_right_pane = getKeyCombination("change_show_right_pane");
+    }
+
+    public static KeyCombination[] getKeyCombination(String keyName) {
+        String property = keyBinding.getProperty(keyName);
+        if (property != null) {
+            String[] texts = property.split(",");
+            KeyCombination[] keys = new KeyCombination[texts.length];
+
+            for (int i = 0; i < texts.length; i++) {
+                keys[i] = KeyCodeCombination.valueOf(texts[i]);
+            }
+
+            return keys;
+        } else return null;
     }
 
     // Combinaciones de tecla
-    public static KeyCombination cut;
-    public static KeyCombination copy;
-    public static KeyCombination paste;
-    public static KeyCombination remove;
-    public static KeyCombination trash;
-    public static KeyCombination rename;
+    public static KeyCombination[] cut;
+    public static KeyCombination[] copy;
+    public static KeyCombination[] paste;
+    public static KeyCombination[] remove;
+    public static KeyCombination[] trash;
+    public static KeyCombination[] rename;
 
-    public static KeyCombination up;
-    public static KeyCombination open;
-    public static KeyCombination down;
-    public static KeyCombination parent;
-    public static KeyCombination up_step;
-    public static KeyCombination down_step;
+    public static KeyCombination[] up;
+    public static KeyCombination[] open;
+    public static KeyCombination[] down;
+    public static KeyCombination[] parent;
+    public static KeyCombination[] up_step;
+    public static KeyCombination[] down_step;
 
-    public static KeyCombination select_up;
-    public static KeyCombination select_down;
-    public static KeyCombination select_up_step;
-    public static KeyCombination select_down_step;
+    public static KeyCombination[] select_up;
+    public static KeyCombination[] select_down;
+    public static KeyCombination[] select_up_step;
+    public static KeyCombination[] select_down_step;
 
-    public static KeyCombination back;
-    public static KeyCombination forward;
+    public static KeyCombination[] back;
+    public static KeyCombination[] forward;
 
-    public static KeyCombination open_shell;
-    public static KeyCombination show_menu;
-    public static KeyCombination show_menu_create;
-    public static KeyCombination focus_path;
+    public static KeyCombination[] open_shell;
+    public static KeyCombination[] show_menu;
+    public static KeyCombination[] show_menu_create;
+    public static KeyCombination[] focus_path;
 
-    public static KeyCombination deselect_all;
-    public static KeyCombination update_all;
-    public static KeyCombination change_show_right_pane;
+    public static KeyCombination[] deselect_all;
+    public static KeyCombination[] update_all;
+    public static KeyCombination[] change_show_right_pane;
 }

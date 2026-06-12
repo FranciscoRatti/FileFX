@@ -23,8 +23,10 @@ public class Lib {
 
     public static boolean isCut = false;
     public static final String HOME = System.getenv("HOME");
-    //public static final String ABSOLUTE_PATH = "/usr/";
-    public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/";
+    public static final String ABSOLUTE_PATH = "/usr/";
+    //public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/";
+    public static final String CONFIG_PATH = HOME+"/.config/filefx/";
+    //public static final String CONFIG_PATH = ABSOLUTE_PATH+"share/filefx/";
 
     public static final String RESET = "\u001B[0m";
     public static final String RED = "\u001B[31m";
@@ -193,7 +195,7 @@ public class Lib {
     }
     private static MenuItem createRenameItem() {
         MenuItem item = new MenuItem("Renombrar", new ImageView("file://"+ABSOLUTE_PATH+"share/filefx/icons/context_menu/rename.png"));
-        item.setAccelerator(rename);
+        if (rename != null) item.setAccelerator(rename[0]);
         item.setOnAction(e -> {
             RightPane.focusName();
         });
@@ -201,7 +203,7 @@ public class Lib {
     }
     private static MenuItem createCopyItem() {
         MenuItem item = new MenuItem("Copiar", new ImageView("file://"+ABSOLUTE_PATH+"share/filefx/icons/context_menu/copy.png"));
-        item.setAccelerator(copy);
+        if (copy != null) item.setAccelerator(copy[0]);
         item.setOnAction(e -> {
             copyFilesToClipBoard(MainPane.parseFileLabelsToFiles(selectedItems), false);
         });
@@ -209,7 +211,7 @@ public class Lib {
     }
     private static MenuItem createCutItem() {
         MenuItem item = new MenuItem("Cortar", new ImageView("file://"+ABSOLUTE_PATH+"share/filefx/icons/context_menu/cut.png"));
-        item.setAccelerator(cut);
+        if (cut != null) item.setAccelerator(cut[0]);
         item.setOnAction(e -> {
             copyFilesToClipBoard(MainPane.parseFileLabelsToFiles(selectedItems), true);
         });
@@ -220,7 +222,7 @@ public class Lib {
                 getClipboardFiles() : null;
 
         MenuItem item = new MenuItem("Pegar", new ImageView("file://"+ABSOLUTE_PATH+"share/filefx/icons/context_menu/paste.png"));
-        item.setAccelerator(paste);
+        if (paste != null) item.setAccelerator(paste[0]);
         item.setOnAction(e -> {
             if (clipboardFiles == null) clipboardFiles = getClipboardFiles();
             pasteFiles(clipboardFiles);
@@ -229,7 +231,7 @@ public class Lib {
     }
     private static MenuItem createTrashItem() {
         MenuItem item = new MenuItem("Enviar a papelera", new ImageView("file://"+ABSOLUTE_PATH+"share/filefx/icons/context_menu/trash.png"));
-        item.setAccelerator(trash);
+        if (trash != null) item.setAccelerator(trash[0]);
         item.setOnAction(e -> {
             trashFiles(MainPane.parseFileLabelsToFiles(selectedItems));
         });
@@ -237,7 +239,7 @@ public class Lib {
     }
     private static MenuItem createRemoveItem() {
         MenuItem item = new MenuItem("Eliminar", new ImageView("file://"+ABSOLUTE_PATH+"share/filefx/icons/context_menu/remove.png"));
-        item.setAccelerator(remove);
+        if (remove != null) item.setAccelerator(remove[0]);
         item.setOnAction(e -> {
             removeFiles(MainPane.parseFileLabelsToFiles(selectedItems));
         });
@@ -245,21 +247,19 @@ public class Lib {
     }
     private static MenuItem createOpenShellItem() {
         MenuItem item = new MenuItem("Abrir una terminal  ", new ImageView("file://"+ABSOLUTE_PATH+"share/filefx/icons/context_menu/shell.png"));
-        item.setAccelerator(open_shell);
+        if (open_shell != null) item.setAccelerator(open_shell[0]);
         item.setOnAction(e -> {
             openShell();
         });
         return item;
     }
-    
-    public static void updateAll(boolean topPane, boolean rightPane, boolean bottomPane, boolean leftPane, boolean centerPane) {
-        if (topPane) MainPane.topPane.update();
-        if (rightPane) MainPane.rightPane.update();
-        if (bottomPane) ;
-        if (leftPane) MainPane.leftPane.update();
-        if (centerPane) MainPane.centerPane.update();
-    }
-    public static void updateAll() {updateAll(true, true, true, true, true);}
+
+    public static void updateTop() {topPane.update();}
+    public static void updateRight() {rightPane.update();}
+    public static void updateBottom() {}
+    public static void updateLeft() {leftPane.update();}
+    public static void updateCenter() {centerPane.update();}
+    public static void updateAll() {updateTop(); updateRight(); updateBottom(); updateLeft(); updateCenter();}
 
     // Imprimir informacion
     public static void printInfo(String message) {System.out.println("[" + BLUE + "INFO" + RESET + "]     "+message);}
@@ -294,7 +294,9 @@ public class Lib {
             selectedItems.clear();
             selectedFile=null;
 
-            updateAll(true, true, false, false, true);
+            updateTop();
+            updateRight();
+            updateCenter();
         }
     }
     public static void forward() {
@@ -306,7 +308,9 @@ public class Lib {
             selectedItems.clear();
             selectedFile=null;
 
-            updateAll(true, true, false, false, true);
+            updateTop();
+            updateRight();
+            updateCenter();
         }
     }
     public static void parent() {
@@ -328,7 +332,9 @@ public class Lib {
                 } while(!path.endsWith("/"));
             }
 
-            updateAll(true, true, false, true, true);
+            updateTop();
+            updateRight();
+            updateCenter();
 
             Platform.runLater(() -> {
                 for (FileLabel label : fileLabels) {
@@ -374,7 +380,9 @@ public class Lib {
 
                 selectedItems.clear();
                 selectedItem = null;
-                updateAll(false, true, false, false, true);
+
+                updateRight();
+                updateCenter();
             } catch (Exception e) {
                 printError("Error al renombrar '" + file.getAbsolutePath() + "'", e);
             }
@@ -434,7 +442,7 @@ public class Lib {
                 }
             }
 
-            updateAll(false, false, false, false, true);
+            updateCenter();
         }
     }
     public static File[] getClipboardFiles() {
@@ -484,7 +492,9 @@ public class Lib {
 
             selectedItems.clear();
             selectedItem = null;
-            updateAll(false, true, false, false, true);
+
+            updateRight();
+            updateCenter();
         }
     }
     private static void createTrashInfo(File[] files) {
@@ -533,7 +543,7 @@ public class Lib {
                                     printExecute("Eliminando archivo '" + YELLOW + file.getAbsolutePath() + RESET + "'");
                                     rm = new ProcessBuilder("rm", "-f", file.getAbsolutePath());
                                 }
-                                rm.start();
+                                rm.start().waitFor();
                             } catch (Exception e) {
                                 printError("Error al eliminar el archivo " + file.getAbsolutePath(), e);
                                 break;
@@ -545,7 +555,9 @@ public class Lib {
 
             selectedItems.clear();
             selectedItem = null;
-            updateAll(false, true, false, false, true);
+
+            updateRight();
+            updateCenter();
         }
     }
 

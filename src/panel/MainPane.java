@@ -7,7 +7,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import main.Main;
-import main.Lib;
 import node.FileLabel;
 
 import static main.Lib.printInfo;
@@ -30,6 +29,8 @@ public class MainPane extends BorderPane {
         setCenter(centerPane);
         topPane = new TopPane();
         setTop(topPane);
+        rightPane = new RightPane();
+        setRight(rightPane);
         changeShowRightPane(Boolean.parseBoolean(Main.config.getProperty("show_right_pane")));
         leftPane = new LeftPane();
         setLeft(leftPane);

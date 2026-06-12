@@ -46,7 +46,7 @@ public class CenterPane extends ScrollPane {
             path = "/";
         }
         fileLabels = new ArrayList<>();
-        MainPane.selectedItems = new ArrayList<>();
+        selectedItems = new ArrayList<>();
 
         menu =          createContextMenu(false, false, true , true , false, false, false, true , false, false, true );
         menuFile =      createContextMenu(true , true , false, false, true , true , true , true , true , true , true );
@@ -61,6 +61,19 @@ public class CenterPane extends ScrollPane {
         setContent(pane);
 
         update();
+
+        Platform.runLater(() -> {
+            String initSelect = dynamicValues.getProperty("init_selection");
+            if (initSelect != null) {
+                for (FileLabel label : fileLabels) {
+                    if (initSelect.equals(label.getName())) {
+                        label.setSelected(true);
+                        setSelectedOnCenter();
+                        break;
+                    }
+                }
+            }
+        });
 
         // Acciones generales
         setOnMouseReleased(e -> {
@@ -83,7 +96,7 @@ public class CenterPane extends ScrollPane {
                     if (isAnyShow()) hideAll();
                     else {
                         deselectAll();
-                        updateAll(false, true, false, false, false);
+                        updateRight();
                     }
                 }
             } else if (button.equals(MouseButton.SECONDARY)) {
@@ -221,7 +234,7 @@ public class CenterPane extends ScrollPane {
 
                 label.setSelected(true);
 
-                Lib.updateAll(false, true , false ,false, false);
+                updateRight();
             } else if (clickCount == 2) {
                 openSelected();
             }
@@ -282,12 +295,12 @@ public class CenterPane extends ScrollPane {
                 }
 
                 labelStepSelected.setSelected(true);
-                updateAll(false, true, false, false, false);
+                updateRight();
             }
         } else if (!fileLabels.isEmpty()) {
             if ((step < 0)) fileLabels.getLast().setSelected(true);
             else fileLabels.getFirst().setSelected(true);
-            updateAll(false, true, false, false, false);
+            updateRight();
         }
 
 
@@ -341,13 +354,12 @@ public class CenterPane extends ScrollPane {
                 forwardBuffer.clear();
                 backBuffer.add(Main.path);
                 path=absolutePath+"/";
-                selectedItems.clear();
-                selectedItem = null;
-                selectedFile = null;
 
-                printInfo("Actualizando path a '"+Lib.BLUE+Main.path+Lib.RESET+"'");
+                printInfo("Entrando a '"+Lib.BLUE+Main.path+Lib.RESET+"'");
 
-                updateAll(true, true, false, false, true);
+                updateCenter();
+                updateTop();
+
                 if (!fileLabels.isEmpty()) fileLabels.getFirst().setSelected(true);
 
             // Si es archivo
@@ -362,7 +374,7 @@ public class CenterPane extends ScrollPane {
             }
 
 
-            updateAll(false, true , false ,false, false);
+            updateRight();
         }
     }
 
