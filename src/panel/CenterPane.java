@@ -5,17 +5,15 @@ import javafx.collections.ObservableList;
 import javafx.event.EventTarget;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.control.ContextMenu;
+import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
 
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -116,9 +114,8 @@ public class CenterPane extends ScrollPane {
 
         // Reiniciando todo
         fileLabels.clear();
-        MainPane.selectedItems.clear();
-        MainPane.selectedItem = null;
-        MainPane.selectedFile = null;
+        selectedItems.clear();
+        selectedItem = null;
         ObservableList<Node> childrensList = pane.getChildren();
         childrensList.clear();
 

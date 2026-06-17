@@ -16,8 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import static main.Lib.ABSOLUTE_PATH;
-import static main.Lib.printOk;
+import static main.Lib.*;
 import static main.Main.desktopApplications;
 import static main.Main.isApplicationsSucceded;
 import static panel.MainPane.selectedItem;
@@ -27,7 +26,7 @@ public class OthersApplicationsScene extends Scene {
     public static VBox pane;
     public OthersApplicationsScene() {
         super(new ScrollPane(pane = new VBox(2)), 200, 400);
-        getStylesheets().add("file://"+ABSOLUTE_PATH+"share/filefx/style.css");
+        getStylesheets().add("file://"+CONFIG_PATH+"theme.css");
 
         // Cargar applicaciones
         ArrayList<File> desktopFiles = new ArrayList<>();

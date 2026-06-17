@@ -30,7 +30,7 @@ public class RightPane extends ScrollPane {
     public RightPane() {
         pane = new VBox();
         pane.setId("right_pane");
-        pane.setPrefWidth(Integer.parseInt(config.getProperty("right_width")));
+        pane.setPrefWidth(Double.parseDouble(config.getProperty("right_width")));
 
         setHbarPolicy(ScrollBarPolicy.NEVER);
         setId("right_scroll_pane");
@@ -53,13 +53,14 @@ public class RightPane extends ScrollPane {
         });
 
         ImageView miniatura;
-        if (MainPane.selectedItem != null) {
+        if (selectedItem != null) {
+            FileProperties propertie = selectedItem.getPropertie();
             String extensionText = selectedItem.getExtension();
 
             // Miniatura
             Image image;
 
-            if (selectedFile.isDirectory()) {
+            if (propertie.isDirectory()) {
                 image = new Image("file://"+Lib.ABSOLUTE_PATH+"share/filefx/icons/right/directory.png");
             } else {
                 if (
@@ -69,7 +70,7 @@ public class RightPane extends ScrollPane {
                         extensionText.equals("jpg") ||
                         extensionText.equals("png")
                 ) {
-                    image = new Image("file://"+selectedFile.getAbsolutePath());
+                    image = new Image("file://"+propertie.getAbsolutePath());
                 } else image = new Image("file://"+Lib.ABSOLUTE_PATH+"share/filefx/icons/right/file.png");
             }
 
@@ -90,12 +91,12 @@ public class RightPane extends ScrollPane {
             nameNode = new FileField("Nombre :", selectedItem.getName(), true);
             nameNode.textField.setOnKeyPressed(e -> {
                 if (e.getCode().equals(KeyCode.ENTER)) {
-                    Lib.renameFile(selectedFile, nameNode.textField.getText());
+                    renameFile(propertie, nameNode.textField.getText());
                 }
             });
 
             // Tamaño
-            long size = FileProperties.getSize();
+            long size = propertie.getSize();
             String sizeText = String.valueOf(size);
             int sizeTextLenght = sizeText.length();
             String unit;
@@ -116,14 +117,17 @@ public class RightPane extends ScrollPane {
             FileField sizeNode = new FileField("Tamaño :", sizeText + " " + unit, false);
 
             // Tipo mime
-            FileField tipeNode = new FileField("Tipo   :", FileProperties.getMimeType(), false);
+            FileField tipeNode = new FileField("Tipo   :", propertie.getMimeType(), false);
 
             // Permisos
-            FilePermissions permissionsNode = new FilePermissions(selectedFile);
+            FileField permissionsNode = new FileField("Permisos :",
+                    new String(propertie.getOwnerPermissions())+
+                    new String(propertie.getGroupPermissions())+
+                    new String(propertie.getOtherPermissions()), false);
 
             // Usuario y grupo
-            FileField ownerNode = new FileField("Usuario :", FileProperties.getOwner(), true);
-            FileField groupNode = new FileField("Grupo   :", FileProperties.getGroup(), true);
+            FileField ownerNode = new FileField("Usuario :", propertie.getOwner(), true);
+            FileField groupNode = new FileField("Grupo   :", propertie.getGroup(), true);
 
             pane.getChildren().addAll(
                     close,

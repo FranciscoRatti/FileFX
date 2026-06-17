@@ -4,8 +4,9 @@ Comment=Explorador de archivos creado por el mejor programador
 Exec=java --module-path /usr/lib/filefx/lib --add-modules javafx.controls,javafx.graphics --enable-native-access=javafx.controls,javafx.graphics -cp /usr/lib/filefx/bin main.Main %f
 Icon=/usr/share/filefx/icons/icon.png
 Type=Application
-StartupNotify=false
 Categories=Office;Utility;Core;
 Terminal=false
 Keywords=explorador;
 MimeType=inode/directory;
+StartupNotify=false
+StartupWMClass=main.Main

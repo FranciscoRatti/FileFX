@@ -21,7 +21,6 @@ public class MainPane extends BorderPane {
 
     public static ArrayList<FileLabel> selectedItems;
     public static FileLabel selectedItem;
-    public static FileProperties selectedFile;
 
     public MainPane() {
         super();
@@ -51,17 +50,15 @@ public class MainPane extends BorderPane {
         changeShowRightPane(!isRightPaneShow);
     }
 
-    public static boolean deselectAll() {
-        if (!selectedItems.isEmpty() || selectedItem != null || selectedFile != null) {
+    public static void deselectAll() {
+        if (!selectedItems.isEmpty() || selectedItem != null) {
             selectedItems.clear();
             selectedItem = null;
-            selectedFile = null;
 
             for (FileLabel fileLabel : CenterPane.fileLabels) fileLabel.setSelected(false);
 
             printInfo("Se deselcciono todo");
-            return true;
-        } else return false;
+        }
     }
 
     public static File[] parseFileLabelsToFiles(ArrayList<FileLabel> fileLabelList) {

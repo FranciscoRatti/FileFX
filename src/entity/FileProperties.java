@@ -12,8 +12,6 @@ import java.time.Month;
 import java.util.Arrays;
 
 import static main.Lib.*;
-import static main.Main.desktopApplications;
-import static panel.MainPane.selectedFile;
 import static panel.MainPane.selectedItem;
 
 public class FileProperties extends File{
@@ -23,7 +21,7 @@ public class FileProperties extends File{
         String result = null;
         try {
             ProcessBuilder pb = new ProcessBuilder("ls", "-la", "--block-size=1", file.getAbsolutePath());
-            pb.redirectErrorStream(false);
+            pb.redirectErrorStream(true);
             Process process = pb.start();
 
             try (BufferedReader out = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
@@ -37,28 +35,41 @@ public class FileProperties extends File{
             printError("No se pudo ejecutar '"+YELLOW+"ls -la --block-size=1 "+file.getAbsolutePath()+RESET, e);
         }
 
-        String[] fields = result.trim().split("\\s+");
+        if (result.startsWith("ls")) {
+            type='?';
+            ownerPermissions = new char[]{'?', '?', '?'};
+            groupPermissions = new char[]{'?', '?', '?'};
+            otherPermissions = new char[]{'?', '?', '?'};
+            owner="unknow";
+            group="unknow";
+            size=0;
+            dateTime=LocalDateTime.now();
+        } else {
+            String[] fields = result.trim().split("\\s+");
 
-        type=fields[0].charAt(0);
-        ownerPermissions=fields[0].substring(1, 4).toCharArray();
-        groupPermissions=fields[0].substring(4, 7).toCharArray();
-        otherPermissions=fields[0].substring(7, 10).toCharArray();
-        owner=fields[2];
-        group=fields[3];
-        size=Long.parseLong(fields[4]);
-        dateTime=LocalDateTime.of(0,
-                toMonth(fields[5]),
-                Integer.parseInt(fields[6]),
-                Integer.parseInt(fields[7].substring(0, 2)),
-                Integer.parseInt(fields[7].substring(3))
-        );
+            type=fields[0].charAt(0);
+            boolean isBlockOrCharset = type == 'b' || type == 'c';
+            ownerPermissions=fields[0].substring(1, 4).toCharArray();
+            groupPermissions=fields[0].substring(4, 7).toCharArray();
+            otherPermissions=fields[0].substring(7, 10).toCharArray();
+            owner=fields[2];
+            group=fields[3];
+            size= isBlockOrCharset ? 0 : Long.parseLong(fields[4]);
+            dateTime=LocalDateTime.of(0,
+                    toMonth(fields[isBlockOrCharset ? 6 : 5]),
+                    Integer.parseInt(fields[isBlockOrCharset ? 7 : 6]),
+                    Integer.parseInt(fields[isBlockOrCharset ? 8 : 7].substring(0, 2)),
+                    Integer.parseInt(fields[isBlockOrCharset ? 8 : 7].substring(3))
+            );
+        }
+
 
         try {
-            ProcessBuilder pb = new ProcessBuilder("file", "--mime-type", "-b", selectedItem.getFile().getAbsolutePath());
+            ProcessBuilder pb = new ProcessBuilder("file", "--mime-type", "-b", file.getAbsolutePath());
             Process process = pb.start();
             mimeType = new String(process.getInputStream().readAllBytes()).trim();
         } catch (Exception ex) {
-            printError("Error al leer tipo mime de '"+selectedItem.getFile()+"'", ex);
+            printError("Error al leer tipo mime de '"+file.getAbsolutePath()+"'", ex);
         }
     }
 
@@ -75,7 +86,7 @@ public class FileProperties extends File{
                 ", mimeType="+mimeType+"]";
     }
 
-    public static Month toMonth(String month) {
+    public Month toMonth(String month) {
         return switch (month) {
             case "jan", "ene" -> Month.JANUARY;
             case "feb" -> Month.FEBRUARY;
@@ -94,40 +105,40 @@ public class FileProperties extends File{
         };
     }
 
-    private static char type;
-    private static char[] ownerPermissions;
-    private static char[] groupPermissions;
-    private static char[] otherPermissions;
-    private static String owner;
-    private static String group;
-    private static long size;
-    private static LocalDateTime dateTime;
-    private static String mimeType;
+    private char type;
+    private char[] ownerPermissions;
+    private char[] groupPermissions;
+    private char[] otherPermissions;
+    private String owner;
+    private String group;
+    private long size;
+    private LocalDateTime dateTime;
+    private String mimeType;
 
-    public static char getType() {return type;}
-    public static void setType(char type) {FileProperties.type = type;}
+    public char getType() {return type;}
+    public void setType(char type) {this.type = type;}
 
-    public static char[] getOwnerPermissions() {return ownerPermissions;}
-    public static void setOwnerPermissions(char[] ownerPermissions) {FileProperties.ownerPermissions = ownerPermissions;}
+    public char[] getOwnerPermissions() {return ownerPermissions;}
+    public void setOwnerPermissions(char[] ownerPermissions) {this.ownerPermissions = ownerPermissions;}
 
-    public static char[] getGroupPermissions() {return groupPermissions;}
-    public static void setGroupPermissions(char[] groupPermissions) {FileProperties.groupPermissions = groupPermissions;}
+    public char[] getGroupPermissions() {return groupPermissions;}
+    public void setGroupPermissions(char[] groupPermissions) {this.groupPermissions = groupPermissions;}
 
-    public static char[] getOtherPermissions() {return otherPermissions;}
-    public static void setOtherPermissions(char[] otherPermissions) {FileProperties.otherPermissions = otherPermissions;}
+    public char[] getOtherPermissions() {return otherPermissions;}
+    public void setOtherPermissions(char[] otherPermissions) {this.otherPermissions = otherPermissions;}
 
-    public static String getOwner() {return owner;}
-    public static void setOwner(String owner) {FileProperties.owner = owner;}
+    public String getOwner() {return owner;}
+    public void setOwner(String owner) {this.owner = owner;}
 
-    public static String getGroup() {return group;}
-    public static void setGroup(String group) {FileProperties.group = group;}
+    public String getGroup() {return group;}
+    public void setGroup(String group) {this.group = group;}
 
-    public static long getSize() {return size;}
-    public static void setSize(long size) {FileProperties.size = size;}
+    public long getSize() {return size;}
+    public void setSize(long size) {this.size = size;}
 
-    public static LocalDateTime getDateTime() {return dateTime;}
-    public static void setDateTime(LocalDateTime dateTime) {FileProperties.dateTime = dateTime;}
+    public LocalDateTime getDateTime() {return dateTime;}
+    public void setDateTime(LocalDateTime dateTime) {this.dateTime = dateTime;}
 
-    public static String getMimeType() {return mimeType;}
-    public static void setMimeType(String mimeType) {FileProperties.mimeType = mimeType;}
+    public String getMimeType() {return mimeType;}
+    public void setMimeType(String mimeType) {this.mimeType = mimeType;}
 }

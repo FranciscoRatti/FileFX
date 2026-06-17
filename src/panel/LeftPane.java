@@ -4,24 +4,21 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 import node.PlaceLabel;
 
-import main.Main;
 import main.Lib;
 
+import java.util.Arrays;
+
+import static main.Main.*;
+
 public class LeftPane extends VBox {
-    private boolean showHome;
-    private boolean showDevices;
-    private VBox home;
-    private VBox devices;
+    private VBox placesBox;
+    private VBox devicesBox;
 
     public LeftPane() {
         super(0);
-
-        showHome = Boolean.parseBoolean(Main.config.getProperty("show_places"));
-        showDevices = Boolean.parseBoolean(Main.config.getProperty("show_devices"));
         setId("left_pane");
 
         update();
@@ -29,54 +26,45 @@ public class LeftPane extends VBox {
 
     public void update() {
         Lib.printInfo("Actualizando panel izquierdo");
-        ObservableList<Node> childrens = getChildren();
-        childrens.clear();
+        ObservableList<Node> children = getChildren();
+        children.clear();
 
-        if (showHome) {
-            if (home == null) {
-                home = new VBox();
+        if (Boolean.parseBoolean(config.getProperty("show_places"))) {
+            if (placesBox == null) {
+                placesBox = new VBox();
+                ObservableList<Node> placesChildren = placesBox.getChildren();
 
                 Label title = new Label("Lugares");
                 title.setId("left_label_title");
+                placesChildren.add(title);
 
-                PlaceLabel homeDirectory = new PlaceLabel("Home", "home", Lib.HOME);
-                PlaceLabel desktopDirectory = new PlaceLabel("Escritorio", "desktop", Lib.HOME + "/Desktop");
-                PlaceLabel downloadDirectory = new PlaceLabel("Descargas", "download", Lib.HOME + "/Downloads");
-                PlaceLabel documentsDirectory = new PlaceLabel("Documentos", "documents", Lib.HOME + "/Documents");
-                PlaceLabel.PlaceMenu mediaDirectory = new PlaceLabel.PlaceMenu("Media      ▶", "media",
-                        new PlaceLabel("Imagenes", "image", Lib.HOME + "/Images"),
-                        new PlaceLabel("Videos", "video", Lib.HOME + "/Videos"),
-                        new PlaceLabel("Plantillas", "template", Lib.HOME + "/Templates")
-                );
+                String[] places = config.getProperty("places").split(",");
+                for (String place : places) {
+                    String[] values = place.substring(1, place.length()-1).split(";");
+                    placesChildren.add(new PlaceLabel(
+                            values[0], values[1],
+                            values[2].charAt(0) == '~' ? Lib.HOME+values[2].substring(1) : values[2]
+                            ));
+                }
 
-                home.getChildren().addAll(title, homeDirectory, desktopDirectory, downloadDirectory, documentsDirectory, mediaDirectory,
-                        new node.Separator(10, Orientation.HORIZONTAL));
+                placesBox.getChildren().add(new node.Separator(10, Orientation.HORIZONTAL));
             }
-            childrens.add(home);
+            children.add(placesBox);
         }
 
-        if (showDevices) {
-            if (devices == null) {
-                devices = new VBox();
+        if (Boolean.parseBoolean(config.getProperty("show_devices"))) {
+            if (devicesBox == null) {
+                devicesBox = new VBox();
 
                 Label title = new Label("Dispositivos");
                 title.setId("left_label_title");
 
                 Label rootDirectory = new PlaceLabel("Raiz", "root", "/");
 
-                devices.getChildren().addAll(title, rootDirectory,
+                devicesBox.getChildren().addAll(title, rootDirectory,
                         new node.Separator(20, Orientation.HORIZONTAL));
             }
-            childrens.add(devices);
+            children.add(devicesBox);
         }
-    }
-
-    public void setShowHome(boolean showHome) {
-        this.showHome=showHome;
-        update();
-    }
-    public void setShowDevices(boolean showDevices) {
-        this.showDevices=showDevices;
-        update();
     }
 }
