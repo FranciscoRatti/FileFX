@@ -1,5 +1,7 @@
 package panel;
 
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
@@ -26,17 +28,8 @@ public class TopPane extends HBox {
     public void update() {
         printInfo("Actualizando panel superior");
 
-        getChildren().clear();
-
-        Button back = new TopButton("back", "Deshacer", e -> {
-            back();
-        });
-        Button forward = new TopButton("forward", "Rehacer", e -> {
-            forward();
-        });
-        Button parent = new TopButton("parent", "Ir arriba", e -> {
-            parent();
-        });
+        ObservableList<Node> children = getChildren();
+        children.clear();
 
         search = new TextField(FileFX.path);
         search.setId("top_text_field");
@@ -61,16 +54,20 @@ public class TopPane extends HBox {
             }
         });
 
-        Button reload = new TopButton("reload", "Recargar", e -> {
-            updateAll();
-        });
+        String[] buttons = config.getProperty("top_buttons").split(",");
+        for (String button : buttons) {
 
-        getChildren().addAll(back, forward, parent, search, reload);
+            switch (button) {
+                case "back" -> children.add(new TopButton("back", "Deshacer", e -> back()));
+                case "forward" -> children.add(new TopButton("forward", "Rehacer", e -> forward()));
+                case "parent" -> children.add(new TopButton("parent", "Ir arriba", e -> parent()));
+                case "search" -> children.add(search);
+                case "reload" -> children.add(new TopButton("reload", "Recargar", e -> updateAll()));
+            }
+        }
     }
 
-    public static void focusSearch() {
-        search.requestFocus();
-    }
+    public static void focusSearch() {search.requestFocus();}
     public static boolean isSearchFocus() {
         if (search != null) return search.isFocused();
         else return false;

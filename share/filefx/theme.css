@@ -1,14 +1,13 @@
 /*-- FUENTE ----------------------------------------------------------------------------------------------------------*/
 
 .menu-item, .menu-item > .label,
-#top_button, #top_text_field,
+#top_text_field,
 #right_close_button, #right_component, #right_label,
 #left_label_title, #left_place_label,
 #center_label_b1, #center_label_b2,
 #center_label_focus_b1, #center_label_focus_b2,
 #other_button
 {-fx-text-fill: white; -fx-font-family: "Noto Sans Mono";}
-/* -fx-alignment: CENTER-LEFT; */
 
 .menu-item
 {-fx-font-size: 11;}
@@ -16,11 +15,13 @@
 #right_close_button, #right_label
 {-fx-font-size: 12;}
 
-#right_component, #left_place_label,
-#center_label_b1, #center_label_b2, #center_label_focus_b1, #center_label_focus_b2
+#right_component,
+#left_place_label,
+#center_label_b1, #center_label_b2,
+#center_label_focus_b1, #center_label_focus_b2
 {-fx-font-size: 13;}
 
-#top_button, #top_text_field, #left_label_title
+#top_text_field, #left_label_title
 {-fx-font-size: 14;}
 
 
@@ -111,13 +112,10 @@
 #right_close_button {-fx-padding: 0 4 2 4;}
 #right_component {-fx-padding: 1 2 1 2;}
 #right_label {-fx-padding: 0 0 0 10;}
-
-#left_pane {-fx-border-width: 0 2 0 0;}
-#left_label_title {
-    -fx-label-padding: 2 10 2 5;
-    -fx-font-weight: bold;
+#right_miniatura {
+    -fx-font-size: 170;
+    -fx-fill: white;
 }
-#left_place_label {-fx-label-padding: 4 10 4 5;}
 
 #top_button, #top_text_field {
     -fx-border-radius: 2;
@@ -128,13 +126,29 @@
     -fx-border-width: 0 0 2 0;
 }
 
-#center_label_b1, #center_label_b2, #center_label_focus_b1, #center_label_focus_b2 {-fx-label-padding: 1;}
+#left_pane {-fx-border-width: 0 2 0 0;}
+#left_label_title {
+    -fx-label-padding: 2 10 2 5;
+    -fx-font-weight: bold;
+}
+#left_place_label {
+    -fx-label-padding: 4 10 4 10;
+    -fx-graphic-text-gap: 15;
+}
+#left_place_icon {
+    -fx-font-size: 15;
+    -fx-alignment: CENTER-RIGHT;
+    -fx-text-fill: white;
+}
+
+#center_label_b1, #center_label_b2, #center_label_focus_b1, #center_label_focus_b2 {-fx-label-padding: 2;}
 #center_label_focus_b1:hover, #center_label_focus_b2:hover {-fx-background-color: #41aeff;}
 #center_label_focus_b1, #center_label_focus_b2 {
     -fx-background-color: #0095c8;
     -fx-border-color: #0095c8;
 }
-#center_label_icon {-fx-label-padding: 0 5 0 5;}
+
+#center_icon, #top_button {-fx-label-padding: 0 5 0 5;}
 
 #other_button {
     -fx-alignment: CENTER-LEFT;

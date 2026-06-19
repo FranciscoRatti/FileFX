@@ -13,6 +13,7 @@ import static main.FileFX.*;
 public class FileLabel extends Label {
     private File file;
     private String fileName;
+    private String icon;
     private FileProperties propertie;
     private Boolean selected;
     private String extension = "";
@@ -28,14 +29,14 @@ public class FileLabel extends Label {
         selected = false;
         setMaxWidth(Double.MAX_VALUE);
 
-        String icon = null;
+        icon = null;
         if (extension != null) icon = iconsExtension.getProperty("."+extension);
         if (icon == null) icon = iconsMyme.getProperty(propertie.getMimeType());
         if (icon == null) icon = iconsMyme.getProperty("unknow");
 
         Label label = new Label(icon);
-        label.setId("center_label_icon");
         label.setFont(nerdFont);
+        label.setId("center_icon");
 
         setGraphic(label);
     }
@@ -46,6 +47,7 @@ public class FileLabel extends Label {
     public String getName() {
       return fileName;
     }
+    public String getIcon() {return icon;}
     public FileProperties getPropertie() {
       return propertie;
     }

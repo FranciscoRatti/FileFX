@@ -45,9 +45,9 @@ public class FileFX extends javafx.application.Application {
         nerdFont = Font.loadFont("file://" + ABSOLUTE_PATH + "share/filefx/0xProtoNerdFontMono-Regular.ttf", 16);
 
         printInfo("Cargando archivo de configuracion");
-        try (FileInputStream fileInputStream = new FileInputStream(CONFIG_PATH+"config.properties")) {
+        try (Reader reader = new InputStreamReader(new FileInputStream(CONFIG_PATH+"config.properties"), StandardCharsets.UTF_8)) {
             config = new Properties();
-            config.load(fileInputStream);
+            config.load(reader);
         } catch (IOException e) {
             printError("No se pudo leer el archivo de "+RED+"configuracion"+RESET, e);
             System.exit(0);

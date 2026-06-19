@@ -1,15 +1,21 @@
 package node;
 
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 
 import main.*;
+
+import static main.FileFX.*;
 import static main.Lib.*;
 
 public class PlaceLabel extends Label {
     public PlaceLabel(String name, String icon, String path) {
-        super(name, new ImageView("file://"+Lib.ABSOLUTE_PATH+"share/filefx/icons/left/"+icon+".png"));
+        super(name);
+
+        Label label = new Label(icon);
+        label.setFont(nerdFont);
+        label.setId("left_place_icon");
+        setGraphic(label);
 
         setId("left_place_label");
         setMaxWidth(Double.MAX_VALUE);

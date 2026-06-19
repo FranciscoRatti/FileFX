@@ -1,12 +1,16 @@
 package panel;
 
 import entity.FileProperties;
+import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 
+import javafx.scene.text.Text;
 import main.Lib;
 import node.FileField;
 import static main.FileFX.*;
@@ -42,13 +46,15 @@ public class RightPane extends ScrollPane {
 
     public void update() {
         printInfo("Actualizando panel derecho");
-        pane.getChildren().clear();
+        ObservableList<Node> children = pane.getChildren();
+        children.clear();
 
         Button close = new Button("x");
         close.setId("right_close_button");
         close.setOnAction(e -> {
             mainPane.changeShowRightPane(false);
         });
+        children.add(close);
 
         ImageView miniatura;
         if (selectedItem != null) {
@@ -56,29 +62,38 @@ public class RightPane extends ScrollPane {
             String extensionText = selectedItem.getExtension();
 
             // Miniatura
-            Image image;
+            if (Boolean.parseBoolean(config.getProperty("show_miniatura")) &&
+                    !propertie.isDirectory() &&
+                    (
+                            extensionText.equals("bmp") ||
+                            extensionText.equals("gif") ||
+                            extensionText.equals("jpeg") ||
+                            extensionText.equals("jpg") ||
+                            extensionText.equals("png")
+            )) {
+                Image image = new Image("file://"+propertie.getAbsolutePath());
+                miniatura = new ImageView(image);
+                miniatura.setPreserveRatio(true);
 
-            if (propertie.isDirectory()) {
-                image = new Image("file://"+Lib.ABSOLUTE_PATH+"share/filefx/icons/right/directory.png");
+                int imageWidth = (int) image.getWidth();
+                int imageHeight = (int) image.getHeight();
+                if (imageWidth < imageHeight) miniatura.setFitHeight(paneWidth-5);
+                else miniatura.setFitWidth(paneWidth-5);
+
+                StackPane miniaturaPane = new StackPane(miniatura);
+                miniaturaPane.setMinSize(paneWidth, paneWidth);
+
+                children.addAll(miniaturaPane);
             } else {
-                if (Boolean.parseBoolean(config.getProperty("show_miniatura")) && (
-                        extensionText.equals("bmp") ||
-                        extensionText.equals("gif") ||
-                        extensionText.equals("jpeg") ||
-                        extensionText.equals("jpg") ||
-                        extensionText.equals("png")
-                )) {
-                    image = new Image("file://"+propertie.getAbsolutePath());
-                } else image = new Image("file://"+Lib.ABSOLUTE_PATH+"share/filefx/icons/right/file.png");
+                Text label = new Text(selectedItem.getIcon());
+                label.setFont(nerdFont);
+                label.setId("right_miniatura");
+
+                StackPane miniaturaPane = new StackPane(label);
+                miniaturaPane.setMinSize(paneWidth, paneWidth);
+
+                children.add(miniaturaPane);
             }
-
-            miniatura = new ImageView(image);
-            miniatura.setPreserveRatio(true);
-
-            int imageWidth = (int) image.getWidth();
-            int imageHeight = (int) image.getHeight();
-            if (imageWidth < imageHeight) miniatura.setFitHeight(paneWidth-5);
-            else miniatura.setFitWidth(paneWidth-5);
 
             // Propiedades
             nameNode = new FileField("Nombre :", selectedItem.getName(), true);
@@ -119,9 +134,7 @@ public class RightPane extends ScrollPane {
             ownerNode = new FileField("Usuario :", propertie.getOwner(), true);
             groupNode = new FileField("Grupo   :", propertie.getGroup(), true);
 
-            pane.getChildren().addAll(
-                    close,
-                    new StackPane(miniatura),
+            children.addAll(
                     new node.Separator(10, Orientation.HORIZONTAL),
                     nameNode,
                     sizeNode,
@@ -138,7 +151,7 @@ public class RightPane extends ScrollPane {
             StackPane miniaturaPane = new StackPane(miniatura);
             miniaturaPane.setMinHeight(paneWidth);
 
-            pane.getChildren().addAll(close, miniaturaPane);
+            children.add(miniaturaPane);
         }
     }
 

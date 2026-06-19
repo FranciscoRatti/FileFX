@@ -54,7 +54,7 @@ public class LeftPane extends VBox {
             Label title = new Label("Dispositivos");
             title.setId("left_label_title");
 
-            Label rootDirectory = new PlaceLabel("Raiz", "root", "/");
+            Label rootDirectory = new PlaceLabel("Raiz", "\uEF81", "/");
 
             devicesBox.getChildren().addAll(title, rootDirectory, new node.Separator(20, Orientation.HORIZONTAL));
             children.add(devicesBox);
