@@ -1,15 +1,13 @@
 package panel;
 
-import entity.FileProperties;
 import javafx.scene.layout.BorderPane;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import main.Main;
+import main.FileFX;
 import node.FileLabel;
-
-import static main.Lib.printInfo;
+import static main.Lib.*;
 
 public class MainPane extends BorderPane {
     public static CenterPane centerPane;
@@ -30,7 +28,7 @@ public class MainPane extends BorderPane {
         setTop(topPane);
         rightPane = new RightPane();
         setRight(rightPane);
-        changeShowRightPane(Boolean.parseBoolean(Main.config.getProperty("show_right_pane")));
+        changeShowRightPane(Boolean.parseBoolean(FileFX.config.getProperty("show_right_pane")));
         leftPane = new LeftPane();
         setLeft(leftPane);
 
@@ -52,12 +50,11 @@ public class MainPane extends BorderPane {
 
     public static void deselectAll() {
         if (!selectedItems.isEmpty() || selectedItem != null) {
-            selectedItems.clear();
             selectedItem = null;
+            for (FileLabel fileLabel : selectedItems) fileLabel.setSelected(false);
+            selectedItems.clear();
 
-            for (FileLabel fileLabel : CenterPane.fileLabels) fileLabel.setSelected(false);
-
-            printInfo("Se deselcciono todo");
+            printInfo("Se deselecciono todo");
         }
     }
 

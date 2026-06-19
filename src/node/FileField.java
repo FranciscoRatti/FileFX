@@ -3,7 +3,6 @@ package node;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import main.Lib;
 
 public class FileField extends HBox {
     public Label label;

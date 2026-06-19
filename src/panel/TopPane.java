@@ -1,18 +1,16 @@
 package panel;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
+import main.FileFX;
 import node.TopButton;
 
 import java.io.File;
 
-import main.Main;
 import main.Lib;
 import static panel.MainPane.*;
-import static main.Main.*;
+import static main.FileFX.*;
 import static main.Lib.*;
 
 public class TopPane extends HBox {
@@ -27,7 +25,6 @@ public class TopPane extends HBox {
 
     public void update() {
         printInfo("Actualizando panel superior");
-        printInfo("Actualizando path a '"+Lib.BLUE+Main.path+Lib.RESET+"'");
 
         getChildren().clear();
 
@@ -41,7 +38,7 @@ public class TopPane extends HBox {
             parent();
         });
 
-        search = new TextField(Main.path);
+        search = new TextField(FileFX.path);
         search.setId("top_text_field");
         search.setPrefColumnCount(200);
         search.setOnKeyPressed(e -> {
@@ -53,7 +50,7 @@ public class TopPane extends HBox {
                     printError("El archivo o directorio "+text+" no existe", null);
                     showAlert(new Alert(Alert.AlertType.ERROR), "El archivo o directorio "+text+" no existe", "ERROR");
                 } else {
-                    printInfo("Actualizando path a '"+Lib.BLUE+Main.path+Lib.RESET+"'");
+                    printInfo("Actualizando path a '"+Lib.BLUE+ FileFX.path+Lib.RESET+"'");
                     path = text;
                     deselectAll();
 
@@ -65,9 +62,7 @@ public class TopPane extends HBox {
         });
 
         Button reload = new TopButton("reload", "Recargar", e -> {
-            updateCenter();
-            updateTop();
-            updateRight();
+            updateAll();
         });
 
         getChildren().addAll(back, forward, parent, search, reload);

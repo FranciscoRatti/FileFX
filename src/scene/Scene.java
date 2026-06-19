@@ -1,17 +1,13 @@
 package scene;
 
 import javafx.application.Platform;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import panel.CenterPane;
 
-import static main.Lib.*;
-import static main.Main.*;
-import static panel.MainPane.*;
-import main.*;
 import panel.*;
+import static main.Lib.*;
+import static main.FileFX.*;
+import static panel.MainPane.*;
 
 public class Scene extends javafx.scene.Scene {
     public Scene() {
@@ -24,7 +20,7 @@ public class Scene extends javafx.scene.Scene {
     }
 
     public static boolean isAnyFocus() {
-        return  TopPane.isSearchFocus() || RightPane.isNameFocus();
+        return  TopPane.isSearchFocus() || RightPane.isAnyFocus();
     }
 
     public void updateKeyBinding() {
@@ -33,7 +29,7 @@ public class Scene extends javafx.scene.Scene {
                 e.consume();
                 try {
                     KeyCombination key =
-                            e.isControlDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.CONTROL_DOWN) :
+                                    e.isControlDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.CONTROL_DOWN) :
                                     e.isShiftDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.SHIFT_DOWN) :
                                     e.isAltDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.ALT_DOWN) :
                                     e.isMetaDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.META_DOWN) :
@@ -69,6 +65,7 @@ public class Scene extends javafx.scene.Scene {
 
                     setKeyBindAction(deselect_all, key, () -> {
                         if (TopPane.isSearchFocus()) updateTop();
+                        else if (RightPane.isAnyFocus()) updateRight();
                         else deselectAll();
                     });
 

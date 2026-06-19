@@ -1,9 +1,7 @@
 package entity;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import node.FileLabel;
-
 import java.io.*;
 
 import static main.Lib.*;
@@ -23,7 +21,7 @@ public class DesktopApplication {
         iconText = "";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(desktopFile))) {
-            String line = "";
+            String line;
 
             do {
                 line = reader.readLine();

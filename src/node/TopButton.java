@@ -2,8 +2,7 @@ package node;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 
 import static main.Lib.ABSOLUTE_PATH;

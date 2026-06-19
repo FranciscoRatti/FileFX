@@ -2,14 +2,14 @@ package main;
 
 import entity.DesktopApplication;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import panel.MainPane;
-import scene.OthersApplicationsScene;
-import scene.Scene;
+import scene.*;
+import stage.OthersApplicationsStage;
 
 import java.awt.*;
 import java.io.*;
@@ -19,12 +19,14 @@ import java.util.Properties;
 
 import static main.Lib.*;
 
-public class Main extends javafx.application.Application {
+public class FileFX extends javafx.application.Application {
     public static Properties config;
     public static Properties keyBinding;
     public static Properties dynamicValues;
-    public static Properties iconsBinding;
-    public static boolean isApplicationsSucceded = false;
+    public static Properties iconsMyme;
+    public static Properties iconsExtension;
+    public static Font nerdFont;
+    public static volatile boolean isApplicationsSucceded = false;
 
     public static ArrayList<DesktopApplication> desktopApplications;
     public static Stage othersApplicationsStage;
@@ -35,23 +37,19 @@ public class Main extends javafx.application.Application {
     public static Stage stage;
 
     public static void main(String[] args) {
-        if (args.length > 1) {
-            path = args[0];
-            for (String arg : args) {
-                System.out.println("Argumento : '"+arg+"'");
-            }
-        }
+        if (args.length > 1) path = args[0];
         launch(args);
     }
 
-    @Override
     public void start(Stage s) {
+        nerdFont = Font.loadFont("file://" + ABSOLUTE_PATH + "share/filefx/0xProtoNerdFontMono-Regular.ttf", 16);
+
         printInfo("Cargando archivo de configuracion");
         try (FileInputStream fileInputStream = new FileInputStream(CONFIG_PATH+"config.properties")) {
             config = new Properties();
             config.load(fileInputStream);
         } catch (IOException e) {
-            printError("No se pudo leer el archivo de configuracion", e);
+            printError("No se pudo leer el archivo de "+RED+"configuracion"+RESET, e);
             System.exit(0);
         }
 
@@ -60,7 +58,7 @@ public class Main extends javafx.application.Application {
             keyBinding = new Properties();
             keyBinding.load(fileInputStream);
         } catch (IOException e) {
-            printError("No se pudo leer el archivo de combinaciones de teclado", e);
+            printError("No se pudo leer el archivo de "+RED+"combinaciones de teclado"+RESET, e);
             System.exit(0);
         }
 
@@ -69,32 +67,20 @@ public class Main extends javafx.application.Application {
             dynamicValues = new Properties();
             dynamicValues.load(fileInputStream);
         } catch (IOException e) {
-            printError("No se pudo leer el archivo de combinaciones de teclado", e);
+            printError("No se pudo leer el archivo de "+RED+"combinaciones de teclado"+RESET, e);
             System.exit(0);
         }
 
         printInfo("Verificando que existan valores dinamicos");
-        if (dynamicValues.getProperty("width") == null) {
-            dynamicValues.put("width", "1200");
-            printError("no existe propiedad width", null);
-        }
-        if (dynamicValues.getProperty("height") == null) {
-            dynamicValues.put("height", "700");
-            printError("no existe propiedad height", null);
-        }
-        if (dynamicValues.getProperty("init_path") == null) {
-            dynamicValues.put("init_path", HOME);
-            printError("no existe propiedad init_path", null);
-        }
-        if (dynamicValues.getProperty("init_selection") == null) {
-            dynamicValues.put("init_selection", "");
-            printError("no existe propiedad init_selection", null);
-        }
+        dynamicValues.putIfAbsent("width", "1200");
+        dynamicValues.putIfAbsent("height", "700");
+        dynamicValues.putIfAbsent("init_path", HOME);
+        dynamicValues.putIfAbsent("init_selection", "");
 
         String initPath = dynamicValues.getProperty("init_path");
         if (path.equals("") && initPath != null) {
             if (initPath.charAt(0) == '~') {
-                path = HOME+(initPath.substring(1));
+                path = HOME+initPath.substring(1);
             } else {
                 path = initPath;
             }
@@ -106,8 +92,19 @@ public class Main extends javafx.application.Application {
 
         printInfo("Cargando archivo de iconos");
         try (Reader reader = new InputStreamReader(new FileInputStream(CONFIG_PATH+"icons_binding.properties"), StandardCharsets.UTF_8)) {
-            iconsBinding = new Properties();
+            Properties iconsBinding = new Properties();
             iconsBinding.load(reader);
+
+            iconsMyme = new Properties();
+            iconsExtension = new Properties();
+
+            iconsBinding.forEach((arg0, arg1) -> {
+                String k = (String) arg0;
+                String v = (String) arg1;
+
+                if (k.startsWith(".")) iconsExtension.put(k, v);
+                else iconsMyme.put(k, v);
+            });
         } catch (IOException e) {
             printError("No se pudo leer el archivo de iconos", e);
             System.exit(0);
@@ -125,6 +122,7 @@ public class Main extends javafx.application.Application {
         printInfo("Cargando escenario principal");
         stage=s;
         stage.getIcons().add(new Image("file://"+ABSOLUTE_PATH+"share/filefx/icons/icon.png"));
+        stage.setTitle("Explorador de archivos");
         stage.setOnCloseRequest(e -> {
             boolean isSaveBounds = Boolean.parseBoolean(config.getProperty("save_bounds"));
             boolean isSavePath = Boolean.parseBoolean(config.getProperty("save_path"));
@@ -168,8 +166,7 @@ public class Main extends javafx.application.Application {
         printOk("Aplicacion iniciada con exito");
 
         printInfo("Cargando applicaciones para abrir con");
-        othersApplicationsStage = new Stage();
-        othersApplicationsStage.setScene(new OthersApplicationsScene());
+        othersApplicationsStage = new OthersApplicationsStage();
         isApplicationsSucceded = true;
     }
 

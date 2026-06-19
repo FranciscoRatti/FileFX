@@ -12,20 +12,18 @@ import javafx.scene.layout.VBox;
 
 import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import static main.Main.*;
+import static main.FileFX.*;
 import static main.Lib.*;
 import static panel.MainPane.*;
 
 import javafx.stage.Window;
 import main.Lib;
-import main.Main;
+import main.FileFX;
 import node.FileLabel;
-import node.PlaceLabel;
 
 public class CenterPane extends ScrollPane {
     public static ArrayList<FileLabel> fileLabels;
@@ -40,17 +38,17 @@ public class CenterPane extends ScrollPane {
 
     public CenterPane() {
         if (!new File(path).exists()) {
-            printError("El directorio inicial '"+path+"' no existe", new FileNotFoundException("The initial directory '"+path+"' not exist"));
+            printError("El directorio inicial '"+path+"' no existe", null);
             path = "/";
         }
         fileLabels = new ArrayList<>();
         selectedItems = new ArrayList<>();
 
-        menu =          createContextMenu(false, false, true , true , false, false, false, true , false, false, true );
-        menuFile =      createContextMenu(true , true , false, false, true , true , true , true , true , true , true );
-        menuDirectory = createContextMenu(true , true , true , true , true , true , true , true , true , true , true );
-        menuMultiple =  createContextMenu(true , true , false, false, false, true , true , true , true , true , true );
-        menuCreate =    createContextMenu(false, false, true , true , false, false, false, false, false, false, false);
+        menu =          createContextMenu(0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1);
+        menuFile =      createContextMenu(1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1);
+        menuDirectory = createContextMenu(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+        menuMultiple =  createContextMenu(1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1);
+        menuCreate =    createContextMenu(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
 
         pane = new VBox();
 
@@ -77,8 +75,6 @@ public class CenterPane extends ScrollPane {
         setOnMouseReleased(e -> {
             MouseButton button = e.getButton();
             EventTarget target = e.getTarget();
-            boolean isShiftDown = e.isShiftDown();
-            boolean isControlDown = e.isControlDown();
 
             if (button.equals(MouseButton.MIDDLE)) {
                 parent();
@@ -89,7 +85,7 @@ public class CenterPane extends ScrollPane {
             } else if (button.equals(MouseButton.PRIMARY)) {
                 if (target instanceof FileLabel) {
                     if (isAnyShow()) hideAll();
-                    changeSelectMouse(isShiftDown, isControlDown, e,(FileLabel) target);
+                    changeSelectMouse(e,(FileLabel) target);
                 } else {
                     if (isAnyShow()) hideAll();
                     else {
@@ -103,16 +99,12 @@ public class CenterPane extends ScrollPane {
 
             e.consume();
         });
-
-        setOnMouseEntered(e -> {
-            PlaceLabel.PlaceMenu.hide();
-        });
     }
 
     public void update() {
         printInfo("Actualizando panel central");
 
-        // Reiniciando todo
+        // Reiniciando
         fileLabels.clear();
         selectedItems.clear();
         selectedItem = null;
@@ -135,7 +127,6 @@ public class CenterPane extends ScrollPane {
 
             for (File file : content) {
                 boolean isHidden = file.getName().startsWith(".");
-
                 if (!showHidden && isHidden) continue;
 
                 if (file.isDirectory()) {
@@ -144,17 +135,15 @@ public class CenterPane extends ScrollPane {
                     filesList.add(new FileLabel(file));
                 }
             }
+
+            filesList.sort(Comparator.comparing(FileLabel::getName, String.CASE_INSENSITIVE_ORDER));
+            directoriesList.sort(Comparator.comparing(FileLabel::getName, String.CASE_INSENSITIVE_ORDER));
+
+            // Añadiendo nodos
+            if (Boolean.parseBoolean(config.getProperty("is_directory_first"))) fileLabels.addAll(directoriesList);
+            fileLabels.addAll(filesList);
+            if (!Boolean.parseBoolean(config.getProperty("is_directory_first"))) fileLabels.addAll(directoriesList);
         }
-
-        filesList.sort(Comparator.comparing(FileLabel::getName, String.CASE_INSENSITIVE_ORDER));
-        directoriesList.sort(Comparator.comparing(FileLabel::getName, String.CASE_INSENSITIVE_ORDER));
-
-        // Añadiendo nodos
-        if (Boolean.parseBoolean(config.getProperty("is_directory_first"))) {
-            fileLabels.addAll(directoriesList);}
-        fileLabels.addAll(filesList);
-        if (!Boolean.parseBoolean(config.getProperty("is_directory_first"))) {
-            fileLabels.addAll(directoriesList);}
 
         // Definiendo ids
         for (int i = 0; i < fileLabels.size(); i++) {
@@ -166,13 +155,13 @@ public class CenterPane extends ScrollPane {
 
     public static void showMenu(Node anchor) {
         hideAll();
-
         Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
 
-        if (MainPane.selectedItems.isEmpty()) {
+        printInfo("Mostrando menu");
+        if (selectedItems.isEmpty()) {
             menu.show(anchor, mouseLocation.x, mouseLocation.y);
-        } else if (MainPane.selectedItems.size() == 1) {
-            if (MainPane.selectedItems.getFirst().getFile().isDirectory()) menuDirectory.show(anchor, mouseLocation.x, mouseLocation.y);
+        } else if (selectedItems.size() == 1) {
+            if (selectedItems.getFirst().getFile().isDirectory()) menuDirectory.show(anchor, mouseLocation.x, mouseLocation.y);
             else menuFile.show(anchor, mouseLocation.x, mouseLocation.y);
         } else {
             menuMultiple.show(anchor, mouseLocation.x, mouseLocation.y);
@@ -180,14 +169,15 @@ public class CenterPane extends ScrollPane {
     }
     public static void showMenuCreate() {
         hideAll();
+        printInfo("Mostrando menu");
         menuCreate.show(Window.getWindows().getFirst());
     }
     public static void hideAll() {
-        if (menu.isShowing()) menu.hide();
-        if (menuFile.isShowing()) menuFile.hide();
-        if (menuDirectory.isShowing()) menuDirectory.hide();
-        if (menuMultiple.isShowing()) menuMultiple.hide();
-        if (menuCreate.isShowing()) menuCreate.hide();
+        menu.hide();
+        menuFile.hide();
+        menuDirectory.hide();
+        menuMultiple.hide();
+        menuCreate.hide();
     }
     public static boolean isAnyShow() {
         return  menu.isShowing() ||
@@ -197,7 +187,7 @@ public class CenterPane extends ScrollPane {
                 menuCreate.isShowing();
     }
 
-    public void changeSelectMouse(boolean isShitDown, boolean isControlDown, MouseEvent event, FileLabel label) {
+    public void changeSelectMouse(MouseEvent event, FileLabel label) {
         MouseButton button = event.getButton();
         int clickCount = event.getClickCount();
 
@@ -206,16 +196,14 @@ public class CenterPane extends ScrollPane {
             // Seleccionar
             if (clickCount == 1) {
                 if (!event.isControlDown() && !event.isShiftDown()) {
-                    MainPane.selectedItems.clear();
-                    for (FileLabel fileLabel : CenterPane.fileLabels) {
-                        fileLabel.setSelected(false);
-                    }
-                } else if (event.isShiftDown()) {
-                    if (MainPane.selectedItem != null) {
-                        boolean beSelected = false;
-                        FileLabel lastSelectedItem = MainPane.selectedItem;
+                    deselectAll();
 
-                        for (FileLabel fileLabel : CenterPane.fileLabels) {
+                } else if (event.isShiftDown()) {
+                    if (selectedItem != null) {
+                        boolean beSelected = false;
+                        FileLabel lastSelectedItem = selectedItem;
+
+                        for (FileLabel fileLabel : fileLabels) {
                             if (beSelected) {
                                 if (fileLabel.equals(label) || fileLabel.equals(lastSelectedItem)) {
                                     break;
@@ -246,26 +234,26 @@ public class CenterPane extends ScrollPane {
             FileLabel labelStepSelected = null;
 
             // Si el seleccionado es el primero
-            if (selectedItemIndex == 0 && step < 0) {
+            if (selectedItemIndex == 0 && step < 0)
                 labelStepSelected = fileLabels.getLast();
 
             // Si el seleccionado es el ultimo
-            } else if (selectedItemIndex == fileLabels.size()-1 && step > 0) {
+            else if (selectedItemIndex == fileLabels.size()-1 && step > 0)
                 labelStepSelected = fileLabels.getFirst();
 
             // Si el seleccionado esta en un indice menor a los pasos
-            } else if (selectedItemIndex < -step && step < 0) {
+            else if (selectedItemIndex < -step && step < 0)
                 labelStepSelected = fileLabels.getFirst();
 
             // Si el seleccionado esta en un indice mayor a los pasos
-            } else if (fileLabels.size()-1-selectedItemIndex < step && step > 0) {
+            else if (fileLabels.size()-1-selectedItemIndex < step && step > 0)
                 labelStepSelected = fileLabels.getLast();
 
-            } else {
-                for (FileLabel label : fileLabels) {
-                    if (label.getIndex() == selectedItemIndex+step) {labelStepSelected = label; break;}
-                }
-            }
+            else
+                for (FileLabel label : fileLabels)
+                    if (label.getIndex() == selectedItemIndex+step) {
+                        labelStepSelected = label; break;
+                    }
 
             if (labelStepSelected != null) {
 
@@ -274,9 +262,9 @@ public class CenterPane extends ScrollPane {
                     deselectAll();
 
                 // Si se presiono shift
-                } else if (step > 1 || step < -1) {
+                } else {
                     boolean beSelected = false;
-                    FileLabel lastSelectedItem = MainPane.selectedItem;
+                    FileLabel lastSelectedItem = selectedItem;
 
                     for (FileLabel fileLabel : fileLabels) {
                         if (beSelected) {
@@ -292,14 +280,12 @@ public class CenterPane extends ScrollPane {
                 }
 
                 labelStepSelected.setSelected(true);
-                updateRight();
             }
         } else if (!fileLabels.isEmpty()) {
             if ((step < 0)) fileLabels.getLast().setSelected(true);
             else fileLabels.getFirst().setSelected(true);
-            updateRight();
         }
-
+        updateRight();
 
         // Scroll
 
@@ -349,13 +335,14 @@ public class CenterPane extends ScrollPane {
             // Si es directorio
             if (file.isDirectory()) {
                 forwardBuffer.clear();
-                backBuffer.add(Main.path);
+                backBuffer.add(FileFX.path);
                 path=absolutePath+"/";
 
-                printInfo("Entrando a '"+Lib.BLUE+Main.path+Lib.RESET+"'");
+                printInfo("Entrando a '"+Lib.BLUE+ FileFX.path+Lib.RESET+"'");
 
                 updateCenter();
                 updateTop();
+                updateRight();
 
                 if (!fileLabels.isEmpty()) fileLabels.getFirst().setSelected(true);
 
@@ -369,9 +356,6 @@ public class CenterPane extends ScrollPane {
                     Lib.printError("No se puede abrir el archivo "+absolutePath, ex);
                 }
             }
-
-
-            updateRight();
         }
     }
 
@@ -384,8 +368,7 @@ public class CenterPane extends ScrollPane {
 
                 if (scrollRange > 0) {
                     setVvalue(
-                            (selectedItem.getBoundsInParent().getCenterY() - (viewportHeight / 2.0))
-                                    / scrollRange);
+                            (selectedItem.getBoundsInParent().getCenterY() - (viewportHeight / 2.0)) / scrollRange);
                 }
             });
         }
