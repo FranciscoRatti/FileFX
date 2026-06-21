@@ -22,6 +22,8 @@ public class PlaceLabel extends Label {
 
         setOnMouseClicked(e -> {
             if (e.getButton().equals(MouseButton.PRIMARY)) {
+                printInfo("Yendo a '"+BLUE+path+RESET+"'");
+
                 forwardBuffer.clear();
                 backBuffer.add(path);
                 FileFX.path = path;

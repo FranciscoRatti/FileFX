@@ -25,8 +25,10 @@ public class FileFX extends javafx.application.Application {
     public static Properties dynamicValues;
     public static Properties iconsMyme;
     public static Properties iconsExtension;
+
     public static Font nerdFont;
     public static volatile boolean isApplicationsSucceded = false;
+    public static boolean showHidden;
 
     public static ArrayList<DesktopApplication> desktopApplications;
     public static Stage othersApplicationsStage;
@@ -52,6 +54,8 @@ public class FileFX extends javafx.application.Application {
             printError("No se pudo leer el archivo de "+RED+"configuracion"+RESET, e);
             System.exit(0);
         }
+
+        showHidden = Boolean.parseBoolean(config.getProperty("show_hidden"));
 
         printInfo("Cargando archivo de combinaciones de teclado");
         try (FileInputStream fileInputStream = new FileInputStream(CONFIG_PATH+"key_binding.properties")) {

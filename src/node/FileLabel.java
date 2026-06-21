@@ -30,7 +30,7 @@ public class FileLabel extends Label {
         setMaxWidth(Double.MAX_VALUE);
 
         icon = null;
-        if (extension != null) icon = iconsExtension.getProperty("."+extension);
+        if (icon != null) icon = iconsExtension.getProperty("."+extension);
         if (icon == null) icon = iconsMyme.getProperty(propertie.getMimeType());
         if (icon == null) icon = iconsMyme.getProperty("unknow");
 
@@ -54,6 +54,9 @@ public class FileLabel extends Label {
     public String getExtension() {
       return extension;
     }
+    public int getIndex() {
+        return index;
+    }
 
     public void setSelected(boolean selected) {
         if (this.selected != selected) {
@@ -70,12 +73,8 @@ public class FileLabel extends Label {
             }
         }
     }
-
     public void setIndex(int index) {
       this.index = index;
       setId((index % 2 == 0) ? "center_label_b1" : "center_label_b2");
     }
-    public int getIndex() {
-    return index;
-  }
 }

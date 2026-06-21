@@ -1,5 +1,6 @@
 package panel;
 
+import entity.FileProperties;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventTarget;
@@ -11,18 +12,16 @@ import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static main.FileFX.*;
 import static main.Lib.*;
 import static panel.MainPane.*;
 
 import javafx.stage.Window;
-import main.Lib;
-import main.FileFX;
+import main.*;
 import node.FileLabel;
 
 public class CenterPane extends ScrollPane {
@@ -33,6 +32,7 @@ public class CenterPane extends ScrollPane {
     private static ContextMenu menuDirectory;
     private static ContextMenu menuMultiple;
     private static ContextMenu menuCreate;
+    private static ContextMenu menuTrash;
 
     private VBox pane;
 
@@ -44,11 +44,12 @@ public class CenterPane extends ScrollPane {
         fileLabels = new ArrayList<>();
         selectedItems = new ArrayList<>();
 
-        menu =          createContextMenu(0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1);
-        menuFile =      createContextMenu(1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1);
-        menuDirectory = createContextMenu(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-        menuMultiple =  createContextMenu(1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1);
-        menuCreate =    createContextMenu(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
+        menu          = createContextMenu(0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1);
+        menuFile      = createContextMenu(1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1);
+        menuDirectory = createContextMenu(1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1);
+        menuMultiple  = createContextMenu(1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1);
+        menuCreate    = createContextMenu(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+        menuTrash     = createContextMenu(1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1);
 
         pane = new VBox();
 
@@ -116,24 +117,20 @@ public class CenterPane extends ScrollPane {
         try {
             content = new File(path).listFiles();
         } catch (Exception e) {
-            printError("No existe "+path, e);
+            printError("No existe '"+path+"'", e);
             content = new File("/").listFiles();
         }
         ArrayList<FileLabel> filesList = new ArrayList<>();
         ArrayList<FileLabel> directoriesList = new ArrayList<>();
 
         if (content != null) {
-            boolean showHidden = Boolean.parseBoolean(config.getProperty("show_hidden"));
-
             for (File file : content) {
                 boolean isHidden = file.getName().startsWith(".");
                 if (!showHidden && isHidden) continue;
 
-                if (file.isDirectory()) {
-                    directoriesList.add(new FileLabel(file));
-                } else {
-                    filesList.add(new FileLabel(file));
-                }
+                FileLabel fileLabel = new FileLabel(file);
+                if (file.isDirectory()) directoriesList.add(fileLabel);
+                else filesList.add(fileLabel);
             }
 
             filesList.sort(Comparator.comparing(FileLabel::getName, String.CASE_INSENSITIVE_ORDER));
@@ -160,6 +157,8 @@ public class CenterPane extends ScrollPane {
         printInfo("Mostrando menu");
         if (selectedItems.isEmpty()) {
             menu.show(anchor, mouseLocation.x, mouseLocation.y);
+        } else if (path.startsWith(TRASH+"files")) {
+            menuTrash.show(anchor, mouseLocation.x, mouseLocation.y);
         } else if (selectedItems.size() == 1) {
             if (selectedItems.getFirst().getFile().isDirectory()) menuDirectory.show(anchor, mouseLocation.x, mouseLocation.y);
             else menuFile.show(anchor, mouseLocation.x, mouseLocation.y);
@@ -178,13 +177,11 @@ public class CenterPane extends ScrollPane {
         menuDirectory.hide();
         menuMultiple.hide();
         menuCreate.hide();
+        menuTrash.hide();
     }
     public static boolean isAnyShow() {
-        return  menu.isShowing() ||
-                menuFile.isShowing() ||
-                menuDirectory.isShowing() ||
-                menuMultiple.isShowing() ||
-                menuCreate.isShowing();
+        return  menu.isShowing() || menuFile.isShowing() || menuDirectory.isShowing() ||
+                menuMultiple.isShowing() || menuCreate.isShowing() || menuTrash.isShowing();
     }
 
     public void changeSelectMouse(MouseEvent event, FileLabel label) {
@@ -338,7 +335,7 @@ public class CenterPane extends ScrollPane {
                 backBuffer.add(FileFX.path);
                 path=absolutePath+"/";
 
-                printInfo("Entrando a '"+Lib.BLUE+ FileFX.path+Lib.RESET+"'");
+                printInfo("Entrando a '"+BLUE+path+RESET+"'");
 
                 updateCenter();
                 updateTop();

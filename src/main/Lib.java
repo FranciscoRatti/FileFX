@@ -10,6 +10,7 @@ import panel.*;
 
 import java.awt.datatransfer.*;
 import java.io.*;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -23,6 +24,7 @@ public class Lib {
 
     public static boolean isCut = false;
     public static final String HOME = System.getenv("HOME");
+    public static final String TRASH = HOME+"/.local/share/Trash/";
     //public static final String ABSOLUTE_PATH = "/usr/";
     public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/";
     //public static final String CONFIG_PATH = HOME + "/.config/filefx/";
@@ -50,50 +52,54 @@ public class Lib {
     }
 
     public static ContextMenu createContextMenu(
-              int open, int openWith, int createFile, int createDirectory, int rename, int copy,
-              int cut, int paste, int trash, int remove, int shell)
+              int open, int openWith,
+              int createFile, int createDirectory,
+              int rename, int copy, int cut, int paste,
+              int restore, int trash, int remove,
+              int shell)
     {
-          ContextMenu contextMenu = new ContextMenu();
-          ObservableList<MenuItem> contextMenuItems = contextMenu.getItems();
-          MenuItem pasteItem;
+        ContextMenu contextMenu = new ContextMenu();
+        ObservableList<MenuItem> contextMenuItems = contextMenu.getItems();
+        MenuItem pasteItem;
 
-          if (open==1) contextMenuItems.add(createNewOpenItem());
-          if (openWith==1) contextMenuItems.add(createNewOpenWithItem());
+        if (open == 1) contextMenuItems.add(createNewOpenItem());
+        if (openWith == 1) contextMenuItems.add(createNewOpenWithItem());
 
-          if (createFile==1) contextMenuItems.add(createNewFileItem());
-          if (createDirectory==1) contextMenuItems.add(createNewDirectoryItem());
-          if (rename==1) contextMenuItems.add(createRenameItem());
+        if (createFile == 1) contextMenuItems.add(createNewFileItem());
+        if (createDirectory == 1) contextMenuItems.add(createNewDirectoryItem());
+        if (rename == 1) contextMenuItems.add(createRenameItem());
 
-          if (copy==1) contextMenuItems.addAll(new SeparatorMenuItem(), createCopyItem());
-          if (cut==1) contextMenuItems.add(createCutItem());
-          if (paste==1) contextMenuItems.add(pasteItem = createPasteItem());
-          else pasteItem = null;
+        if (copy == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createCopyItem());
+        if (cut == 1) contextMenuItems.add(createCutItem());
+        if (paste == 1) contextMenuItems.add(pasteItem = createPasteItem());
+        else pasteItem = null;
 
-          if (trash==1) contextMenuItems.addAll(new SeparatorMenuItem(), createTrashItem());
-          if (remove==1) contextMenuItems.add(createRemoveItem());
+        if (restore == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createRestoreItem());
+        if (trash == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createTrashItem());
+        if (remove == 1) contextMenuItems.add(createRemoveItem());
 
-          if (shell==1) contextMenuItems.addAll(new SeparatorMenuItem(), createOpenShellItem());
+        if (shell == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createOpenShellItem());
 
-          if (Boolean.parseBoolean(config.getProperty("check_clipboard_paste"))) {
+        if (Boolean.parseBoolean(config.getProperty("check_clipboard_paste"))) {
             contextMenu.setOnShowing(e -> {
-              if (pasteItem != null) {
-                clipboardFiles = getClipboardFiles();
-                if (clipboard != null && clipboardFiles != null) {
-                  boolean setDisable = false;
-                  for (File file : clipboardFiles) {
-                    if (!file.exists())
-                      setDisable = true;
-                  }
-                  pasteItem.setDisable(setDisable);
-                } else {
-                  pasteItem.setDisable(true);
+                if (pasteItem != null) {
+                    clipboardFiles = getClipboardFiles();
+                    if (clipboard != null && clipboardFiles != null) {
+                        boolean setDisable = false;
+                        for (File file : clipboardFiles) {
+                            if (!file.exists())
+                                setDisable = true;
+                        }
+                        pasteItem.setDisable(setDisable);
+                    } else {
+                        pasteItem.setDisable(true);
+                    }
                 }
-              }
             });
-          }
-
-          return contextMenu;
         }
+
+        return contextMenu;
+    }
 
     private static MenuItem createNewOpenItem() {
         MenuItem item = new MenuItem("Abrir");
@@ -228,11 +234,18 @@ public class Lib {
         });
         return item;
     }
+    private static MenuItem createRestoreItem() {
+        MenuItem item = new MenuItem("Restaurar");
+        item.setOnAction(e -> {
+            restoreSelected();
+        });
+        return item;
+    }
     private static MenuItem createTrashItem() {
         MenuItem item = new MenuItem("Enviar a papelera", new ImageView("file://" + ABSOLUTE_PATH + "share/filefx/icons/context_menu/trash.png"));
         if (trash != null) item.setAccelerator(trash[0]);
         item.setOnAction(e -> {
-            trashFiles(MainPane.parseFileLabelsToFiles(selectedItems));
+            trashFiles(parseFileLabelsToFiles(selectedItems));
         });
         return item;
     }
@@ -320,25 +333,25 @@ public class Lib {
     }
     public static void parent() {
         if (!path.equals("/")) {
-          printExecute("Yendo al parent");
-          forwardBuffer.clear();
-          backBuffer.add(path);
+            printExecute("Yendo al parent");
+            forwardBuffer.clear();
+            backBuffer.add(path);
 
-          String oldPath = path.substring(0, path.length() - 1);
+            String oldPath = path.substring(0, path.length() - 1);
 
-          int length = path.length();
-          if (length > 1) {
-              do {
-                  path = path.substring(0, length - 1);
-                  length = path.length();
-              } while (!path.endsWith("/"));
-          }
+            int length = path.length();
+            if (length > 1) {
+            do {
+              path = path.substring(0, length - 1);
+              length = path.length();
+            } while (!path.endsWith("/"));
+            }
 
-          updateTop();
-          updateRight();
-          updateCenter();
+            updateCenter();
+            updateTop();
+            updateRight();
 
-          Platform.runLater(() -> {
+            Platform.runLater(() -> {
               for (FileLabel label : fileLabels) {
                   if (label.getFile().getAbsolutePath().equals(oldPath)) {
                       label.setSelected(true);
@@ -351,22 +364,26 @@ public class Lib {
     }
 
     public static void createNewFile(File file) {
-        try {
-            printExecute("Creando nuevo archivo '" + YELLOW + file + RESET + "'");
-            if (!file.createNewFile()) printError("No se pudo crear el archivo " + file, null);
-        } catch (Exception ex) {
-            printError("No se pudo crear el archivo " + file, ex);
+        if (!path.startsWith(TRASH+"files")) {
+            try {
+                printExecute("Creando nuevo archivo '" + YELLOW + file + RESET + "'");
+                if (!file.createNewFile()) printError("No se pudo crear el archivo " + file, null);
+            } catch (Exception ex) {
+                printError("No se pudo crear el archivo " + file, ex);
+            }
+            updateCenter();
         }
-        updateCenter();
     }
     public static void createNewDirectory(File directory) {
-        try {
-            printExecute("Creando nuevo directorio '" + YELLOW + directory + RESET + "'");
-            if (!directory.mkdir()) printError("No se pudo crear el directorio " + directory, null);
-        } catch (Exception ex) {
-            printError("No se pudo crear el directorio " + directory, ex);
+        if (!path.startsWith(TRASH+"files")) {
+            try {
+                printExecute("Creando nuevo directorio '" + YELLOW + directory + RESET + "'");
+                if (!directory.mkdir()) printError("No se pudo crear el directorio " + directory, null);
+            } catch (Exception ex) {
+                printError("No se pudo crear el directorio " + directory, ex);
+            }
+            updateCenter();
         }
-        updateCenter();
     }
     public static void renameFile(File file, String newName) {
         if (file != null && newName != null) {
@@ -465,8 +482,63 @@ public class Lib {
         return files;
     }
 
+    public static void restoreFiles(File[] files) {
+        for (File file : files) {
+            printExecute("Restaurando archivo '"+YELLOW+file.getAbsolutePath().substring(TRASH.length()+6)+RESET+"'");
+
+            File[] childrens = null;
+            boolean isDirectory = file.isDirectory();
+            if (isDirectory) childrens = file.listFiles();
+
+            FileProperties properties = new FileProperties(file);
+            String trashPath = properties.getTrashPath();
+            File trashInfo = properties.getTrashInfo();
+
+            if (trashPath != null && file.exists()) {
+                try {
+
+                    // Si es directorio
+                    if (isDirectory) {
+                        new ProcessBuilder("mkdir", "-p", trashPath)
+                                .start().waitFor();
+
+                    // Si es archivo
+                    } else {
+                        new ProcessBuilder("mkdir", "-p", Path.of(trashPath).getParent().toString())
+                                .start().waitFor();
+                        new ProcessBuilder("mv", file.getAbsolutePath(), trashPath)
+                                .start().waitFor();
+                        file.delete();
+                    }
+
+                    trashInfo.delete();
+                } catch (Exception e) {
+                    printError("No se pudo mover el archivo '"+file.getName()+"'", e);
+                }
+            } else {
+                printError("No se encontro archivo trash info de '"+file.getName()+"'", null);
+                continue;
+            }
+
+            if (childrens != null) restoreFiles(childrens);
+            if (isDirectory) file.delete();
+        }
+    }
+    public static void restoreSelected() {
+        if (selectedItems != null && !selectedItems.isEmpty()) {
+            File[] files = new File[selectedItems.size()];
+            for (int i = 0; i < files.length; i++) {
+                files[i] = selectedItems.get(i).getFile();
+            }
+
+            restoreFiles(files);
+
+            updateCenter();
+            updateRight();
+        }
+    }
     public static void trashFiles(File[] files) {
-        if (files != null) {
+        if (files != null && !path.startsWith(TRASH+"files")) {
             createTrashInfo(files);
             for (File file : files) {
                 try {

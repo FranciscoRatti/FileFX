@@ -8,6 +8,7 @@ import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.time.*;
 import java.util.Arrays;
+import java.util.Properties;
 
 import static main.Lib.*;
 
@@ -30,6 +31,7 @@ public class FileProperties extends File{
             size = attributes.size();
             dateTime = LocalDateTime.ofInstant(attributes.lastModifiedTime().toInstant(), ZoneId.systemDefault());
 
+            // Mime Type
             try {
                 ProcessBuilder pb = new ProcessBuilder("file", "--mime-type", "-b", file.getAbsolutePath());
                 Process process = pb.start();
@@ -37,6 +39,28 @@ public class FileProperties extends File{
             } catch (Exception ex) {
                 mimeType = "?";
                 printError("Error al leer tipo mime de '"+file.getAbsolutePath()+"'", ex);
+            }
+
+            // Trash Path
+            if (path.startsWith(TRASH+"files")) {
+                for (File trashInfo : new File(TRASH+"info").listFiles()) {
+                    String trashInfoName = trashInfo.getName();
+                    if (trashInfoName.substring(0, trashInfoName.length()-10).equals(file.getName())) {
+
+                        this.trashInfo=trashInfo;
+
+                        try (FileInputStream input = new FileInputStream(trashInfo)) {
+                            Properties trashProperties = new Properties();
+                            trashProperties.load(input);
+
+                            setTrashPath(trashProperties.getProperty("Path"));
+                            setDateTime(LocalDateTime.parse(trashProperties.getProperty("DeletionDate")));
+                        } catch (Exception e) {
+                            printError("Error al leer archivo '"+trashInfo.getAbsolutePath()+"'", e);
+                        }
+                        break;
+                    }
+                }
             }
         } catch (Exception e) {
             ownerPermissions = new char[]{'-', '-', '-'};
@@ -49,6 +73,7 @@ public class FileProperties extends File{
             size = 0L;
             dateTime = LocalDateTime.now();
             mimeType = "?";
+            trashPath = null;
             printError("Error al leer las propiedades de '"+getAbsolutePath()+"'", e);
         }
     }
@@ -80,6 +105,14 @@ public class FileProperties extends File{
     public String getOwner() {return owner;}
     public String getGroup() {return group;}
     public long getSize() {return size;}
-    public LocalDateTime getDateTime() {return dateTime;}
     public String getMimeType() {return mimeType;}
+
+    public void setDateTime(LocalDateTime dateTime) {this.dateTime=dateTime;}
+    public LocalDateTime getDateTime() {return dateTime;}
+
+    private String trashPath;
+    public void setTrashPath(String trashPath) {this.trashPath=trashPath;}
+    public String getTrashPath() {return trashPath;}
+    private File trashInfo;
+    public File getTrashInfo() {return trashInfo;}
 }

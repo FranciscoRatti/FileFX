@@ -5,33 +5,31 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
-import main.FileFX;
 import node.TopButton;
 
 import java.io.File;
+import java.util.Optional;
 
-import main.Lib;
-import static panel.MainPane.*;
 import static main.FileFX.*;
 import static main.Lib.*;
 
 public class TopPane extends HBox {
+    private static TopButton back;
+    private static TopButton forward;
+    private static TopButton parent;
     private static TextField search;
+    private static TopButton clean;
+    private static TopButton reload;
 
     public TopPane() {
         super(10);
         setId("top_pane");
 
-        update();
-    }
+        back = new TopButton("back"   , "Deshacer" , e -> back());
+        forward = new TopButton("forward", "Rehacer"  , e -> forward());
+        parent = new TopButton("parent" , "Ir arriba", e -> parent());
 
-    public void update() {
-        printInfo("Actualizando panel superior");
-
-        ObservableList<Node> children = getChildren();
-        children.clear();
-
-        search = new TextField(FileFX.path);
+        search = new TextField();
         search.setId("top_text_field");
         search.setPrefColumnCount(200);
         search.setOnKeyPressed(e -> {
@@ -43,9 +41,7 @@ public class TopPane extends HBox {
                     printError("El archivo o directorio "+text+" no existe", null);
                     showAlert(new Alert(Alert.AlertType.ERROR), "El archivo o directorio "+text+" no existe", "ERROR");
                 } else {
-                    printInfo("Actualizando path a '"+Lib.BLUE+ FileFX.path+Lib.RESET+"'");
-                    path = text;
-                    deselectAll();
+                    printInfo("Actualizando path a '"+BLUE+path+RESET+"'");
 
                     updateCenter();
                     updateTop();
@@ -54,15 +50,61 @@ public class TopPane extends HBox {
             }
         });
 
+        clean = new TopButton("clean", "Limpiar papelera", e -> restoreSelected());
+        clean.setOnAction(e -> {
+            Optional<ButtonType> result = showAlert(new Alert(Alert.AlertType.CONFIRMATION), "Todos los archivos de papelera\nseran eliminados permanentemente", "ADVERTENCIA");
+            if (result.isPresent()) {
+                ButtonBar.ButtonData option = result.get().getButtonData();
+                if (option.equals(ButtonBar.ButtonData.OK_DONE)) {
+
+                    // Eliminar
+                    try {
+                        printExecute("Limpiando la papelera");
+                        new ProcessBuilder("rm", "-Rf", TRASH+"files", TRASH+"info").start().waitFor();
+                        new ProcessBuilder("mkdir", TRASH+"files", TRASH+"info").start().waitFor();
+                    } catch (Exception ex) {
+                        printError("Error al eliminar archivo", ex);
+                    }
+
+                    path = TRASH+"files/";
+
+                    updateCenter();
+                    updateTop();
+                    updateRight();
+                }
+            }
+        });
+
+        reload = new TopButton("reload" , "Recargar" , e -> updateAll());
+
+        update();
+    }
+
+    public void update() {
+        printInfo("Actualizando panel superior");
+
+        ObservableList<Node> children = getChildren();
+        children.clear();
+
+
+
         String[] buttons = config.getProperty("top_buttons").split(",");
         for (String button : buttons) {
 
             switch (button) {
-                case "back" -> children.add(new TopButton("back", "Deshacer", e -> back()));
-                case "forward" -> children.add(new TopButton("forward", "Rehacer", e -> forward()));
-                case "parent" -> children.add(new TopButton("parent", "Ir arriba", e -> parent()));
-                case "search" -> children.add(search);
-                case "reload" -> children.add(new TopButton("reload", "Recargar", e -> updateAll()));
+                case "back"    -> children.add(back);
+                case "forward" -> children.add(forward);
+                case "parent"  -> children.add(parent);
+                case "search"  -> {
+                    children.add(search);
+                    search.setText(path.startsWith(TRASH+"files") ?
+                            "trash"+path.substring(HOME.length()+25) :
+                            path.startsWith(HOME) ?
+                            "~/"+path.substring(HOME.length()+1) :
+                            path);
+                }
+                case "clean" -> {if (path.startsWith(TRASH+"files")) children.add(clean);}
+                case "reload"  -> children.add(reload);
             }
         }
     }
