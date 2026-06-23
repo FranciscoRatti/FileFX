@@ -172,7 +172,12 @@ public class RightPane extends ScrollPane {
     }
 
     public static boolean isAnyFocus() {
-        return nameNode.isFocused() || sizeNode.isFocused() || dateTimeNode.isFocused() || tipeNode.isFocused() ||
-                permissionsNode.isFocused() || ownerNode.isFocused() || groupNode.isFocused();
+        return  nameNode != null ? nameNode.isFocused() :
+                sizeNode != null ? sizeNode.isFocused() :
+                dateTimeNode != null ? dateTimeNode.isFocused() :
+                tipeNode != null ? tipeNode.isFocused() :
+                permissionsNode != null ? permissionsNode.isFocused() :
+                ownerNode != null ? ownerNode.isFocused() :
+                groupNode != null ? groupNode.isFocused() : false;
     }
 }

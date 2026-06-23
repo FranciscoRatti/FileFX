@@ -87,8 +87,8 @@ public class TopPane extends HBox {
         children.clear();
 
 
-
-        String[] buttons = config.getProperty("top_buttons").split(",");
+        String textButtons = config.getProperty("top_buttons");
+        String[] buttons = textButtons.substring(1, textButtons.length()-1).split(",");
         for (String button : buttons) {
 
             switch (button) {

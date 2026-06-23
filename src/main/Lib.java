@@ -62,23 +62,30 @@ public class Lib {
         ObservableList<MenuItem> contextMenuItems = contextMenu.getItems();
         MenuItem pasteItem;
 
-        if (open == 1) contextMenuItems.add(createNewOpenItem());
-        if (openWith == 1) contextMenuItems.add(createNewOpenWithItem());
+        String textIcons = config.getProperty("context_menu_icons");
+        String[] configIcons = textIcons.substring(1, textIcons.length()-1).split(",");
+        String[] icons = {"", "", "", "", "", "", "", "", "", "", "", ""};
+        for (int i = 0; i < configIcons.length; i++) {
+            icons[i] = configIcons[i];
+        }
 
-        if (createFile == 1) contextMenuItems.add(createNewFileItem());
-        if (createDirectory == 1) contextMenuItems.add(createNewDirectoryItem());
-        if (rename == 1) contextMenuItems.add(createRenameItem());
+        if (open == 1) contextMenuItems.add(createNewOpenItem(icons[0]));
+        if (openWith == 1) contextMenuItems.add(createNewOpenWithItem(icons[1]));
 
-        if (copy == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createCopyItem());
-        if (cut == 1) contextMenuItems.add(createCutItem());
-        if (paste == 1) contextMenuItems.add(pasteItem = createPasteItem());
+        if (createFile == 1) contextMenuItems.add(createNewFileItem(icons[2]));
+        if (createDirectory == 1) contextMenuItems.add(createNewDirectoryItem(icons[3]));
+        if (rename == 1) contextMenuItems.add(createRenameItem(icons[4]));
+
+        if (copy == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createCopyItem(icons[5]));
+        if (cut == 1) contextMenuItems.add(createCutItem(icons[6]));
+        if (paste == 1) contextMenuItems.add(pasteItem = createPasteItem(icons[7]));
         else pasteItem = null;
 
-        if (restore == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createRestoreItem());
-        if (trash == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createTrashItem());
-        if (remove == 1) contextMenuItems.add(createRemoveItem());
+        if (restore == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createRestoreItem(icons[8]));
+        if (trash == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createTrashItem(icons[9]));
+        if (remove == 1) contextMenuItems.add(createRemoveItem(icons[10]));
 
-        if (shell == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createOpenShellItem());
+        if (shell == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createOpenShellItem(icons[11]));
 
         if (Boolean.parseBoolean(config.getProperty("check_clipboard_paste"))) {
             contextMenu.setOnShowing(e -> {
@@ -101,8 +108,8 @@ public class Lib {
         return contextMenu;
     }
 
-    private static MenuItem createNewOpenItem() {
-        MenuItem item = new MenuItem("Abrir");
+    private static MenuItem createNewOpenItem(String icon) {
+        MenuItem item = new MenuItem("Abrir", createIconItem(icon));
         item.setOnAction(e -> {
             if (selectedItem != null) {
                 centerPane.openSelected();
@@ -110,8 +117,8 @@ public class Lib {
         });
         return item;
     }
-    private static Menu createNewOpenWithItem() {
-        Menu menu = new Menu("Abrir con");
+    private static Menu createNewOpenWithItem(String icon) {
+        Menu menu = new Menu("Abrir con", createIconItem(icon));
         ObservableList<MenuItem> childrens = menu.getItems();
 
         Platform.runLater(() -> {
@@ -133,11 +140,11 @@ public class Lib {
                     }
 
                     if (isMimeTypeEqual) {
-                    ImageView icon = new ImageView(app.getIcon());
-                    icon.setPreserveRatio(true);
-                    icon.setFitHeight(20);
+                    ImageView imageIcon = new ImageView(app.getIcon());
+                    imageIcon.setPreserveRatio(true);
+                    imageIcon.setFitHeight(20);
 
-                    MenuItem item = new MenuItem(app.getName(), icon);
+                    MenuItem item = new MenuItem(app.getName(), imageIcon);
                     item.setOnAction(ev -> {
                         app.openWith(selectedItem);
                     });
@@ -155,7 +162,7 @@ public class Lib {
 
         return menu;
     }
-    private static Menu createNewFileItem() {
+    private static Menu createNewFileItem(String icon) {
         MenuItem item = new MenuItem("Sin formato");
         item.setOnAction(e -> {
             Optional<String> result = showAlert(new TextInputDialog(), "Ingrese nombre del archivo", null);
@@ -175,11 +182,10 @@ public class Lib {
           }
         });
 
-        return new Menu("Crear archivo",
-            new ImageView("file://" + ABSOLUTE_PATH + "share/filefx/icons/context_menu/new_file.png"), item);
+        return new Menu("Crear archivo", createIconItem(icon), item);
     }
-    private static MenuItem createNewDirectoryItem() {
-      MenuItem item = new MenuItem("Crear carpeta", new ImageView("file://" + ABSOLUTE_PATH + "share/filefx/icons/context_menu/new_dir.png"));
+    private static MenuItem createNewDirectoryItem(String icon) {
+      MenuItem item = new MenuItem("Crear carpeta", createIconItem(icon));
       item.setOnAction(e -> {
           Optional<String> result = showAlert(new TextInputDialog(), "Ingrese nombre de la carpeta", null);
           if (result.isPresent()) {
@@ -199,34 +205,34 @@ public class Lib {
       });
       return item;
     }
-    private static MenuItem createRenameItem() {
-        MenuItem item = new MenuItem("Renombrar", new ImageView("file://" + ABSOLUTE_PATH + "share/filefx/icons/context_menu/rename.png"));
+    private static MenuItem createRenameItem(String icon) {
+        MenuItem item = new MenuItem("Renombrar", createIconItem(icon));
         if (rename != null) item.setAccelerator(rename[0]);
         item.setOnAction(e -> {
             RightPane.focusName();
         });
         return item;
     }
-    private static MenuItem createCopyItem() {
-        MenuItem item = new MenuItem("Copiar", new ImageView("file://" + ABSOLUTE_PATH + "share/filefx/icons/context_menu/copy.png"));
+    private static MenuItem createCopyItem(String icon) {
+        MenuItem item = new MenuItem("Copiar", createIconItem(icon));
         if (copy != null) item.setAccelerator(copy[0]);
         item.setOnAction(e -> {
             copyFilesToClipBoard(MainPane.parseFileLabelsToFiles(selectedItems), false);
         });
         return item;
     }
-    private static MenuItem createCutItem() {
-        MenuItem item = new MenuItem("Cortar", new ImageView("file://" + ABSOLUTE_PATH + "share/filefx/icons/context_menu/cut.png"));
+    private static MenuItem createCutItem(String icon) {
+        MenuItem item = new MenuItem("Cortar", createIconItem(icon));
         if (cut != null) item.setAccelerator(cut[0]);
         item.setOnAction(e -> {
             copyFilesToClipBoard(MainPane.parseFileLabelsToFiles(selectedItems), true);
         });
         return item;
     }
-    private static MenuItem createPasteItem() {
-        clipboardFiles = Boolean.parseBoolean(config.getProperty("check_clipboard_paste")) ? getClipboardFiles() : null;
+    private static MenuItem createPasteItem(String icon) {
+        clipboardFiles = Boolean.parseBoolean(config.getProperty("check_clipboard_paste")) ? getClipboardFiles() : clipboardFiles;
 
-        MenuItem item = new MenuItem("Pegar", new ImageView("file://" + ABSOLUTE_PATH + "share/filefx/icons/context_menu/paste.png"));
+        MenuItem item = new MenuItem("Pegar", createIconItem(icon));
         if (paste != null) item.setAccelerator(paste[0]);
         item.setOnAction(e -> {
             if (clipboardFiles == null) clipboardFiles = getClipboardFiles();
@@ -234,36 +240,42 @@ public class Lib {
         });
         return item;
     }
-    private static MenuItem createRestoreItem() {
-        MenuItem item = new MenuItem("Restaurar");
+    private static MenuItem createRestoreItem(String icon) {
+        MenuItem item = new MenuItem("Restaurar", createIconItem(icon));
         item.setOnAction(e -> {
             restoreSelected();
         });
         return item;
     }
-    private static MenuItem createTrashItem() {
-        MenuItem item = new MenuItem("Enviar a papelera", new ImageView("file://" + ABSOLUTE_PATH + "share/filefx/icons/context_menu/trash.png"));
+    private static MenuItem createTrashItem(String icon) {
+        MenuItem item = new MenuItem("Enviar a papelera", createIconItem(icon));
         if (trash != null) item.setAccelerator(trash[0]);
         item.setOnAction(e -> {
             trashFiles(parseFileLabelsToFiles(selectedItems));
         });
         return item;
     }
-    private static MenuItem createRemoveItem() {
-        MenuItem item = new MenuItem("Eliminar", new ImageView("file://" + ABSOLUTE_PATH + "share/filefx/icons/context_menu/remove.png"));
+    private static MenuItem createRemoveItem(String icon) {
+        MenuItem item = new MenuItem("Eliminar", createIconItem(icon));
         if (remove != null) item.setAccelerator(remove[0]);
         item.setOnAction(e -> {
             removeFiles(MainPane.parseFileLabelsToFiles(selectedItems));
         });
         return item;
     }
-    private static MenuItem createOpenShellItem() {
-      MenuItem item = new MenuItem("Abrir una terminal ", new ImageView("file://" + ABSOLUTE_PATH + "share/filefx/icons/context_menu/shell.png"));
+    private static MenuItem createOpenShellItem(String icon) {
+      MenuItem item = new MenuItem("Abrir una terminal ", createIconItem(icon));
       if (open_shell != null) item.setAccelerator(open_shell[0]);
       item.setOnAction(e -> {
           openShell();
       });
       return item;
+    }
+    private static Label createIconItem(String text) {
+        Label icon = new Label(text);
+        icon.setFont(nerdFont);
+        icon.setId("context_menu_icon");
+        return icon;
     }
 
     public static void updateTop() {

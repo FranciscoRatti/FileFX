@@ -154,3 +154,10 @@
     -fx-alignment: CENTER-LEFT;
     -fx-content-display: LEFT;
 }
+
+#context_menu_icon {
+    -fx-font-size: 12;
+    -fx-alignment: CENTER;
+    -fx-text-fill: white;
+    -fx-label-padding: 0 10 0 0;
+}

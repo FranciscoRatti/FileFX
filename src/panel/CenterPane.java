@@ -39,7 +39,7 @@ public class CenterPane extends ScrollPane {
     public CenterPane() {
         if (!new File(path).exists()) {
             printError("El directorio inicial '"+path+"' no existe", null);
-            path = "/";
+            path = HOME;
         }
         fileLabels = new ArrayList<>();
         selectedItems = new ArrayList<>();
