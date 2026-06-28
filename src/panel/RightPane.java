@@ -117,14 +117,14 @@ public class RightPane extends ScrollPane {
             String sizeText = String.valueOf(size);
             int sizeTextLenght = sizeText.length();
 
-            if (size >= 1000)
-                sizeText = sizeText.substring(0, sizeTextLenght - 3) + "," + sizeText.substring(sizeTextLenght - 3, sizeTextLenght - 1) + " KB";
-            else if (size >= 1000000)
-                sizeText = sizeText.substring(0, sizeText.length() - 6) + "," + sizeText.substring(sizeTextLenght - 6, sizeTextLenght - 4) + " MB";
+            if (size >= 1000000000000L)
+                sizeText = sizeText.substring(0, sizeText.length() - 12) + "," + sizeText.substring(sizeTextLenght - 12, sizeTextLenght - 10) + " TB";
             else if (size >= 1000000000)
                 sizeText = sizeText.substring(0, sizeText.length() - 9) + "," + sizeText.substring(sizeTextLenght - 9, sizeTextLenght - 7) + " GB";
-            else if (size >= 1000000000000L)
-                sizeText = sizeText.substring(0, sizeText.length() - 12) + "," + sizeText.substring(sizeTextLenght - 12, sizeTextLenght - 10) + " TB";
+            else if (size >= 1000000)
+                sizeText = sizeText.substring(0, sizeText.length() - 6) + "," + sizeText.substring(sizeTextLenght - 6, sizeTextLenght - 4) + " MB";
+            else if (size >= 1000)
+                sizeText = sizeText.substring(0, sizeTextLenght - 3) + "," + sizeText.substring(sizeTextLenght - 3, sizeTextLenght - 1) + " KB";
             else sizeText += " BI";
 
             sizeNode = new RightNode("Tamaño :", sizeText, false);

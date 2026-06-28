@@ -12,9 +12,6 @@ import static main.FileFX.*;
 import static main.Lib.printInfo;
 
 public class LeftPane extends VBox {
-    private VBox placesBox;
-    private VBox devicesBox;
-
     public LeftPane() {
         super(0);
         setId("left_pane");
@@ -28,7 +25,7 @@ public class LeftPane extends VBox {
         children.clear();
 
         if (SHOW_PLACES) {
-            placesBox = new VBox();
+            VBox placesBox = new VBox();
             ObservableList<Node> placesChildren = placesBox.getChildren();
 
             Label title = new Label("Lugares");
@@ -47,7 +44,7 @@ public class LeftPane extends VBox {
         }
 
         if (SHOW_DEVICES) {
-            devicesBox = new VBox();
+            VBox devicesBox = new VBox();
 
             Label title = new Label("Dispositivos");
             title.setId("left_label_title");

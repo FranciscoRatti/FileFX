@@ -6,6 +6,7 @@ import main.FileFX;
 
 import static main.FileFX.nerdFont;
 import static main.Lib.*;
+import static panel.MainPane.selectThis;
 
 public class LeftNode extends Label {
     public LeftNode(String name, String icon, String path) {
@@ -24,10 +25,11 @@ public class LeftNode extends Label {
                 printInfo("Yendo a '"+BLUE+path+RESET+"'");
 
                 forwardBuffer.clear();
-                backBuffer.add(path);
+                backBuffer.add(FileFX.path);
                 FileFX.path = path;
 
                 updateCenter();
+                selectThis();
                 updateTop();
                 updateRight();
             }
