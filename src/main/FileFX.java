@@ -5,10 +5,11 @@ import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import panel.MainPane;
-import scene.*;
+import scene.Scene;
 import stage.OthersApplicationsStage;
 
 import java.awt.*;
@@ -25,10 +26,11 @@ public class FileFX extends javafx.application.Application {
     public static Properties dynamicValues;
     public static Properties iconsMyme;
     public static Properties iconsExtension;
+    public static Properties colorsMyme;
+    public static Properties colorsExtension;
 
     public static Font nerdFont;
     public static volatile boolean isApplicationsSucceded = false;
-    public static boolean showHidden;
 
     public static ArrayList<DesktopApplication> desktopApplications;
     public static Stage othersApplicationsStage;
@@ -55,7 +57,7 @@ public class FileFX extends javafx.application.Application {
             System.exit(0);
         }
 
-        showHidden = Boolean.parseBoolean(config.getProperty("show_hidden"));
+        SHOW_HIDDEN = Boolean.parseBoolean(config.getProperty("show_hidden"));
 
         printInfo("Cargando archivo de combinaciones de teclado");
         try (FileInputStream fileInputStream = new FileInputStream(CONFIG_PATH+"key_binding.properties")) {
@@ -91,7 +93,7 @@ public class FileFX extends javafx.application.Application {
         }
         printInfo("Path inicial: '"+BLUE+path+RESET+"'");
 
-        printInfo("Cargando combinaciones de tecla");
+        printInfo("Cargando combinaciones de teclado");
         updateKeyBinding();
 
         printInfo("Cargando archivo de iconos");
@@ -111,6 +113,35 @@ public class FileFX extends javafx.application.Application {
             });
         } catch (IOException e) {
             printError("No se pudo leer el archivo de iconos", e);
+            System.exit(0);
+        }
+
+        printInfo("Cargando archivo de colores");
+        try (FileInputStream input = new FileInputStream(CONFIG_PATH+"colors_binding.properties")) {
+            Properties colorsBinding = new Properties();
+            colorsBinding.load(input);
+
+            colorsMyme = new Properties();
+            colorsExtension = new Properties();
+
+            colorsBinding.forEach((arg0, arg1) -> {
+                String k = (String) arg0;
+                String v = (String) arg1;
+
+                if (k.startsWith(".")) colorsExtension.put(k, v);
+                else {
+                    colorsMyme.put(k, v);
+                    if (k.equals("focus")) {
+                        FOCUS_COLOR = Color.valueOf(v);
+                        FOCUS_COLOR_RGB = new double[]{FOCUS_COLOR.getRed() * 255, FOCUS_COLOR.getGreen() * 255, FOCUS_COLOR.getBlue() * 255};
+                    } else if (k.equals("unknow")) {
+                        UNKNOW_COLOR = Color.valueOf(v);
+                        UNKNOW_COLOR_RGB = new double[]{UNKNOW_COLOR.getRed() * 255, UNKNOW_COLOR.getGreen() * 255, UNKNOW_COLOR.getBlue() * 255};
+                    }
+                }
+            });
+        } catch (IOException e) {
+            printError("No se puedo leer archivo de colores", e);
             System.exit(0);
         }
 
@@ -252,4 +283,11 @@ public class FileFX extends javafx.application.Application {
     public static KeyCombination[] deselect_all;
     public static KeyCombination[] update_all;
     public static KeyCombination[] change_show_right_pane;
+
+    // Configuracion
+    public static boolean SHOW_HIDDEN;
+    public static Color FOCUS_COLOR;
+    public static double[] FOCUS_COLOR_RGB;
+    public static Color UNKNOW_COLOR;
+    public static double[] UNKNOW_COLOR_RGB;
 }

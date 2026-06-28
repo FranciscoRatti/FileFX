@@ -1,8 +1,12 @@
 package entity;
 
 import javafx.scene.image.Image;
-import node.FileLabel;
-import java.io.*;
+import node.CenterNode;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 import static main.Lib.*;
 
@@ -55,7 +59,7 @@ public class DesktopApplication {
         if (name == null) name = "";
     }
 
-    public void openWith(FileLabel selectedItem) {
+    public void openWith(CenterNode selectedItem) {
         if (hasParameter) {
             File file = selectedItem.getFile();
             String parameterPath = file.getAbsolutePath();

@@ -1,13 +1,14 @@
 package panel;
 
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
+import node.CenterNode;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import main.FileFX;
-import node.FileLabel;
-import static main.Lib.*;
+import static main.FileFX.*;
+import static main.Lib.printInfo;
 
 public class MainPane extends BorderPane {
     public static CenterPane centerPane;
@@ -17,8 +18,8 @@ public class MainPane extends BorderPane {
 
     private boolean isRightPaneShow;
 
-    public static ArrayList<FileLabel> selectedItems;
-    public static FileLabel selectedItem;
+    public static ArrayList<CenterNode> selectedItems;
+    public static CenterNode selectedItem;
 
     public MainPane() {
         super();
@@ -28,7 +29,7 @@ public class MainPane extends BorderPane {
         setTop(topPane);
         rightPane = new RightPane();
         setRight(rightPane);
-        changeShowRightPane(Boolean.parseBoolean(FileFX.config.getProperty("show_right_pane")));
+        changeShowRightPane(Boolean.parseBoolean(config.getProperty("show_right_pane")));
         leftPane = new LeftPane();
         setLeft(leftPane);
 
@@ -51,19 +52,27 @@ public class MainPane extends BorderPane {
     public static void deselectAll() {
         if (!selectedItems.isEmpty() || selectedItem != null) {
             selectedItem = null;
-            for (FileLabel fileLabel : selectedItems) fileLabel.setSelected(false);
+            for (CenterNode centerNode : selectedItems) centerNode.setSelected(false);
             selectedItems.clear();
 
             printInfo("Se deselecciono todo");
         }
     }
+    public static void selectThis() {
+        if (Boolean.parseBoolean(config.getProperty("show_this"))) {
+            CenterPane.centerNodes.getFirst().setSelected(true);
+        } else {
+            selectedItem = new CenterNode(new File(path));
+            selectedItem.setIcon(iconsMyme.getProperty("this"), Color.valueOf(colorsMyme.getProperty("this")));
+        }
+    }
 
-    public static File[] parseFileLabelsToFiles(ArrayList<FileLabel> fileLabelList) {
-        if (!fileLabelList.isEmpty()) {
-            File[] listFiles = new File[fileLabelList.size()];
-            for (int i = 0; i < fileLabelList.size(); i++) {
-                FileLabel fileLabel = fileLabelList.get(i);
-                listFiles[i] = fileLabel.getFile();
+    public static File[] parseFileLabelsToFiles(ArrayList<CenterNode> centerNodeList) {
+        if (!centerNodeList.isEmpty()) {
+            File[] listFiles = new File[centerNodeList.size()];
+            for (int i = 0; i < centerNodeList.size(); i++) {
+                CenterNode centerNode = centerNodeList.get(i);
+                listFiles[i] = centerNode.getFile();
             }
             return listFiles;
         } else {

@@ -6,7 +6,8 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -14,11 +15,15 @@ import javafx.stage.Stage;
 import main.FileFX;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
-import static main.Lib.*;
-import static main.FileFX.*;
-import static panel.MainPane.*;
+import static main.FileFX.desktopApplications;
+import static main.Lib.CONFIG_PATH;
+import static main.Lib.printOk;
+import static panel.MainPane.selectedItem;
+import static panel.MainPane.selectedItems;
 
 public class OthersApplicationsStage extends Stage {
     public static VBox pane;

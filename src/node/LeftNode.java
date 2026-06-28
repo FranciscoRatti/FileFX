@@ -1,15 +1,14 @@
 package node;
 
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
+import main.FileFX;
 
-import main.*;
-
-import static main.FileFX.*;
+import static main.FileFX.nerdFont;
 import static main.Lib.*;
 
-public class PlaceLabel extends Label {
-    public PlaceLabel(String name, String icon, String path) {
+public class LeftNode extends Label {
+    public LeftNode(String name, String icon, String path) {
         super(name);
 
         Label label = new Label(icon);

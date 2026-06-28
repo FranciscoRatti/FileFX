@@ -2,32 +2,37 @@ package panel;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
-import node.TopButton;
+import node.TopNode;
 
 import java.io.File;
 import java.util.Optional;
 
-import static main.FileFX.*;
+import static main.FileFX.config;
+import static main.FileFX.path;
 import static main.Lib.*;
+import static panel.CenterPane.centerNodes;
 
 public class TopPane extends HBox {
-    private static TopButton back;
-    private static TopButton forward;
-    private static TopButton parent;
+    private static TopNode back;
+    private static TopNode forward;
+    private static TopNode parent;
     private static TextField search;
-    private static TopButton clean;
-    private static TopButton reload;
+    private static TopNode clean;
+    private static TopNode reload;
 
     public TopPane() {
         super(10);
         setId("top_pane");
 
-        back = new TopButton("back"   , "Deshacer" , e -> back());
-        forward = new TopButton("forward", "Rehacer"  , e -> forward());
-        parent = new TopButton("parent" , "Ir arriba", e -> parent());
+        back = new TopNode("back"   , "Deshacer" , e -> back());
+        forward = new TopNode("forward", "Rehacer"  , e -> forward());
+        parent = new TopNode("parent" , "Ir arriba", e -> parent());
 
         search = new TextField();
         search.setId("top_text_field");
@@ -37,20 +42,27 @@ public class TopPane extends HBox {
 
             if (key.equals(KeyCode.ENTER)) {
                 String text = search.getText();
+                if (!text.endsWith("/")) text+="/";
+
+                if (text.startsWith("~")) text = HOME+text.substring(1);
+                else if (text.startsWith("trash")) text = TRASH+"files"+text.substring(5);
+
                 if (!new File(text).exists()) {
                     printError("El archivo o directorio "+text+" no existe", null);
                     showAlert(new Alert(Alert.AlertType.ERROR), "El archivo o directorio "+text+" no existe", "ERROR");
                 } else {
+                    path = text;
                     printInfo("Actualizando path a '"+BLUE+path+RESET+"'");
 
                     updateCenter();
                     updateTop();
+                    if (!centerNodes.isEmpty()) centerNodes.getFirst().setSelected(true);
                     updateRight();
                 }
             }
         });
 
-        clean = new TopButton("clean", "Limpiar papelera", e -> restoreSelected());
+        clean = new TopNode("clean", "Limpiar papelera", e -> restoreSelected());
         clean.setOnAction(e -> {
             Optional<ButtonType> result = showAlert(new Alert(Alert.AlertType.CONFIRMATION), "Todos los archivos de papelera\nseran eliminados permanentemente", "ADVERTENCIA");
             if (result.isPresent()) {
@@ -68,14 +80,14 @@ public class TopPane extends HBox {
 
                     path = TRASH+"files/";
 
-                    updateCenter();
                     updateTop();
                     updateRight();
+                    updateCenter();
                 }
             }
         });
 
-        reload = new TopButton("reload" , "Recargar" , e -> updateAll());
+        reload = new TopNode("reload" , "Recargar" , e -> updateAll());
 
         update();
     }
@@ -85,7 +97,6 @@ public class TopPane extends HBox {
 
         ObservableList<Node> children = getChildren();
         children.clear();
-
 
         String textButtons = config.getProperty("top_buttons");
         String[] buttons = textButtons.substring(1, textButtons.length()-1).split(",");

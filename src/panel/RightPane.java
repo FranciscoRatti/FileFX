@@ -4,29 +4,31 @@ import entity.FileProperties;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.image.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.*;
-
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import main.Lib;
-import node.FileField;
+import node.RightNode;
 
 import java.time.LocalDateTime;
 
 import static main.FileFX.*;
 import static main.Lib.*;
-import static panel.MainPane.*;
+import static panel.MainPane.selectedItem;
 
 public class RightPane extends ScrollPane {
-    private static FileField nameNode;
-    private static FileField sizeNode;
-    private static FileField dateTimeNode;
-    private static FileField tipeNode;
-    private static FileField permissionsNode;
-    private static FileField ownerNode;
-    private static FileField groupNode;
+    private static RightNode nameNode;
+    private static RightNode sizeNode;
+    private static RightNode dateTimeNode;
+    private static RightNode tipeNode;
+    private static RightNode permissionsNode;
+    private static RightNode ownerNode;
+    private static RightNode groupNode;
 
     private VBox pane;
     private double paneWidth;
@@ -91,6 +93,10 @@ public class RightPane extends ScrollPane {
                 Text label = new Text(selectedItem.getIcon());
                 label.setFont(nerdFont);
                 label.setId("right_miniatura");
+                if (Boolean.parseBoolean(config.getProperty("fill_miniatura_like_icon")))
+                    label.setFill(selectedItem.getColor());
+                else
+                    label.setFill(UNKNOW_COLOR);
 
                 StackPane miniaturaPane = new StackPane(label);
                 miniaturaPane.setMinSize(paneWidth, paneWidth);
@@ -99,7 +105,7 @@ public class RightPane extends ScrollPane {
             }
 
             // Propiedades
-            nameNode = new FileField("Nombre :", selectedItem.getName(), !path.startsWith(TRASH+"files"));
+            nameNode = new RightNode("Nombre :", selectedItem.getName(), !path.startsWith(TRASH+"files"));
             nameNode.textField.setOnKeyPressed(e -> {
                 if (e.getCode().equals(KeyCode.ENTER)) {
                     renameFile(propertie, nameNode.textField.getText());
@@ -121,30 +127,30 @@ public class RightPane extends ScrollPane {
                 sizeText = sizeText.substring(0, sizeText.length()-12)+","+sizeText.substring(sizeTextLenght-12, sizeTextLenght-10)+" TB";
             else sizeText += " BI";
 
-            sizeNode = new FileField("Tamaño :", sizeText, false);
+            sizeNode = new RightNode("Tamaño :", sizeText, false);
 
             // Fecha
             LocalDateTime dateTime = propertie.getDateTime();
             LocalDateTime now = LocalDateTime.now();
-            dateTimeNode = new FileField("Fecha :",
+            dateTimeNode = new RightNode("Fecha :",
                     dateTime.isAfter(now.minusDays(1)) ? dateTime.getHour()+":"+dateTime.getMinute() :
                     dateTime.isAfter(now.minusYears(1)) ? dateTime.getDayOfMonth()+"/"+dateTime.getMonthValue() :
                     dateTime.getDayOfMonth()+"/"+dateTime.getMonthValue()+"/"+dateTime.getYear(),
                     false);
 
             // Tipo mime
-            tipeNode = new FileField("Tipo :", propertie.getMimeType(), false);
+            tipeNode = new RightNode("Tipo :", propertie.getMimeType(), false);
 
             // Permisos
-            permissionsNode = new FileField("Permisos :",
+            permissionsNode = new RightNode("Permisos :",
                     new String(propertie.getOwnerPermissions())+
                     new String(propertie.getGroupPermissions())+
                     new String(propertie.getOtherPermissions()),
                     false);
 
             // Usuario y grupo
-            ownerNode = new FileField("Usuario :", propertie.getOwner(), true);
-            groupNode = new FileField("Grupo   :", propertie.getGroup(), true);
+            ownerNode = new RightNode("Usuario :", propertie.getOwner(), true);
+            groupNode = new RightNode("Grupo   :", propertie.getGroup(), true);
 
             children.addAll(
                     new node.Separator(10, Orientation.HORIZONTAL),
@@ -172,12 +178,12 @@ public class RightPane extends ScrollPane {
     }
 
     public static boolean isAnyFocus() {
-        return  nameNode != null ? nameNode.isFocused() :
-                sizeNode != null ? sizeNode.isFocused() :
-                dateTimeNode != null ? dateTimeNode.isFocused() :
-                tipeNode != null ? tipeNode.isFocused() :
-                permissionsNode != null ? permissionsNode.isFocused() :
-                ownerNode != null ? ownerNode.isFocused() :
-                groupNode != null ? groupNode.isFocused() : false;
+        return  (nameNode != null && nameNode.textField.isFocused()) ||
+                (sizeNode != null && sizeNode.textField.isFocused()) ||
+                (dateTimeNode != null && dateTimeNode.textField.isFocused()) ||
+                (tipeNode != null && tipeNode.textField.isFocused()) ||
+                (permissionsNode != null && permissionsNode.textField.isFocused()) ||
+                (ownerNode != null && ownerNode.textField.isFocused()) ||
+                (groupNode != null && groupNode.textField.isFocused());
     }
 }

@@ -4,10 +4,12 @@
 #top_text_field,
 #right_close_button, #right_component, #right_label,
 #left_label_title, #left_place_label,
-#center_label_b1, #center_label_b2,
-#center_label_focus_b1, #center_label_focus_b2,
 #other_button
 {-fx-text-fill: white; -fx-font-family: "Noto Sans Mono";}
+
+#center_label_b1, #center_label_b2,
+#center_label_focus_b1, #center_label_focus_b2
+{-fx-font-family: "Noto Sans Mono";}
 
 .menu-item
 {-fx-font-size: 11;}
@@ -112,10 +114,7 @@
 #right_close_button {-fx-padding: 0 4 2 4;}
 #right_component {-fx-padding: 1 2 1 2;}
 #right_label {-fx-padding: 0 0 0 10;}
-#right_miniatura {
-    -fx-font-size: 170;
-    -fx-fill: white;
-}
+#right_miniatura {-fx-font-size: 170;}
 
 #top_button, #top_text_field {
     -fx-border-radius: 2;
@@ -142,13 +141,18 @@
 }
 
 #center_label_b1, #center_label_b2, #center_label_focus_b1, #center_label_focus_b2 {-fx-label-padding: 2;}
-#center_label_focus_b1:hover, #center_label_focus_b2:hover {-fx-background-color: #41aeff;}
+#center_label_focus_b1:hover, #center_label_focus_b2:hover {
+    -fx-background-color: #41aeff;
+    -fx-border-color: #41aeff;
+}
 #center_label_focus_b1, #center_label_focus_b2 {
     -fx-background-color: #0095c8;
     -fx-border-color: #0095c8;
+    -fx-font-weight: bold;
 }
 
-#center_icon, #top_button {-fx-label-padding: 0 5 0 5;}
+#center_icon, #top_button, #center_icon_focus {-fx-label-padding: 0 5 0 5;}
+#center_icon_focus {-fx-text-fill: white;}
 
 #other_button {
     -fx-alignment: CENTER-LEFT;

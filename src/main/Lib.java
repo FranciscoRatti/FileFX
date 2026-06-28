@@ -1,22 +1,31 @@
 package main;
 
-import entity.*;
+import entity.DesktopApplication;
+import entity.FileProperties;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import node.FileLabel;
-import panel.*;
+import node.CenterNode;
+import panel.MainPane;
+import panel.RightPane;
 
-import java.awt.datatransfer.*;
-import java.io.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Optional;
 
 import static main.FileFX.*;
+import static panel.CenterPane.centerNodes;
 import static panel.MainPane.*;
-import static panel.CenterPane.*;
 
 public class Lib {
 
@@ -25,10 +34,10 @@ public class Lib {
     public static boolean isCut = false;
     public static final String HOME = System.getenv("HOME");
     public static final String TRASH = HOME+"/.local/share/Trash/";
-    //public static final String ABSOLUTE_PATH = "/usr/";
-    public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/";
-    //public static final String CONFIG_PATH = HOME + "/.config/filefx/";
-    public static final String CONFIG_PATH = ABSOLUTE_PATH+"share/filefx/";
+    public static final String ABSOLUTE_PATH = "/usr/";
+    //public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/";
+    public static final String CONFIG_PATH = HOME + "/.config/filefx/";
+    //public static final String CONFIG_PATH = ABSOLUTE_PATH+"share/filefx/";
 
     public static final String RESET = "\u001B[0m";
     public static final String RED = "\u001B[31m";
@@ -327,9 +336,10 @@ public class Lib {
             forwardBuffer.add(path);
             path = backBuffer.removeLast();
 
+            updateCenter();
+            selectThis();
             updateTop();
             updateRight();
-            updateCenter();
         }
     }
     public static void forward() {
@@ -338,9 +348,10 @@ public class Lib {
             backBuffer.add(path);
             path = forwardBuffer.removeLast();
 
+            updateCenter();
+            selectThis();
             updateTop();
             updateRight();
-            updateCenter();
         }
     }
     public static void parent() {
@@ -360,11 +371,12 @@ public class Lib {
             }
 
             updateCenter();
+            selectThis();
             updateTop();
             updateRight();
 
             Platform.runLater(() -> {
-              for (FileLabel label : fileLabels) {
+              for (CenterNode label : centerNodes) {
                   if (label.getFile().getAbsolutePath().equals(oldPath)) {
                       label.setSelected(true);
                       centerPane.setSelectedOnCenter();
@@ -656,5 +668,14 @@ public class Lib {
         } catch (IOException ex) {
             printError("Error al abrir la terminal '"+config.getProperty("terminal")+"'", ex);
         }
-      }
+    }
+
+    public static boolean isChildrenOf(Node ancestro, Node nodo) {
+        Node n = nodo;
+        while (n != null) {
+            if (n == ancestro) return true;
+            n = n.getParent();
+        }
+        return false;
+    }
 }

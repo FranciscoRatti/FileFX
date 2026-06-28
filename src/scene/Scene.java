@@ -1,12 +1,21 @@
 package scene;
 
 import javafx.application.Platform;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import panel.CenterPane;
+import panel.RightPane;
+import panel.TopPane;
 
-import panel.*;
-import static main.Lib.*;
 import static main.FileFX.*;
+import static main.FileFX.back;
+import static main.FileFX.forward;
+import static main.FileFX.parent;
+import static main.Lib.*;
+import static main.Lib.back;
+import static main.Lib.forward;
+import static main.Lib.parent;
 import static panel.MainPane.*;
 
 public class Scene extends javafx.scene.Scene {
@@ -44,7 +53,7 @@ public class Scene extends javafx.scene.Scene {
                     setKeyBindAction(rename, key, () -> RightPane.focusName());
 
                     setKeyBindAction(up, key, () -> centerPane.changeSelectKey(false, -1));
-                    setKeyBindAction(open, key, () -> centerPane.openSelected());
+                    setKeyBindAction(open, key, () -> CenterPane.openSelected());
                     setKeyBindAction(down, key, () -> centerPane.changeSelectKey(false, 1));
                     setKeyBindAction(parent, key, () -> parent());
                     setKeyBindAction(up_step, key, () -> centerPane.changeSelectKey(false, -3));
@@ -66,7 +75,11 @@ public class Scene extends javafx.scene.Scene {
                     setKeyBindAction(deselect_all, key, () -> {
                         if (TopPane.isSearchFocus()) updateTop();
                         else if (RightPane.isAnyFocus()) updateRight();
-                        else deselectAll();
+                        else {
+                            deselectAll();
+                            selectThis();
+                            updateRight();
+                        }
                     });
 
                     setKeyBindAction(update_all, key, () -> updateAll());
