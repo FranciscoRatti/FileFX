@@ -59,12 +59,12 @@ public class FileFX extends javafx.application.Application {
             SAVE_BOUNDS = Boolean.parseBoolean(config.getProperty("save_bounds"));
             SAVE_PATH = Boolean.parseBoolean(config.getProperty("save_path"));
             SAVE_SELECTION = Boolean.parseBoolean(config.getProperty("save_selection"));
-            TOP_BUTTONS = split(config.getProperty("top_buttons"));
+            TOP_BUTTONS = splitTwoTimes(config.getProperty("top_buttons"));
             RIGHT_WIDTH = Double.parseDouble(config.getProperty("right_width"));
             SHOW_RIGHT_PANE = Boolean.parseBoolean(config.getProperty("show_right_pane"));
             SHOW_MINIATURA = Boolean.parseBoolean(config.getProperty("show_miniatura"));
             SHOW_PLACES = Boolean.parseBoolean(config.getProperty("show_places"));
-            PLACES = split(config.getProperty("places").split(","));
+            PLACES = splitTwoTimes(config.getProperty("places"));
             SHOW_DEVICES = Boolean.parseBoolean(config.getProperty("show_devices"));
             IS_DIRECTORY_FIRST = Boolean.parseBoolean(config.getProperty("is_directory_first"));
             SHOW_HIDDEN = Boolean.parseBoolean(config.getProperty("show_hidden"));
@@ -178,7 +178,7 @@ public class FileFX extends javafx.application.Application {
 
         printInfo("Cargando escenario principal");
         stage=s;
-        stage.getIcons().add(new Image("file://"+ABSOLUTE_PATH+"share/filefx/icons/icon.png"));
+        stage.getIcons().add(new Image("file://"+ABSOLUTE_PATH+"share/filefx/icon.png"));
         stage.setTitle("Explorador de archivos");
         stage.setOnCloseRequest(e -> {
             if (SAVE_BOUNDS || SAVE_PATH || SAVE_SELECTION) {
@@ -225,10 +225,11 @@ public class FileFX extends javafx.application.Application {
     private String[] split(String text) {
         return text.substring(1, text.length()-1).split(",");
     }
-    private String[][] split(String[] text) {
-        String[][] result = new String[text.length][];
-        for (int i = 0; i < text.length; i++) {
-            result[i] = text[i].split(";");
+    private String[][] splitTwoTimes(String text) {
+        String[] split = text.substring(1, text.length()-1).split(",");
+        String[][] result = new String[split.length][];
+        for (int i = 0; i < split.length; i++) {
+            result[i] = split[i].substring(1, split[i].length()-1).split(";");
         }
         return result;
     }
@@ -317,7 +318,7 @@ public class FileFX extends javafx.application.Application {
     public static boolean SAVE_BOUNDS;
     public static boolean SAVE_PATH;
     public static boolean SAVE_SELECTION;
-    public static String[] TOP_BUTTONS;
+    public static String[][] TOP_BUTTONS;
     public static double RIGHT_WIDTH;
     public static boolean SHOW_RIGHT_PANE;
     public static boolean SHOW_MINIATURA;

@@ -93,6 +93,7 @@ public class RightPane extends ScrollPane {
                 Text label = new Text(selectedItem.getIcon());
                 label.setFont(nerdFont);
                 label.setId("right_miniatura");
+
                 if (FILL_MINIATURA_LIKE_ICON)
                     label.setFill(selectedItem.getColor());
                 else

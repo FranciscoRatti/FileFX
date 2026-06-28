@@ -10,7 +10,6 @@ cp share/filefx/theme.css ~/.config/filefx/
 
 sudo cp share/filefx/*.ttf /usr/share/filefx/
 sudo cp share/filefx/icon.png /usr/share/filefx/
-sudo cp -R share/filefx/icons /usr/share/filefx/
 sudo cp -R bin /usr/lib/filefx/
 sudo cp -R lib /usr/lib/filefx/
 
