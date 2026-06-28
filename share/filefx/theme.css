@@ -106,13 +106,13 @@
     -fx-background-radius: 0;
     -fx-background-color: transparent;
 }
-.scroll-pane > .scroll-bar .increment-arrow,
-.scroll-pane > .scroll-bar .decrement-arrow {
+.scroll-pane > .scroll-bar > .increment-arrow,
+.scroll-pane > .scroll-bar > .decrement-arrow {
     -fx-shape: "";
     -fx-padding: 0;
     -fx-background-color: transparent;
 }
-.scroll-pane > .scroll-bar:vertical .thumb {-fx-border-radius: 5;}
+.scroll-pane > .scroll-bar:vertical > .thumb {-fx-border-radius: 5;}
 
 #top_button, #top_text_field {
     -fx-border-radius: 2;

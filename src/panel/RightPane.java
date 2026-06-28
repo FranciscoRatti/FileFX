@@ -61,7 +61,6 @@ public class RightPane extends ScrollPane {
         });
         children.add(close);
 
-        ImageView miniatura;
         if (selectedItem != null) {
             FileProperties propertie = selectedItem.getPropertie();
             String extensionText = selectedItem.getExtension();
@@ -71,19 +70,19 @@ public class RightPane extends ScrollPane {
                     !propertie.isDirectory() && extensionText != null &&
                     (
                             extensionText.equals("bmp") ||
-                            extensionText.equals("gif") ||
-                            extensionText.equals("jpeg") ||
-                            extensionText.equals("jpg") ||
-                            extensionText.equals("png")
-            )) {
-                Image image = new Image("file://"+propertie.getAbsolutePath());
-                miniatura = new ImageView(image);
+                                    extensionText.equals("gif") ||
+                                    extensionText.equals("jpeg") ||
+                                    extensionText.equals("jpg") ||
+                                    extensionText.equals("png")
+                    )) {
+                Image image = new Image("file://" + propertie.getAbsolutePath());
+                ImageView miniatura = new ImageView(image);
                 miniatura.setPreserveRatio(true);
 
                 int imageWidth = (int) image.getWidth();
                 int imageHeight = (int) image.getHeight();
-                if (imageWidth < imageHeight) miniatura.setFitHeight(paneWidth-5);
-                else miniatura.setFitWidth(paneWidth-5);
+                if (imageWidth < imageHeight) miniatura.setFitHeight(paneWidth - 5);
+                else miniatura.setFitWidth(paneWidth - 5);
 
                 StackPane miniaturaPane = new StackPane(miniatura);
                 miniaturaPane.setMinSize(paneWidth, paneWidth);
@@ -106,7 +105,7 @@ public class RightPane extends ScrollPane {
             }
 
             // Propiedades
-            nameNode = new RightNode("Nombre :", selectedItem.getName(), !path.startsWith(TRASH+"files"));
+            nameNode = new RightNode("Nombre :", selectedItem.getName(), !path.startsWith(TRASH + "files"));
             nameNode.textField.setOnKeyPressed(e -> {
                 if (e.getCode().equals(KeyCode.ENTER)) {
                     renameFile(propertie, nameNode.textField.getText());
@@ -119,13 +118,13 @@ public class RightPane extends ScrollPane {
             int sizeTextLenght = sizeText.length();
 
             if (size >= 1000)
-                 sizeText = sizeText.substring(0, sizeTextLenght-3)+","+sizeText.substring(sizeTextLenght-3, sizeTextLenght-1)+" KB";
+                sizeText = sizeText.substring(0, sizeTextLenght - 3) + "," + sizeText.substring(sizeTextLenght - 3, sizeTextLenght - 1) + " KB";
             else if (size >= 1000000)
-                sizeText = sizeText.substring(0, sizeText.length()-6)+","+sizeText.substring(sizeTextLenght-6, sizeTextLenght-4)+" MB";
+                sizeText = sizeText.substring(0, sizeText.length() - 6) + "," + sizeText.substring(sizeTextLenght - 6, sizeTextLenght - 4) + " MB";
             else if (size >= 1000000000)
-                sizeText = sizeText.substring(0, sizeText.length()-9)+","+sizeText.substring(sizeTextLenght-9, sizeTextLenght-7)+" GB";
+                sizeText = sizeText.substring(0, sizeText.length() - 9) + "," + sizeText.substring(sizeTextLenght - 9, sizeTextLenght - 7) + " GB";
             else if (size >= 1000000000000L)
-                sizeText = sizeText.substring(0, sizeText.length()-12)+","+sizeText.substring(sizeTextLenght-12, sizeTextLenght-10)+" TB";
+                sizeText = sizeText.substring(0, sizeText.length() - 12) + "," + sizeText.substring(sizeTextLenght - 12, sizeTextLenght - 10) + " TB";
             else sizeText += " BI";
 
             sizeNode = new RightNode("Tamaño :", sizeText, false);
@@ -134,9 +133,9 @@ public class RightPane extends ScrollPane {
             LocalDateTime dateTime = propertie.getDateTime();
             LocalDateTime now = LocalDateTime.now();
             dateTimeNode = new RightNode("Fecha :",
-                    dateTime.isAfter(now.minusDays(1)) ? dateTime.getHour()+":"+dateTime.getMinute() :
-                    dateTime.isAfter(now.minusYears(1)) ? dateTime.getDayOfMonth()+"/"+dateTime.getMonthValue() :
-                    dateTime.getDayOfMonth()+"/"+dateTime.getMonthValue()+"/"+dateTime.getYear(),
+                    dateTime.isAfter(now.minusDays(1)) ? dateTime.getHour() + ":" + dateTime.getMinute() :
+                            dateTime.isAfter(now.minusYears(1)) ? dateTime.getDayOfMonth() + "/" + dateTime.getMonthValue() :
+                            dateTime.getDayOfMonth() + "/" + dateTime.getMonthValue() + "/" + dateTime.getYear(),
                     false);
 
             // Tipo mime
@@ -144,9 +143,9 @@ public class RightPane extends ScrollPane {
 
             // Permisos
             permissionsNode = new RightNode("Permisos :",
-                    new String(propertie.getOwnerPermissions())+
-                    new String(propertie.getGroupPermissions())+
-                    new String(propertie.getOtherPermissions()),
+                    new String(propertie.getOwnerPermissions()) +
+                            new String(propertie.getGroupPermissions()) +
+                            new String(propertie.getOtherPermissions()),
                     false);
 
             // Usuario y grupo
@@ -164,13 +163,6 @@ public class RightPane extends ScrollPane {
                     ownerNode,
                     groupNode
             );
-        } else {
-            miniatura = new ImageView("file://"+Lib.ABSOLUTE_PATH+"share/filefx/icons/right/void.png");
-
-            StackPane miniaturaPane = new StackPane(miniatura);
-            miniaturaPane.setMinHeight(paneWidth);
-
-            children.add(miniaturaPane);
         }
     }
 
