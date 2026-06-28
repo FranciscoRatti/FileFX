@@ -8,7 +8,7 @@ import javafx.scene.layout.VBox;
 import main.Lib;
 import node.LeftNode;
 
-import static main.FileFX.config;
+import static main.FileFX.*;
 import static main.Lib.printInfo;
 
 public class LeftPane extends VBox {
@@ -27,7 +27,7 @@ public class LeftPane extends VBox {
         ObservableList<Node> children = getChildren();
         children.clear();
 
-        if (Boolean.parseBoolean(config.getProperty("show_places"))) {
+        if (SHOW_PLACES) {
             placesBox = new VBox();
             ObservableList<Node> placesChildren = placesBox.getChildren();
 
@@ -35,12 +35,10 @@ public class LeftPane extends VBox {
             title.setId("left_label_title");
             placesChildren.add(title);
 
-            String[] places = config.getProperty("places").split(",");
-            for (String place : places) {
-                String[] values = place.substring(1, place.length()-1).split(";");
+            for (String[] place : PLACES) {
                 placesChildren.add(new LeftNode(
-                        values[0], values[1],
-                        values[2].charAt(0) == '~' ? Lib.HOME+values[2].substring(1) : values[2]
+                        place[0], place[1],
+                        place[2].charAt(0) == '~' ? Lib.HOME+place[2].substring(1) : place[2]
                         ));
             }
 
@@ -48,7 +46,7 @@ public class LeftPane extends VBox {
             children.add(placesBox);
         }
 
-        if (Boolean.parseBoolean(config.getProperty("show_devices"))) {
+        if (SHOW_DEVICES) {
             devicesBox = new VBox();
 
             Label title = new Label("Dispositivos");

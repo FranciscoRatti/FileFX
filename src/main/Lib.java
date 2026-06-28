@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import node.CenterNode;
+import panel.CenterPane;
 import panel.MainPane;
 import panel.RightPane;
 
@@ -71,11 +72,9 @@ public class Lib {
         ObservableList<MenuItem> contextMenuItems = contextMenu.getItems();
         MenuItem pasteItem;
 
-        String textIcons = config.getProperty("context_menu_icons");
-        String[] configIcons = textIcons.substring(1, textIcons.length()-1).split(",");
         String[] icons = {"", "", "", "", "", "", "", "", "", "", "", ""};
-        for (int i = 0; i < configIcons.length; i++) {
-            icons[i] = configIcons[i];
+        for (int i = 0; i < CONTEXT_MENU_ICONS.length; i++) {
+            icons[i] = CONTEXT_MENU_ICONS[i];
         }
 
         if (open == 1) contextMenuItems.add(createNewOpenItem(icons[0]));
@@ -96,7 +95,7 @@ public class Lib {
 
         if (shell == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createOpenShellItem(icons[11]));
 
-        if (Boolean.parseBoolean(config.getProperty("check_clipboard_paste"))) {
+        if (CHECK_CLIPBOARD_PASTE) {
             contextMenu.setOnShowing(e -> {
                 if (pasteItem != null) {
                     clipboardFiles = getClipboardFiles();
@@ -121,7 +120,7 @@ public class Lib {
         MenuItem item = new MenuItem("Abrir", createIconItem(icon));
         item.setOnAction(e -> {
             if (selectedItem != null) {
-                centerPane.openSelected();
+                CenterPane.openSelected();
             }
         });
         return item;
@@ -130,44 +129,41 @@ public class Lib {
         Menu menu = new Menu("Abrir con", createIconItem(icon));
         ObservableList<MenuItem> childrens = menu.getItems();
 
-        Platform.runLater(() -> {
-            menu.getParentPopup().setOnShowing(e -> {
-                childrens.clear();
-                while (!isApplicationsSucceded) {
-                    Thread.onSpinWait();
-                }
+        Platform.runLater(() -> menu.getParentPopup().setOnShowing(e -> {
+            lock.lock();
+            childrens.clear();
 
-                String mimeType = selectedItem.getPropertie().getMimeType();
-                for (DesktopApplication app : desktopApplications) {
-                    boolean isMimeTypeEqual = false;
+            String mimeType = selectedItem.getPropertie().getMimeType();
+            for (DesktopApplication app : desktopApplications) {
+                boolean isMimeTypeEqual = false;
 
-                    for (String mimeTypeApp : app.getMimeTypes()) {
-                        if (mimeType.equals(mimeTypeApp)) {
-                            isMimeTypeEqual = true;
-                            break;
-                        }
+                for (String mimeTypeApp : app.getMimeTypes()) {
+                    if (mimeType.equals(mimeTypeApp)) {
+                        isMimeTypeEqual = true;
+                        break;
                     }
-
-                    if (isMimeTypeEqual) {
-                    ImageView imageIcon = new ImageView(app.getIcon());
-                    imageIcon.setPreserveRatio(true);
-                    imageIcon.setFitHeight(20);
-
-                    MenuItem item = new MenuItem(app.getName(), imageIcon);
-                    item.setOnAction(ev -> {
-                        app.openWith(selectedItem);
-                    });
-                    childrens.add(item);
-                  }
                 }
 
-                MenuItem others = new MenuItem("Otra...");
-                others.setOnAction(ev -> {
-                    othersApplicationsStage.showAndWait();
+                if (isMimeTypeEqual) {
+                ImageView imageIcon = new ImageView(app.getIcon());
+                imageIcon.setPreserveRatio(true);
+                imageIcon.setFitHeight(20);
+
+                MenuItem item = new MenuItem(app.getName(), imageIcon);
+                item.setOnAction(ev -> {
+                    app.openWith(selectedItem);
                 });
-                childrens.add(others);
-            });
-        });
+                childrens.add(item);
+              }
+            }
+
+            MenuItem others = new MenuItem("Otra...");
+            others.setOnAction(ev ->
+                    othersApplicationsStage.showAndWait()
+            );
+            childrens.add(others);
+            lock.unlock();
+        }));
 
         return menu;
     }
@@ -239,7 +235,7 @@ public class Lib {
         return item;
     }
     private static MenuItem createPasteItem(String icon) {
-        clipboardFiles = Boolean.parseBoolean(config.getProperty("check_clipboard_paste")) ? getClipboardFiles() : clipboardFiles;
+        clipboardFiles = CHECK_CLIPBOARD_PASTE ? getClipboardFiles() : clipboardFiles;
 
         MenuItem item = new MenuItem("Pegar", createIconItem(icon));
         if (paste != null) item.setAccelerator(paste[0]);
@@ -371,7 +367,6 @@ public class Lib {
             }
 
             updateCenter();
-            selectThis();
             updateTop();
             updateRight();
 
@@ -663,10 +658,10 @@ public class Lib {
                 if (dir.isDirectory()) shellPath = dir.getAbsolutePath();
             }
 
-            ProcessBuilder pb = new ProcessBuilder(config.getProperty("terminal")).directory(new File(shellPath));
+            ProcessBuilder pb = new ProcessBuilder(TERMINAL).directory(new File(shellPath));
             pb.start();
         } catch (IOException ex) {
-            printError("Error al abrir la terminal '"+config.getProperty("terminal")+"'", ex);
+            printError("Error al abrir la terminal '"+TERMINAL+"'", ex);
         }
     }
 

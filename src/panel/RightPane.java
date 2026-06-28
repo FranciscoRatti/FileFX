@@ -34,7 +34,7 @@ public class RightPane extends ScrollPane {
     private double paneWidth;
 
     public RightPane() {
-        paneWidth = Double.parseDouble(config.getProperty("right_width"));
+        paneWidth = RIGHT_WIDTH;
 
         pane = new VBox();
         pane.setId("right_pane");
@@ -67,7 +67,7 @@ public class RightPane extends ScrollPane {
             String extensionText = selectedItem.getExtension();
 
             // Miniatura
-            if (Boolean.parseBoolean(config.getProperty("show_miniatura")) &&
+            if (SHOW_MINIATURA &&
                     !propertie.isDirectory() && extensionText != null &&
                     (
                             extensionText.equals("bmp") ||
@@ -93,7 +93,7 @@ public class RightPane extends ScrollPane {
                 Text label = new Text(selectedItem.getIcon());
                 label.setFont(nerdFont);
                 label.setId("right_miniatura");
-                if (Boolean.parseBoolean(config.getProperty("fill_miniatura_like_icon")))
+                if (FILL_MINIATURA_LIKE_ICON)
                     label.setFill(selectedItem.getColor());
                 else
                     label.setFill(UNKNOW_COLOR);

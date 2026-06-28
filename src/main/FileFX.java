@@ -17,6 +17,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static main.Lib.*;
 
@@ -30,11 +32,11 @@ public class FileFX extends javafx.application.Application {
     public static Properties colorsExtension;
 
     public static Font nerdFont;
-    public static volatile boolean isApplicationsSucceded = false;
+    public static String path = "";
+    public static final Lock lock = new ReentrantLock();
 
     public static ArrayList<DesktopApplication> desktopApplications;
     public static Stage othersApplicationsStage;
-    public static String path = "";
 
     public static MainPane mainPane;
     public static Scene scene;
@@ -52,12 +54,32 @@ public class FileFX extends javafx.application.Application {
         try (Reader reader = new InputStreamReader(new FileInputStream(CONFIG_PATH+"config.properties"), StandardCharsets.UTF_8)) {
             config = new Properties();
             config.load(reader);
+
+            TERMINAL = config.getProperty("terminal");
+            SAVE_BOUNDS = Boolean.parseBoolean(config.getProperty("save_bounds"));
+            SAVE_PATH = Boolean.parseBoolean(config.getProperty("save_path"));
+            SAVE_SELECTION = Boolean.parseBoolean(config.getProperty("save_selection"));
+            TOP_BUTTONS = split(config.getProperty("top_buttons"));
+            RIGHT_WIDTH = Double.parseDouble(config.getProperty("right_width"));
+            SHOW_RIGHT_PANE = Boolean.parseBoolean(config.getProperty("show_right_pane"));
+            SHOW_MINIATURA = Boolean.parseBoolean(config.getProperty("show_miniatura"));
+            SHOW_PLACES = Boolean.parseBoolean(config.getProperty("show_places"));
+            PLACES = split(config.getProperty("places").split(","));
+            SHOW_DEVICES = Boolean.parseBoolean(config.getProperty("show_devices"));
+            IS_DIRECTORY_FIRST = Boolean.parseBoolean(config.getProperty("is_directory_first"));
+            SHOW_HIDDEN = Boolean.parseBoolean(config.getProperty("show_hidden"));
+            SHOW_THIS = Boolean.parseBoolean(config.getProperty("show_this"));
+            SHOW_PARENT = Boolean.parseBoolean(config.getProperty("show_parent"));
+            FILL_TEXT_FILE_LIKE_ICON = Boolean.parseBoolean(config.getProperty("fill_text_file_like_icon"));
+            FILL_TEXT_DIR_LIKE_ICON = Boolean.parseBoolean(config.getProperty("fill_text_dir_like_icon"));
+            FILL_MINIATURA_LIKE_ICON = Boolean.parseBoolean(config.getProperty("fill_miniatura_like_icon"));
+            CONTEXT_MENU_ICONS = split(config.getProperty("context_menu_icons"));
+            CHECK_CLIPBOARD_PASTE = Boolean.parseBoolean(config.getProperty("check_clipboard_paste"));
+
         } catch (IOException e) {
             printError("No se pudo leer el archivo de "+RED+"configuracion"+RESET, e);
             System.exit(0);
         }
-
-        SHOW_HIDDEN = Boolean.parseBoolean(config.getProperty("show_hidden"));
 
         printInfo("Cargando archivo de combinaciones de teclado");
         try (FileInputStream fileInputStream = new FileInputStream(CONFIG_PATH+"key_binding.properties")) {
@@ -159,11 +181,7 @@ public class FileFX extends javafx.application.Application {
         stage.getIcons().add(new Image("file://"+ABSOLUTE_PATH+"share/filefx/icons/icon.png"));
         stage.setTitle("Explorador de archivos");
         stage.setOnCloseRequest(e -> {
-            boolean isSaveBounds = Boolean.parseBoolean(config.getProperty("save_bounds"));
-            boolean isSavePath = Boolean.parseBoolean(config.getProperty("save_path"));
-            boolean isSaveSelection = Boolean.parseBoolean(config.getProperty("save_selection"));
-
-            if (isSaveBounds || isSavePath || isSaveSelection) {
+            if (SAVE_BOUNDS || SAVE_PATH || SAVE_SELECTION) {
                 printInfo("Actualizando valores dinamicos:");
                 try (FileOutputStream output = new FileOutputStream(CONFIG_PATH+"dynamic_values.properties")) {
                     String width = String.valueOf(stage.getWidth());
@@ -175,12 +193,12 @@ public class FileFX extends javafx.application.Application {
                     printInfo("   init_path="+path);
                     printInfo("   init_selection="+selection);
                     
-                    if (isSaveBounds) {
+                    if (SAVE_BOUNDS) {
                         dynamicValues.replace("width", width);
                         dynamicValues.replace("height", height);
                     }
-                    if (isSavePath) dynamicValues.replace("init_path", path);
-                    if (isSaveSelection) dynamicValues.replace("init_selection", selection);
+                    if (SAVE_PATH) dynamicValues.replace("init_path", path);
+                    if (SAVE_SELECTION) dynamicValues.replace("init_selection", selection);
                     dynamicValues.store(output, "");
                 } catch (IOException ex) {
                     printError("Error al actualizar datos en dynamic_values.properties", ex);
@@ -202,7 +220,17 @@ public class FileFX extends javafx.application.Application {
 
         printInfo("Cargando applicaciones para abrir con");
         othersApplicationsStage = new OthersApplicationsStage();
-        isApplicationsSucceded = true;
+    }
+
+    private String[] split(String text) {
+        return text.substring(1, text.length()-1).split(",");
+    }
+    private String[][] split(String[] text) {
+        String[][] result = new String[text.length][];
+        for (int i = 0; i < text.length; i++) {
+            result[i] = text[i].split(";");
+        }
+        return result;
     }
 
     public static void updateKeyBinding() {
@@ -285,7 +313,27 @@ public class FileFX extends javafx.application.Application {
     public static KeyCombination[] change_show_right_pane;
 
     // Configuracion
+    public static String TERMINAL;
+    public static boolean SAVE_BOUNDS;
+    public static boolean SAVE_PATH;
+    public static boolean SAVE_SELECTION;
+    public static String[] TOP_BUTTONS;
+    public static double RIGHT_WIDTH;
+    public static boolean SHOW_RIGHT_PANE;
+    public static boolean SHOW_MINIATURA;
+    public static boolean SHOW_PLACES;
+    public static String[][] PLACES;
+    public static boolean SHOW_DEVICES;
+    public static boolean IS_DIRECTORY_FIRST;
     public static boolean SHOW_HIDDEN;
+    public static boolean SHOW_THIS;
+    public static boolean SHOW_PARENT;
+    public static boolean FILL_TEXT_FILE_LIKE_ICON;
+    public static boolean FILL_TEXT_DIR_LIKE_ICON;
+    public static boolean FILL_MINIATURA_LIKE_ICON;
+    public static String[] CONTEXT_MENU_ICONS;
+    public static boolean CHECK_CLIPBOARD_PASTE;
+
     public static Color FOCUS_COLOR;
     public static double[] FOCUS_COLOR_RGB;
     public static Color UNKNOW_COLOR;

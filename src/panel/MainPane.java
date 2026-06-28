@@ -29,7 +29,7 @@ public class MainPane extends BorderPane {
         setTop(topPane);
         rightPane = new RightPane();
         setRight(rightPane);
-        changeShowRightPane(Boolean.parseBoolean(config.getProperty("show_right_pane")));
+        changeShowRightPane(SHOW_RIGHT_PANE);
         leftPane = new LeftPane();
         setLeft(leftPane);
 
@@ -59,7 +59,7 @@ public class MainPane extends BorderPane {
         }
     }
     public static void selectThis() {
-        if (Boolean.parseBoolean(config.getProperty("show_this"))) {
+        if (SHOW_THIS) {
             CenterPane.centerNodes.getFirst().setSelected(true);
         } else {
             selectedItem = new CenterNode(new File(path));

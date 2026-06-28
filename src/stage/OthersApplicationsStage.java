@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import static main.FileFX.desktopApplications;
+import static main.FileFX.lock;
 import static main.Lib.CONFIG_PATH;
 import static main.Lib.printOk;
 import static panel.MainPane.selectedItem;
@@ -50,6 +51,7 @@ public class OthersApplicationsStage extends Stage {
         // Hilo
         Task<Void> task = new Task<Void>() {
             protected Void call() throws Exception {
+                lock.lock();
 
                 // Cargar applicaciones
                 ArrayList<File> desktopFiles = new ArrayList<>();
@@ -108,6 +110,7 @@ public class OthersApplicationsStage extends Stage {
                 }
 
                 printOk("Applicaciones para abrir con cargadas con exito");
+                lock.unlock();
                 return null;
             }
         };

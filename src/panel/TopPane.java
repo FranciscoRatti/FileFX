@@ -13,8 +13,7 @@ import node.TopNode;
 import java.io.File;
 import java.util.Optional;
 
-import static main.FileFX.config;
-import static main.FileFX.path;
+import static main.FileFX.*;
 import static main.Lib.*;
 import static panel.CenterPane.centerNodes;
 
@@ -98,9 +97,7 @@ public class TopPane extends HBox {
         ObservableList<Node> children = getChildren();
         children.clear();
 
-        String textButtons = config.getProperty("top_buttons");
-        String[] buttons = textButtons.substring(1, textButtons.length()-1).split(",");
-        for (String button : buttons) {
+        for (String button : TOP_BUTTONS) {
 
             switch (button) {
                 case "back"    -> children.add(back);

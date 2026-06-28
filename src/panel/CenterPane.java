@@ -142,7 +142,7 @@ public class CenterPane extends ScrollPane {
             filesList.sort(Comparator.comparing(CenterNode::getName, String.CASE_INSENSITIVE_ORDER));
             directoriesList.sort(Comparator.comparing(CenterNode::getName, String.CASE_INSENSITIVE_ORDER));
 
-            if (Boolean.parseBoolean(config.getProperty("show_parent"))) {
+            if (SHOW_PARENT) {
                 File parent = directory.getParentFile();
                 if (parent != null) {
                     CenterNode parentNode = new CenterNode(parent);
@@ -152,7 +152,7 @@ public class CenterPane extends ScrollPane {
                 }
             }
 
-            if (Boolean.parseBoolean(config.getProperty("show_this"))) {
+            if (SHOW_THIS) {
                 CenterNode thisNode = new CenterNode(directory);
                 thisNode.setText(".");
                 thisNode.setIcon(iconsMyme.getProperty("this"), Color.valueOf(colorsMyme.getProperty("this")));
@@ -160,9 +160,9 @@ public class CenterPane extends ScrollPane {
             }
 
             // Añadiendo nodos
-            if (Boolean.parseBoolean(config.getProperty("is_directory_first"))) centerNodes.addAll(directoriesList);
+            if (IS_DIRECTORY_FIRST) centerNodes.addAll(directoriesList);
             centerNodes.addAll(filesList);
-            if (!Boolean.parseBoolean(config.getProperty("is_directory_first"))) centerNodes.addAll(directoriesList);
+            if (!IS_DIRECTORY_FIRST) centerNodes.addAll(directoriesList);
         }
 
         // Definiendo ids

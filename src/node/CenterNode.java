@@ -144,12 +144,12 @@ public class CenterNode extends Label {
     }
     public void setColor() {
         if (isDirectory) {
-            if (Boolean.parseBoolean(config.getProperty("fill_text_dir_like_icon")))
+            if (FILL_TEXT_DIR_LIKE_ICON)
                 setStyle("-fx-text-fill: rgb("+colorRGB[0]+","+colorRGB[1]+","+colorRGB[2]+");");
             else
                 setStyle("-fx-text-fill: rgb("+UNKNOW_COLOR_RGB[0]+","+UNKNOW_COLOR_RGB[1]+","+UNKNOW_COLOR_RGB[2]+");");
         } else {
-            if (Boolean.parseBoolean(config.getProperty("fill_text_file_like_icon")))
+            if (FILL_TEXT_FILE_LIKE_ICON)
                 setStyle("-fx-text-fill: rgb("+colorRGB[0]+","+colorRGB[1]+","+colorRGB[2]+");");
             else
                 setStyle("-fx-text-fill: rgb("+UNKNOW_COLOR_RGB[0]+","+UNKNOW_COLOR_RGB[1]+","+UNKNOW_COLOR_RGB[2]+");");
