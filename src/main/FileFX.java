@@ -106,7 +106,7 @@ public class FileFX extends javafx.application.Application {
         dynamicValues.putIfAbsent("init_selection", "");
 
         String initPath = dynamicValues.getProperty("init_path");
-        if (path.equals("") && initPath != null) {
+        if (path.isEmpty() && initPath != null) {
             if (initPath.charAt(0) == '~') {
                 path = HOME+initPath.substring(1);
             } else {

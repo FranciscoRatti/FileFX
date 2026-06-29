@@ -62,6 +62,7 @@ public class CenterPane extends ScrollPane {
         setContent(pane);
 
         update();
+        selectThis();
 
         Platform.runLater(() -> {
             String initSelect = dynamicValues.getProperty("init_selection");

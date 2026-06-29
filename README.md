@@ -9,6 +9,7 @@ teclado, ser altamente configurable y ligero. Para los iconos utiliza una
 - [Requisitos](#requisitos)
 - [Instalación](#instalacion)
 - [Configuración](#configuracion)
+- [Tema](#tema)
 
 ## Requisitos
 

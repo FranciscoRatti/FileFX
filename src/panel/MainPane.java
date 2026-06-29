@@ -64,6 +64,7 @@ public class MainPane extends BorderPane {
         } else {
             selectedItem = new CenterNode(new File(path));
             selectedItem.setIcon(iconsMyme.getProperty("this"), Color.valueOf(colorsMyme.getProperty("this")));
+            selectedItems.add(selectedItem);
         }
     }
 

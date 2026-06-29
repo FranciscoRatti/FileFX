@@ -2,12 +2,12 @@
 
 .menu-item, .menu-item > .label,
 #top_text_field,
-#right_close_button, #right_component, #right_label,
+#right_close_button, #right_component,
 #left_label_title, #left_place_label,
 #other_button
 {-fx-text-fill: white; -fx-font-family: "Noto Sans Mono";}
 
-#top_label,
+#top_label, #right_label,
 #center_label_b1, #center_label_b2,
 #center_label_focus_b1, #center_label_focus_b2
 {-fx-font-family: "Noto Sans Mono";}
@@ -106,8 +106,8 @@
     -fx-background-radius: 0;
     -fx-background-color: transparent;
 }
-.scroll-pane > .scroll-bar > .increment-arrow,
-.scroll-pane > .scroll-bar > .decrement-arrow {
+.scroll-pane > .scroll-bar .increment-arrow,
+.scroll-pane > .scroll-bar .decrement-arrow {
     -fx-shape: "";
     -fx-padding: 0;
     -fx-background-color: transparent;
@@ -128,8 +128,11 @@
 #right_scroll_pane {-fx-border-width: 0 0 0 2;}
 #right_close_button {-fx-padding: 0 4 2 4;}
 #right_component {-fx-padding: 1 2 1 2;}
-#right_label {-fx-padding: 0 0 0 10;}
 #right_miniatura {-fx-font-size: 170;}
+#right_label {
+    -fx-padding: 0 0 0 10;
+    -fx-text-fill: lightgray;
+}
 
 #left_pane {-fx-border-width: 0 2 0 0;}
 #left_label_title {
