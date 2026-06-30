@@ -14,4 +14,5 @@ sudo cp -R bin /usr/lib/filefx/
 sudo cp -R lib /usr/lib/filefx/
 
 sudo cp filefx.desktop /usr/share/applications/
+sudo cp openWith_filefx.desktop /usr/share/applications/
 sudo update-desktop-database

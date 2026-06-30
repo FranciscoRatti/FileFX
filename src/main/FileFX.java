@@ -43,7 +43,7 @@ public class FileFX extends javafx.application.Application {
     public static Stage stage;
 
     public static void main(String[] args) {
-        if (args.length > 1) path = args[0];
+        if (args.length > 0) path = args[0];
         launch(args);
     }
 

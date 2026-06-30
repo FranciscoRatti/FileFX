@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Objects;
 
 import static main.FileFX.desktopApplications;
 import static main.FileFX.lock;
@@ -49,8 +50,8 @@ public class OthersApplicationsStage extends Stage {
         setScene(scene);
 
         // Hilo
-        Task<Void> task = new Task<Void>() {
-            protected Void call() throws Exception {
+        Task<Void> task = new Task<>() {
+            protected Void call() {
                 lock.lock();
 
                 // Cargar applicaciones
@@ -74,15 +75,15 @@ public class OthersApplicationsStage extends Stage {
 
                 for (File file : desktopFiles) {
                     if (file.isDirectory()) {
-                        for (File childrenFile : file.listFiles()) {
+                        for (File childrenFile : Objects.requireNonNull(file.listFiles())) {
                             DesktopApplication app = new DesktopApplication(childrenFile);
-                            if (app.hasParameter() && app.isDisplay() && app.getMimeTypes() != null) {
+                            if (app.hasParameter() && app.getMimeTypes() != null) {
                                 desktopApplications.add(app);
                             }
                         }
                     } else {
                         DesktopApplication app = new DesktopApplication(file);
-                        if (app.hasParameter() && app.isDisplay() && app.getMimeTypes() != null) {
+                        if (app.hasParameter() && app.getMimeTypes() != null) {
                             desktopApplications.add(app);
                         }
                     }

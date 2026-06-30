@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=File FX
 Comment=Explorador de archivos creado por el mejor programador
-Exec=java --module-path /usr/lib/filefx/lib --add-modules javafx.controls,javafx.graphics --enable-native-access=javafx.controls,javafx.graphics -cp /usr/lib/filefx/bin main.FileFX %f
+Exec=java --module-path /usr/lib/filefx/lib --add-modules javafx.controls,javafx.graphics --enable-native-access=javafx.controls,javafx.graphics -cp /usr/lib/filefx/bin main.FileFX
 Icon=/usr/share/filefx/icons/icon.png
 Type=Application
 Categories=Office;Utility;Core;
