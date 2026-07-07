@@ -92,7 +92,7 @@ public class OthersApplicationsStage extends Stage {
                 desktopApplications.sort(Comparator.comparing(DesktopApplication::getName, String.CASE_INSENSITIVE_ORDER));
 
                 // Crear botones
-                ObservableList<Node> childrens = pane.getChildren();
+                ObservableList<Node> children = pane.getChildren();
                 for (DesktopApplication app : desktopApplications) {
                     ImageView icon = new ImageView(app.getIcon());
                     icon.setPreserveRatio(true);
@@ -107,7 +107,7 @@ public class OthersApplicationsStage extends Stage {
                             app.openWith(selectedItem);
                         }
                     });
-                    childrens.add(button);
+                    children.add(button);
                 }
 
                 printOk("Applicaciones para abrir con cargadas con exito");

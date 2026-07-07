@@ -72,7 +72,7 @@ public class Lib {
         ObservableList<MenuItem> contextMenuItems = contextMenu.getItems();
         MenuItem pasteItem;
 
-        String[] icons = {"", "", "", "", "", "", "", "", "", "", "", ""};
+        String[] icons = new String[CONTEXT_MENU_ICONS.length];
         for (int i = 0; i < CONTEXT_MENU_ICONS.length; i++) {
             icons[i] = CONTEXT_MENU_ICONS[i];
         }

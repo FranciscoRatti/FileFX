@@ -1,12 +1,13 @@
 package entity;
 
 import javafx.scene.image.Image;
+import main.Lib;
 import node.CenterNode;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 import static main.Lib.*;
 
@@ -27,27 +28,32 @@ public class DesktopApplication {
         try (BufferedReader reader = new BufferedReader(new FileReader(desktopFile))) {
             String line;
 
+            boolean isNameFound = false;
             do {
                 line = reader.readLine();
 
-                if (line != null && !line.equals("")) {
+                if (line != null && !line.isEmpty()) {
                     if (exec == null && line.startsWith("Exec")) {
                         exec = line.substring(5);
                         hasParameter = exec.contains("%f") || exec.contains("%F") || exec.contains("%u") || exec.contains("%U");
                     }
-                    if (name == null && line.startsWith("Name")) {
-                        if (line.charAt(4) == '[' && !line.startsWith("es", 5)) continue;
-                        name = line.charAt(4) == '[' ? line.substring(9) : line.substring(5);
-
+                    if (!isNameFound && line.startsWith("Name")) {
+                        if (line.charAt(4) == '[') {
+                            if (line.startsWith("es]", 5)) {
+                                name = line.substring(9);
+                                isNameFound = true;
+                            }
+                        } else if (name == null) {
+                            name = line.substring(5);
+                        }
                     }
                     if (mimeTypes == null && line.startsWith("MimeType")) {
                         mimeTypes = line.substring(9).split(";");
-                        if (mimeTypes == null) mimeTypes = new String[]{""};
                     }
                     if (line.startsWith("NoDisplay")) {
                         isDisplay = !Boolean.parseBoolean(line.substring(10, 14));
                     }
-                    if (iconText.equals("") && line.startsWith("Icon")) {
+                    if (iconText.isEmpty() && line.startsWith("Icon")) {
                         iconText = line.substring(5);
                     }
                 }
@@ -86,29 +92,44 @@ public class DesktopApplication {
 
     public Image getIcon() {
         if (icon == null) {
-            File file = new File(iconText);
-            if (file.exists()) {
+            if (new File(iconText).exists()) {
                 icon = new Image("file://"+iconText);
             } else {
                 try {
-                    printExecute("Buscando icono de '"+YELLOW+name+RESET+"'");
+                    printExecute("Buscando icono de '" + YELLOW + name + RESET + "'");
 
                     Process process = new ProcessBuilder(
                             "python3", "-c",
                             """
-                            import gi, sys
-                            gi.require_version('Gtk', '3.0')
-                            from gi.repository import Gtk
-                            theme = Gtk.IconTheme.get_default()
-                            icon = theme.lookup_icon(sys.argv[1], int(24), 0)
-                            print(icon.get_filename() if icon else '')
-                            """,
+                                    import gi, sys
+                                    gi.require_version('Gtk', '3.0')
+                                    from gi.repository import Gtk
+                                    theme = Gtk.IconTheme.get_default()
+                                    icon = theme.lookup_icon(sys.argv[1], int(24), 0)
+                                    print(icon.get_filename() if icon else '')
+                                    """,
                             iconText
                     ).start();
 
-                    icon = new Image("file://"+new String(process.getInputStream().readAllBytes()).strip());
+                    String iconPath = new String(process.getInputStream().readAllBytes()).strip();
+                    if (iconPath.endsWith(".svg")) {
+                        File png = new File(Lib.CONFIG_PATH + "tmp.png");
+                        try {
+                            Process parseSvg = new ProcessBuilder("rsvg-convert", "-w", "24", "-h", "24", "-o",
+                                    png.getAbsolutePath(), iconPath).start();
+                            parseSvg.waitFor();
+
+                            icon = new Image("file://"+png.getAbsolutePath());
+                        } catch (Exception e) {
+                            printError("Error al parsear " + RED + iconPath + RESET + " a .svg", e);
+                            icon = new Image("file://" + ABSOLUTE_PATH + "share/filefx/notFound.png");
+                        } finally {
+                            png.delete();
+                        }
+                    } else if (!iconPath.isEmpty()) icon = new Image("file://" + iconPath);
+                    else icon = new Image("file://" + ABSOLUTE_PATH + "share/filefx/notFound.png");
                 } catch (IOException e) {
-                    printError("Error al carga icono de "+name, e);
+                    printError("Error al carga icono de " + name, e);
                 }
             }
         }

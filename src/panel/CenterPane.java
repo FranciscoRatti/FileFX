@@ -73,7 +73,8 @@ public class CenterPane extends ScrollPane {
                         break;
                     }
                 }
-            } else {
+            }
+            if (selectedItem == null) {
                 selectThis();
             }
         });

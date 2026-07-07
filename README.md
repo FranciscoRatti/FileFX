@@ -7,14 +7,30 @@ teclado, ser altamente configurable y ligero. Para los iconos utiliza una
 
 ### Indices
 - [Requisitos](#requisitos)
+- [Depdencias](#dependencias)
 - [Instalación](#instalacion)
 - [Configuración](#configuracion)
 - [Tema](#tema)
 
 ## Requisitos
 
-- Java JDK 21 o superior.
 - Linux.
+- [JDK 21 o superior](#jdk-21).
+- [RSVG](#rsvg).
+
+## Dependencias
+
+### JDK 21
+
+Ubuntu = `sudo apt install openjdk-21-jdk` <br>
+Fedora = `sudo dnf install java-21-openjdk-devel` <br>
+Arch Linux = `sudo pacman -Syu jdk21-openjdk`
+
+### RSVG
+
+Ubuntu = `sudo apt install librsvg2-bin` <br>
+Fedora = `sudo dnf install librsvg2-tools` <br>
+Arch Linux = `sudo pacman -Syu librsvg`
 
 ## Instalación
 
@@ -55,10 +71,10 @@ java --module-path /usr/lib/filefx/lib --add-modules javafx.controls,javafx.grap
 ```
 
 Dentro de los archivos también se puede encontrar un **package.sh**, este es
-usado para generar un zip con los archivos necesarios para la installation.
+usado para generar un zip con los archivos necesarios para la instalacion.
 Dentro del directorio _shell/_ hay un script para solo compilar llamado
 **compile.sh** y otro para compilar y ejecutar llamado **compile_and_run.sh**,
-estos los uso para el desarrollo y no están incluidos en.
+estos los uso para el desarrollo y no están incluidos en el .zip.
 
 ## Configuración
 
