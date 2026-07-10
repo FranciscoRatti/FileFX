@@ -11,15 +11,17 @@ import static main.FileFX.*;
 import static main.Lib.printInfo;
 
 public class MainPane extends BorderPane {
-    public static CenterPane centerPane;
     public static TopPane topPane;
     public static RightPane rightPane;
+    public static BottomPane bottomPane;
     public static LeftPane leftPane;
+    public static CenterPane centerPane;
 
     private boolean isRightPaneShow;
 
     public static ArrayList<CenterNode> selectedItems;
     public static CenterNode selectedItem;
+    public static String filter = null;
 
     public MainPane() {
         super();
@@ -29,10 +31,12 @@ public class MainPane extends BorderPane {
         setTop(topPane);
         rightPane = new RightPane();
         setRight(rightPane);
-        changeShowRightPane(SHOW_RIGHT_PANE);
+        bottomPane = new BottomPane();
+        setBottom(bottomPane);
         leftPane = new LeftPane();
         setLeft(leftPane);
 
+        changeShowRightPane(SHOW_RIGHT_PANE);
         setId("main_pane");
     }
 
@@ -50,7 +54,7 @@ public class MainPane extends BorderPane {
     }
 
     public static void deselectAll() {
-        if (!selectedItems.isEmpty() || selectedItem != null) {
+        if (!selectedItems.isEmpty() && selectedItem != null) {
             selectedItem = null;
             for (CenterNode centerNode : selectedItems) centerNode.setSelected(false);
             selectedItems.clear();
@@ -61,6 +65,7 @@ public class MainPane extends BorderPane {
     public static void selectThis() {
         if (SHOW_THIS) {
             CenterPane.centerNodes.getFirst().setSelected(true);
+            centerPane.setSelectedOnCenter();
         } else {
             selectedItem = new CenterNode(new File(path));
             selectedItem.setIcon(iconsMyme.getProperty("this"), Color.valueOf(colorsMyme.getProperty("this")));

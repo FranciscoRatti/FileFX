@@ -331,6 +331,7 @@ public class Lib {
             printExecute("Retrocediendo");
             forwardBuffer.add(path);
             path = backBuffer.removeLast();
+            filter = null;
 
             updateCenter();
             selectThis();
@@ -343,6 +344,7 @@ public class Lib {
             printExecute("Volviendo");
             backBuffer.add(path);
             path = forwardBuffer.removeLast();
+            filter = null;
 
             updateCenter();
             selectThis();
@@ -355,6 +357,7 @@ public class Lib {
             printExecute("Yendo al parent");
             forwardBuffer.clear();
             backBuffer.add(path);
+            filter = null;
 
             String oldPath = path.substring(0, path.length() - 1);
 

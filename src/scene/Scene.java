@@ -1,9 +1,11 @@
 package scene;
 
 import javafx.application.Platform;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
+import panel.BottomPane;
 import panel.CenterPane;
 import panel.RightPane;
 import panel.TopPane;
@@ -16,6 +18,7 @@ import static main.Lib.*;
 import static main.Lib.back;
 import static main.Lib.forward;
 import static main.Lib.parent;
+import static panel.CenterPane.centerNodes;
 import static panel.MainPane.*;
 
 public class Scene extends javafx.scene.Scene {
@@ -29,22 +32,26 @@ public class Scene extends javafx.scene.Scene {
     }
 
     public static boolean isAnyFocus() {
-        return  TopPane.isSearchFocus() || RightPane.isAnyFocus();
+        return  TopPane.isSearchFocus() || RightPane.isAnyFocus() || BottomPane.isFilterFocus();
     }
 
     public void updateKeyBinding() {
         addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            KeyCombination key;
+            try {
+                KeyCode keyCode = e.getCode();
+                key =
+                        e.isControlDown() ? new KeyCodeCombination(keyCode, KeyCombination.CONTROL_DOWN) :
+                                e.isShiftDown() ? new KeyCodeCombination(keyCode, KeyCombination.SHIFT_DOWN) :
+                                e.isAltDown() ? new KeyCodeCombination(keyCode, KeyCombination.ALT_DOWN) :
+                                e.isMetaDown() ? new KeyCodeCombination(keyCode, KeyCombination.META_DOWN) :
+                                e.isShortcutDown() ? new KeyCodeCombination(keyCode, KeyCombination.SHORTCUT_DOWN) :
+                                new KeyCodeCombination(keyCode);
+            } catch (IllegalArgumentException ignored) {return;}
+
             if (!isAnyFocus()) {
                 e.consume();
                 try {
-                    KeyCombination key =
-                                    e.isControlDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.CONTROL_DOWN) :
-                                    e.isShiftDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.SHIFT_DOWN) :
-                                    e.isAltDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.ALT_DOWN) :
-                                    e.isMetaDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.META_DOWN) :
-                                    e.isShortcutDown() ? new KeyCodeCombination(e.getCode(), KeyCombination.SHORTCUT_DOWN) :
-                                    new KeyCodeCombination(e.getCode());
-
                     setKeyBindAction(cut, key, () -> copyFilesToClipBoard(parseFileLabelsToFiles(selectedItems), true));
                     setKeyBindAction(copy, key, () -> copyFilesToClipBoard(parseFileLabelsToFiles(selectedItems), false));
                     setKeyBindAction(paste, key, () -> pasteFiles(getClipboardFiles()));
@@ -71,21 +78,23 @@ public class Scene extends javafx.scene.Scene {
                     setKeyBindAction(show_menu, key, () -> CenterPane.showMenu(mainPane));
                     setKeyBindAction(show_menu_create, key, () -> CenterPane.showMenuCreate());
                     setKeyBindAction(focus_path, key, () -> Platform.runLater(() -> TopPane.focusSearch()));
+                    setKeyBindAction(focus_filter, key, () -> Platform.runLater(() -> BottomPane.focusFilter()));
 
                     setKeyBindAction(deselect_all, key, () -> {
-                        if (TopPane.isSearchFocus()) updateTop();
-                        else if (RightPane.isAnyFocus()) updateRight();
-                        else {
-                            deselectAll();
-                            selectThis();
-                            updateRight();
-                        }
+                        deselectAll();
+                        selectThis();
+                        updateRight();
                     });
 
                     setKeyBindAction(update_all, key, () -> updateAll());
                     setKeyBindAction(change_show_right_pane, key, () -> mainPane.changeShowRightPane());
                 } catch (IllegalArgumentException ignored) {}
-        }});
+            } else {
+                try {
+                    setKeyBindAction(deselect_all, key, () -> selectedItem.requestFocus());
+                } catch (IllegalArgumentException ignored) {}
+            }
+        });
     }
     public void setKeyBindAction(KeyCombination[] keyCombinations, KeyCombination actualKey, Runnable action) {
         for (KeyCombination keyCombination : keyCombinations) {

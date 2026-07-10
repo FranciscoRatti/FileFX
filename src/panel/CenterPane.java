@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.regex.Pattern;
 
 import static main.FileFX.*;
 import static main.Lib.*;
@@ -137,9 +138,17 @@ public class CenterPane extends ScrollPane {
                 boolean isHidden = file.getName().startsWith(".");
                 if (!SHOW_HIDDEN && isHidden) continue;
 
-                CenterNode centerNode = new CenterNode(file);
-                if (file.isDirectory()) directoriesList.add(centerNode);
-                else filesList.add(centerNode);
+                if (filter != null) {
+                    if (file.getName().contains(filter)) {
+                        CenterNode centerNode = new CenterNode(file);
+                        if (file.isDirectory()) directoriesList.add(centerNode);
+                        else filesList.add(centerNode);
+                    }
+                } else {
+                    CenterNode centerNode = new CenterNode(file);
+                    if (file.isDirectory()) directoriesList.add(centerNode);
+                    else filesList.add(centerNode);
+                }
             }
 
             filesList.sort(Comparator.comparing(CenterNode::getName, String.CASE_INSENSITIVE_ORDER));
@@ -311,7 +320,6 @@ public class CenterPane extends ScrollPane {
             }
         }
     }
-
     public static void openSelected() {
         if (selectedItem != null && !selectedItem.getText().equals(".")) {
             File file = selectedItem.getFile();
@@ -319,6 +327,8 @@ public class CenterPane extends ScrollPane {
 
             // Si es directorio
             if (file.isDirectory()) {
+                filter = null;
+
                 forwardBuffer.clear();
                 backBuffer.add(FileFX.path);
                 path=absolutePath+"/";
@@ -342,7 +352,6 @@ public class CenterPane extends ScrollPane {
             }
         }
     }
-
     public void setSelectedOnCenter() {
         if (selectedItem != null) {
             Platform.runLater(() -> {

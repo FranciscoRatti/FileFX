@@ -77,7 +77,7 @@ public class FileFX extends javafx.application.Application {
             CHECK_CLIPBOARD_PASTE = Boolean.parseBoolean(config.getProperty("check_clipboard_paste"));
 
         } catch (IOException e) {
-            printError("No se pudo leer el archivo de "+RED+"configuracion"+RESET, e);
+            printError("No se pudo leer el archivo de configuracion", e);
             System.exit(0);
         }
 
@@ -86,20 +86,20 @@ public class FileFX extends javafx.application.Application {
             keyBinding = new Properties();
             keyBinding.load(fileInputStream);
         } catch (IOException e) {
-            printError("No se pudo leer el archivo de "+RED+"combinaciones de teclado"+RESET, e);
+            printError("No se pudo leer el archivo de combinaciones de teclado", e);
             System.exit(0);
         }
 
-        printInfo("Cargando archivo de valores dinamicos");
-        try (FileInputStream fileInputStream = new FileInputStream(CONFIG_PATH+"dynamic_values.properties")) {
+        printInfo("Cargando archivo de valores iniciales");
+        try (FileInputStream fileInputStream = new FileInputStream(CONFIG_PATH+"init_values.properties")) {
             dynamicValues = new Properties();
             dynamicValues.load(fileInputStream);
         } catch (IOException e) {
-            printError("No se pudo leer el archivo de "+RED+"combinaciones de teclado"+RESET, e);
+            printError("No se pudo leer el archivo de valores iniciales", e);
             System.exit(0);
         }
 
-        printInfo("Verificando que existan valores dinamicos");
+        printInfo("Verificando que existan valores iniciales");
         dynamicValues.putIfAbsent("width", "1200");
         dynamicValues.putIfAbsent("height", "700");
         dynamicValues.putIfAbsent("init_path", HOME);
@@ -181,9 +181,10 @@ public class FileFX extends javafx.application.Application {
         stage.getIcons().add(new Image("file://"+ABSOLUTE_PATH+"share/filefx/icon.png"));
         stage.setTitle("Explorador de archivos");
         stage.setOnCloseRequest(e -> {
+            printExecute("Cerrando ventana");
             if (SAVE_BOUNDS || SAVE_PATH || SAVE_SELECTION) {
                 printInfo("Actualizando valores dinamicos:");
-                try (FileOutputStream output = new FileOutputStream(CONFIG_PATH+"dynamic_values.properties")) {
+                try (FileOutputStream output = new FileOutputStream(CONFIG_PATH+"init_values.properties")) {
                     String width = String.valueOf(stage.getWidth());
                     String height = String.valueOf(stage.getHeight());
                     String selection = MainPane.selectedItem == null ? "" : MainPane.selectedItem.getName();
@@ -201,7 +202,7 @@ public class FileFX extends javafx.application.Application {
                     if (SAVE_SELECTION) dynamicValues.replace("init_selection", selection);
                     dynamicValues.store(output, "");
                 } catch (IOException ex) {
-                    printError("Error al actualizar datos en dynamic_values.properties", ex);
+                    printError("Error al actualizar datos en init_values.properties", ex);
                 }
             }
 
@@ -261,6 +262,7 @@ public class FileFX extends javafx.application.Application {
         show_menu = getKeyCombination("show_menu");
         show_menu_create = getKeyCombination("show_menu_create");
         focus_path = getKeyCombination("focus_path");
+        focus_filter = getKeyCombination("focus_filter");
 
         deselect_all = getKeyCombination("deselect_all");
         update_all = getKeyCombination("update_all");
@@ -308,6 +310,7 @@ public class FileFX extends javafx.application.Application {
     public static KeyCombination[] show_menu;
     public static KeyCombination[] show_menu_create;
     public static KeyCombination[] focus_path;
+    public static KeyCombination[] focus_filter;
 
     public static KeyCombination[] deselect_all;
     public static KeyCombination[] update_all;

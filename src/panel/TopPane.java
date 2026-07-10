@@ -8,6 +8,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
+import node.CenterNode;
 import node.TopNode;
 
 import java.io.File;
@@ -55,9 +56,13 @@ public class TopPane extends HBox {
                                 path = text;
                                 printInfo("Actualizando path a '"+BLUE+path+RESET+"'");
 
-                                updateCenter();
                                 updateTop();
-                                if (!centerNodes.isEmpty()) centerNodes.getFirst().setSelected(true);
+                                updateCenter();
+                                if (!centerNodes.isEmpty()) {
+                                    CenterNode first = centerNodes.getFirst();
+                                    first.setSelected(true);
+                                    first.requestFocus();
+                                }
                                 updateRight();
                             }
                         }
@@ -123,7 +128,6 @@ public class TopPane extends HBox {
 
     public static void focusSearch() {search.requestFocus();}
     public static boolean isSearchFocus() {
-        if (search != null) return search.isFocused();
-        else return false;
+        return search.isFocused();
     }
 }
