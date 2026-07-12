@@ -22,7 +22,7 @@ public class LeftNode extends Label {
 
         setOnMouseClicked(e -> {
             if (e.getButton().equals(MouseButton.PRIMARY)) {
-                printInfo("Yendo a '"+BLUE+path+RESET+"'");
+                printExecute("Yendo a '"+BLUE+path+RESET+"'");
 
                 forwardBuffer.clear();
                 backBuffer.add(FileFX.path);

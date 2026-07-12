@@ -18,6 +18,7 @@ import node.CenterNode;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.regex.Pattern;
@@ -40,6 +41,11 @@ public class CenterPane extends ScrollPane {
     private static ContextMenu menuTrash;
 
     private VBox pane;
+
+    private final Comparator<CenterNode> compareByName = Comparator.comparing(CenterNode::getName, String.CASE_INSENSITIVE_ORDER);
+    private final Comparator<CenterNode> compareByDate = Comparator.comparing(n -> n.getPropertie().getDateTime());
+    private final Comparator<CenterNode> compareBySize = Comparator.comparing(n -> n.getPropertie().getSize());
+    private final Comparator<CenterNode> compareByMime = Comparator.comparing(n -> n.getPropertie().getMimeType(), String.CASE_INSENSITIVE_ORDER);
 
     public CenterPane() {
         if (!new File(path).exists()) {
@@ -151,8 +157,36 @@ public class CenterPane extends ScrollPane {
                 }
             }
 
-            filesList.sort(Comparator.comparing(CenterNode::getName, String.CASE_INSENSITIVE_ORDER));
-            directoriesList.sort(Comparator.comparing(CenterNode::getName, String.CASE_INSENSITIVE_ORDER));
+            // Ordenar
+            ORDER order = DEFAULT_ORDER;
+            for (String[] customOrder : CUSTOM_ORDER) {
+                if (path.equals(
+                        customOrder[0].charAt(0) == '~' ? HOME+(customOrder[0].substring(1)) :
+                        customOrder[0].startsWith("trash") ? TRASH+"files"+(customOrder[0].substring(5)) :
+                        customOrder[0])) {
+                    order = ORDER.valueOf(customOrder[1]);
+                    break;
+                }
+            }
+
+            switch (order) {
+                case DATE -> {
+                    filesList.sort(compareByDate.reversed());
+                    directoriesList.sort(compareByDate.reversed());
+                }
+                case SIZE -> {
+                    filesList.sort(compareBySize);
+                    directoriesList.sort(compareBySize);
+                }
+                case MIME -> {
+                    filesList.sort(compareByMime);
+                    directoriesList.sort(compareByMime);
+                }
+                default -> {
+                    filesList.sort(compareByName);
+                    directoriesList.sort(compareByName);
+                }
+            }
 
             if (SHOW_PARENT) {
                 File parent = directory.getParentFile();

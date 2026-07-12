@@ -59,20 +59,30 @@ public class FileFX extends javafx.application.Application {
             SAVE_BOUNDS = Boolean.parseBoolean(config.getProperty("save_bounds"));
             SAVE_PATH = Boolean.parseBoolean(config.getProperty("save_path"));
             SAVE_SELECTION = Boolean.parseBoolean(config.getProperty("save_selection"));
+
             TOP_BUTTONS = splitTwoTimes(config.getProperty("top_buttons"));
+
             RIGHT_WIDTH = Double.parseDouble(config.getProperty("right_width"));
             SHOW_RIGHT_PANE = Boolean.parseBoolean(config.getProperty("show_right_pane"));
             SHOW_MINIATURA = Boolean.parseBoolean(config.getProperty("show_miniatura"));
+            FILL_MINIATURA_LIKE_ICON = Boolean.parseBoolean(config.getProperty("fill_miniatura_like_icon"));
+
             SHOW_PLACES = Boolean.parseBoolean(config.getProperty("show_places"));
             PLACES = splitTwoTimes(config.getProperty("places"));
             SHOW_DEVICES = Boolean.parseBoolean(config.getProperty("show_devices"));
+
             IS_DIRECTORY_FIRST = Boolean.parseBoolean(config.getProperty("is_directory_first"));
             SHOW_HIDDEN = Boolean.parseBoolean(config.getProperty("show_hidden"));
             SHOW_THIS = Boolean.parseBoolean(config.getProperty("show_this"));
             SHOW_PARENT = Boolean.parseBoolean(config.getProperty("show_parent"));
             FILL_TEXT_FILE_LIKE_ICON = Boolean.parseBoolean(config.getProperty("fill_text_file_like_icon"));
             FILL_TEXT_DIR_LIKE_ICON = Boolean.parseBoolean(config.getProperty("fill_text_dir_like_icon"));
-            FILL_MINIATURA_LIKE_ICON = Boolean.parseBoolean(config.getProperty("fill_miniatura_like_icon"));
+            DEFAULT_ORDER = ORDER.valueOf(config.getProperty("default_order"));
+            CUSTOM_ORDER = splitTwoTimes(config.getProperty("custom_order"));
+
+            BOTTOM_BUTTONS = split(config.getProperty("bottom_buttons"));
+            ORDER_ICONS = split(config.getProperty("order_icons"));
+
             CONTEXT_MENU_ICONS = split(config.getProperty("context_menu_icons"));
             CHECK_CLIPBOARD_PASTE = Boolean.parseBoolean(config.getProperty("check_clipboard_paste"));
 
@@ -268,7 +278,6 @@ public class FileFX extends javafx.application.Application {
         update_all = getKeyCombination("update_all");
         change_show_right_pane = getKeyCombination("change_show_right_pane");
     }
-
     public static KeyCombination[] getKeyCombination(String keyName) {
         String property = keyBinding.getProperty(keyName);
         if (property != null) {
@@ -321,23 +330,34 @@ public class FileFX extends javafx.application.Application {
     public static boolean SAVE_BOUNDS;
     public static boolean SAVE_PATH;
     public static boolean SAVE_SELECTION;
+
     public static String[][] TOP_BUTTONS;
+
     public static double RIGHT_WIDTH;
     public static boolean SHOW_RIGHT_PANE;
     public static boolean SHOW_MINIATURA;
+    public static boolean FILL_MINIATURA_LIKE_ICON;
+
     public static boolean SHOW_PLACES;
     public static String[][] PLACES;
     public static boolean SHOW_DEVICES;
+
     public static boolean IS_DIRECTORY_FIRST;
     public static boolean SHOW_HIDDEN;
     public static boolean SHOW_THIS;
     public static boolean SHOW_PARENT;
     public static boolean FILL_TEXT_FILE_LIKE_ICON;
     public static boolean FILL_TEXT_DIR_LIKE_ICON;
-    public static boolean FILL_MINIATURA_LIKE_ICON;
+    public static ORDER DEFAULT_ORDER;
+    public static String[][] CUSTOM_ORDER;
+
+    public static String[] BOTTOM_BUTTONS;
+    public static String[] ORDER_ICONS;
+
     public static String[] CONTEXT_MENU_ICONS;
     public static boolean CHECK_CLIPBOARD_PASTE;
 
+    // Colores
     public static Color FOCUS_COLOR;
     public static double[] FOCUS_COLOR_RGB;
     public static Color UNKNOW_COLOR;

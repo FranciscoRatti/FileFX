@@ -9,7 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import node.CenterNode;
-import node.TopNode;
+import node.Button;
 
 import java.io.File;
 import java.util.Optional;
@@ -19,22 +19,21 @@ import static main.Lib.*;
 import static panel.CenterPane.centerNodes;
 
 public class TopPane extends HBox {
-    private static TopNode back = null;
-    private static TopNode forward = null;
-    private static TopNode parent = null;
+    private static Button back = null;
+    private static Button forward = null;
+    private static Button parent = null;
     private static TextField search = null;
-    private static TopNode clean = null;
-    private static TopNode reload = null;
+    private static Button clean = null;
+    private static Button reload = null;
 
     public TopPane() {
-        super(10);
         setId("top_pane");
 
         for (String[] button : TOP_BUTTONS) {
             switch (button[0]) {
-                case "back" -> back = new TopNode(button[1]   , "Deshacer" , e -> back());
-                case "forward" -> forward = new TopNode(button[1], "Rehacer"  , e -> forward());
-                case "parent" -> parent = new TopNode(button[1] , "Ir arriba", e -> parent());
+                case "back" -> back = new Button(button[1], "Deshacer", "top", e -> back());
+                case "forward" -> forward = new Button(button[1], "Rehacer", "top", e -> forward());
+                case "parent" -> parent = new Button(button[1], "Ir arriba", "top", e -> parent());
                 case "search" -> {
                     search = new TextField();
                     search.setId("top_text_field");
@@ -69,7 +68,7 @@ public class TopPane extends HBox {
                     });
                 }
                 case "clean" -> {
-                    clean = new TopNode(button[1], "Limpiar papelera", e -> restoreSelected());
+                    clean = new Button(button[1], "Limpiar papelera", "top", e -> restoreSelected());
                     clean.setOnAction(e -> {
                         Optional<ButtonType> result = showAlert(new Alert(Alert.AlertType.CONFIRMATION), "Todos los archivos de papelera\nseran eliminados permanentemente", "ADVERTENCIA");
                         if (result.isPresent()) {
@@ -94,7 +93,7 @@ public class TopPane extends HBox {
                         }
                     });
                 }
-                case "reload" -> reload = new TopNode(button[1] , "Recargar" , e -> updateAll());
+                case "reload" -> reload = new Button(button[1], "Recargar", "top", e -> updateAll());
             }
         }
 
@@ -114,10 +113,9 @@ public class TopPane extends HBox {
                 case "parent"  -> children.add(parent);
                 case "search"  -> {
                     children.add(search);
-                    search.setText(path.startsWith(TRASH+"files") ?
-                            "trash"+path.substring(HOME.length()+25) :
-                            path.startsWith(HOME) ?
-                            "~/"+path.substring(HOME.length()+1) :
+                    search.setText(
+                            path.startsWith(TRASH+"files") ? "trash"+path.substring(HOME.length()+25) :
+                            path.startsWith(HOME) ? "~/"+path.substring(HOME.length()+1) :
                             path);
                 }
                 case "clean" -> {if (path.startsWith(TRASH+"files")) children.add(clean);}

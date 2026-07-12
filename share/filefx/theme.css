@@ -3,12 +3,13 @@
 .menu-item, .menu-item > .label,
 #top_text_field,
 #right_close_button, #right_component,
-#bottom_text_field,
+#bottom_text_field, #bottom_label, #bottom_selected_label,
 #left_label_title, #left_place_label,
 #other_button
 {-fx-text-fill: white; -fx-font-family: "Noto Sans Mono";}
 
-#top_label, #right_label,
+#top_label,
+#right_label,
 #center_label_b1, #center_label_b2,
 #center_label_focus_b1, #center_label_focus_b2
 {-fx-font-family: "Noto Sans Mono";}
@@ -25,8 +26,9 @@
 #center_label_focus_b1, #center_label_focus_b2
 {-fx-font-size: 13;}
 
-#top_text_field, #left_label_title,
-#bottom_text_field
+#top_text_field,
+#bottom_text_field, #bottom_label, #bottom_selected_label,
+#left_label_title
 {-fx-font-size: 14;}
 
 #top_label
@@ -36,6 +38,7 @@
 /*-- COLOR DE FONDO --------------------------------------------------------------------------------------------------*/
 
 #right_close_button:hover, #right_component:hover, #right_component:focused,
+#bottom_selected_button,
 #left_place_label:hover,
 #center_label_b1:hover, #center_label_b2:hover,
 .scroll-pane > .scroll-bar:vertical .thumb:hover
@@ -46,7 +49,8 @@
 {-fx-background-color: #404040FF;}
 
 #top_button, #top_text_field,
-#center_label_b2, #bottom_text_field
+#bottom_text_field, #bottom_button,
+#center_label_b2
 {-fx-background-color: #373737;}
 
 #main_pane, #top_pane, #right_pane, #bottom_pane #left_pane,
@@ -61,20 +65,21 @@
 
 .menu-item, #top_pane, #right_scroll_pane, #bottom_pane, #left_pane,
 #top_button, #top_text_field,
-#bottom_text_field,
+#bottom_text_field, #bottom_button, #bottom_selected_button,
 #center_label_b1, #center_label_b2,
 #center_label_focus_b1, #center_label_focus_b2,
 #other_button, .scroll-pane > .scroll-bar:vertical .thumb
 {-fx-border-style: solid;}
 
-.menu-item, #other_button, .scroll-pane > .scroll-bar:vertical .thumb
+.menu-item, #other_button, .scroll-pane > .scroll-bar:vertical .thumb,
+#bottom_button, #bottom_selected_button
 {-fx-border-radius: 1;}
 
 #top_button, #top_text_field, #bottom_text_field
 {-fx-border-radius: 2;}
 
 .menu-item, #top_button, #top_text_field,
-#bottom_text_field,
+#bottom_text_field, #bottom_button, #bottom_selected_button,
 #center_label_b1, #center_label_b2,
 #center_label_focus_b1, #center_label_focus_b2,
 #other_button
@@ -83,16 +88,18 @@
 .menu-item:hover, .menu-item:focused,
 #top_button:hover, #top_text_field:hover, #top_text_field:focused,
 #bottom_text_field:hover, #bottom_text_field:focused,
+#bottom_button:hover, #bottom_selected_button:hover,
 #center_label_b1:hover, #center_label_b2:hover,
 #other_button:hover, #other_button:focused,
 .scroll-pane > .scroll-bar:vertical .thumb:hover
 {-fx-border-color: white;}
 
+#bottom_selected_button,
 .menu-item, #other_button, .scroll-pane > .scroll-bar:vertical .thumb
 {-fx-border-color: gray;}
 
 #top_button, #top_text_field,
-#bottom_text_field,
+#bottom_text_field, #bottom_button,
 #center_label_b2
 {-fx-border-color: #333333;}
 
@@ -123,10 +130,15 @@
 }
 .scroll-pane > .scroll-bar:vertical > .thumb {-fx-border-radius: 5;}
 
+#top_label, #bottom_label, #bottom_selected_label {
+    -fx-fill: white;
+    -fx-alignment: CENTER;
+}
+
 #top_button, #top_text_field {-fx-max-height: 35;}
 #top_button {-fx-padding: 0 16 3 10;}
-#top_label {-fx-fill: white;}
 #top_pane {
+    -fx-spacing: 10;
     -fx-padding: 5;
     -fx-border-width: 0 0 2 0;
 }
@@ -141,12 +153,13 @@
 }
 
 #bottom_pane {
+    -fx-spacing: 8;
     -fx-border-width: 2 0 0 0;
-    -fx-padding: 5;
+    -fx-padding: 5 8 5 8;
 }
-#bottom_text_field {
-    -fx-padding: 2 8 2 8;
-}
+#bottom_text_field {-fx-padding: 2 8 2 8;}
+#bottom_button, #bottom_selected_button {-fx-padding: 1 5 1 5;}
+#bottom_selected_label {-fx-font-weight: bold;}
 
 #left_pane {-fx-border-width: 0 2 0 0;}
 #left_label_title {
@@ -174,7 +187,7 @@
     -fx-font-weight: bold;
 }
 
-#center_icon, #top_button, #center_icon_focus {-fx-label-padding: 0 5 0 5;}
+#center_icon, #center_icon_focus, #top_button {-fx-label-padding: 0 5 0 5;}
 #center_icon_focus {-fx-text-fill: white;}
 
 #other_button {

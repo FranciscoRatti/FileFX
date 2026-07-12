@@ -2,8 +2,9 @@
 
 Explorador de archivo desarrollado en Java 21 utilizando el framework
 **JavaFX** disponible solo en Linux. Pensado para utilizarse con atajos de
-teclado, ser altamente configurable y ligero. Para los iconos utiliza una
-**Nerd fonts**. Tiene previsualization de imágenes configurable.
+teclado y ser altamente configurable. Para los iconos utiliza una
+**Nerd fonts**, estos se pueden encontrar en la [cheat sheet](https://www.nerdfonts.com/cheat-sheet).
+Tiene previsualization de imágenes.
 
 ### Indices
 
@@ -66,43 +67,63 @@ java --module-path /usr/lib/filefx/lib --add-modules javafx.controls,javafx.grap
 
 ## Configuración
 
-Todo se configura a traves de cinco archivos de configuración, estos se
-encuentran en **~/.config/filefx/**. La sintaxis es _clave=valor_, los arrays
-deben estar entre "[]" y cada item separado por ",". A continuación se enumeran
-los archivos y sus posibles configuraciones.
+Todo se configura a traves de cinco archivos de configuracion en **~/.config/filefx/**.
+Todos los archivos comparten la sintaxis de "**nombre**=**valor**", a continuacion se
+enumeran los tipos de datos que pueden ir en _valor_ seguido de los archivos y sus
+configuraciones:
 
-- **_config.properties_**: Configuraciones generales.
+|    Tipo    |                                   Valor                                    |
+|:----------:|:--------------------------------------------------------------------------:|
+|  boolean   |                                true o false                                |
+|   double   |                              Numero con coma                               |
+|   String   |                                Texto Plano                                 |
+|  String[]  |            Lista de texto, su<br/>sintaxis es [valor,valor,...]            |
+| String[][] | Lista de listas de texto, su<br/>sintaxis es [{valor;...},{valor;...},...] |
+|   ORDER    |                          NAME, DATE, SIZE o MIME                           |
+
+- **_config.properties_**: Configuraciones principales.
   - `terminal = String` : Comando a ejecutar al abrir una terminal.
   - `save_bounds = boolean` : Si es true se guarda el tamaño de la ventana al
     cerrarse.
   - `save_path = boolean` : Si es true guarda la ultima ubicación.
   - `save_selection = boolean` : Si es true guarda el ultimo item seleccionado.
   - `top_buttons = String[][]` : Define los botones que aparecerán en el TopPane.
-    Los posibles valores son _back_, _forward_, _parent_, _search_ (sin icono),
-    _clean_, _reload_. La sintaxis es _[{nombre;icono},{nombre;icono},...]_
+    Los posibles botones son **back**, **forward**, **parent**, **search** (sin icono),
+    **clean**, **reload**. La sintaxis es _[{nombre;icono},{nombre;icono},...]_
   - `right_width = double` : Ancho fijo del RightPane.
   - `show_right_pane = boolean` : Define si se muestra el RightPane al iniciar.
-  - `show_miniatura = boolena` : Dentro del RightPane hay una miniatura, si es
+  - `show_miniatura = boolean` : Dentro del RightPane hay una miniatura, si es
     true en caso de seleccionar una imagen esta se mostrará, si es false se
     muestra siempre el icono.
   - `fill_miniatura_like_icon = boolean` : Si es true, pinta las miniaturas con
     el mismo color que el icono.
   - `show_places = boolean` : Define si se muestran las ubicaciones en el LeftPane.
-  - `places = String[][]` : Define los lugares que aparecerán en Lugares. Su
-    sintaxis es _[{nombre;icono;path},{nombre;icono;path},{...]_.
+  - `places = String[][]` : Define ubicaciones personalizadas que aparecerán en Lugares
+    en el LeftPane. Su sintaxis es _[{nombre;icono;direccion},{nombre;icono;direccion},...]_.
+  - `show_devices = boolean` : Si es true apareceran las particiones y la raiz en
+    el LeftPane.
   - `is_directory_first = boolean` : Si es true se muestran los directorios
     primero.
   - `show_hidden = boolean` : Si es true se muestran los archivos y directorios
     que empiezan por "."
-  - `show_this = boolean` : Si es true aparecerá una carpeta llamada "." que
+  - `show_this = boolean` : Si es true aparecerá un directorio llamado "." que
     hace referencia a la ubicacion actual.
-  - `show_parent = boolean` : Si es true aparece una carpeta llamada ".." que
+  - `show_parent = boolean` : Si es true aparece un directorio llamado ".." que
     hace referencia al directorio padre.
   - `fill_text_file_like_icon = boolean` : Si es true los nombres de los archivos
     tendrán el mismo color que sus iconos, si es false el color será el definido
-    como "unknow".
+    por la propiedad "**unknow**" en _colors_binding.properties_.
   - `fill_text_dir_like_icon = boolean` : Lo mismo que el anterior pero con los
     directorios.
+  - `default_order = ORDER` : Define el orden predeterminado de los archivos y
+    directorios.
+  - `custom_order = String[][]` : Define el orden para directorios especificos. Su
+    sintaxis es _[{path;orden},{path;orden},...]_, el primer valor es String y el
+    segundo es ORDER.
+  - `bottom_buttons = String[]` : Define los botones que aparecen en el BottomPane.
+    Los posibles valores son _order_, _filter_.
+  - `order_icons = String[]` : Define los iconos de los botones para cambiar el orden.
+    El orden es [NAME,DATE,SIZE,MIME]
   - `context_menu_icons = String[]` : Define los iconos del menu contextual que
     aparece al hacer clic derecho sobre el CenterPane. El orden es el mismo que
     aparece al abrir el menu.

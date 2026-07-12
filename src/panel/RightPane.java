@@ -92,10 +92,8 @@ public class RightPane extends ScrollPane {
                 label.setFont(nerdFont);
                 label.setId("right_miniatura");
 
-                if (FILL_MINIATURA_LIKE_ICON)
-                    label.setFill(selectedItem.getColor());
-                else
-                    label.setFill(UNKNOW_COLOR);
+                if (FILL_MINIATURA_LIKE_ICON) label.setFill(selectedItem.getColor());
+                else label.setFill(UNKNOW_COLOR);
 
                 StackPane miniaturaPane = new StackPane(label);
                 miniaturaPane.setMinSize(paneWidth, paneWidth);

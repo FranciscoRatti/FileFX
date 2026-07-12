@@ -35,16 +35,18 @@ public class Lib {
     public static boolean isCut = false;
     public static final String HOME = System.getenv("HOME");
     public static final String TRASH = HOME+"/.local/share/Trash/";
-    public static final String ABSOLUTE_PATH = "/usr/";
-    //public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/";
-    public static final String CONFIG_PATH = HOME + "/.config/filefx/";
-    //public static final String CONFIG_PATH = ABSOLUTE_PATH+"share/filefx/";
+    //public static final String ABSOLUTE_PATH = "/usr/";
+    public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/";
+    //public static final String CONFIG_PATH = HOME + "/.config/filefx/";
+    public static final String CONFIG_PATH = ABSOLUTE_PATH+"share/filefx/";
 
     public static final String RESET = "\u001B[0m";
     public static final String RED = "\u001B[31m";
     public static final String GREEN = "\u001B[32m";
     public static final String YELLOW = "\u001B[33m";
     public static final String BLUE = "\u001B[34m";
+
+    public enum ORDER {NAME, DATE, SIZE, MIME}
 
     public static final LinkedList<String> backBuffer = new LinkedList<>();
     public static final LinkedList<String> forwardBuffer = new LinkedList<>();
@@ -359,15 +361,8 @@ public class Lib {
             backBuffer.add(path);
             filter = null;
 
-            String oldPath = path.substring(0, path.length() - 1);
-
-            int length = path.length();
-            if (length > 1) {
-            do {
-              path = path.substring(0, length - 1);
-              length = path.length();
-            } while (!path.endsWith("/"));
-            }
+            String oldPath = path;
+            path = Path.of(path).getParent().toString()+"/";
 
             updateCenter();
             updateTop();
