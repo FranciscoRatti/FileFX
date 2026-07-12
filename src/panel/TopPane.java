@@ -50,7 +50,6 @@ public class TopPane extends HBox {
 
                             if (!new File(text).exists()) {
                                 printError("El archivo o directorio "+text+" no existe", null);
-                                showAlert(new Alert(Alert.AlertType.ERROR), "El archivo o directorio "+text+" no existe", "ERROR");
                             } else {
                                 path = text;
                                 printInfo("Actualizando path a '"+BLUE+path+RESET+"'");
@@ -115,7 +114,7 @@ public class TopPane extends HBox {
                     children.add(search);
                     search.setText(
                             path.startsWith(TRASH+"files") ? "trash"+path.substring(HOME.length()+25) :
-                            path.startsWith(HOME) ? "~/"+path.substring(HOME.length()+1) :
+                            path.startsWith(HOME) ? "~"+path.substring(HOME.length()) :
                             path);
                 }
                 case "clean" -> {if (path.startsWith(TRASH+"files")) children.add(clean);}

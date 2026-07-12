@@ -50,7 +50,7 @@ public class CenterPane extends ScrollPane {
     public CenterPane() {
         if (!new File(path).exists()) {
             printError("El directorio inicial '"+path+"' no existe", null);
-            path = HOME;
+            path = HOME+"/";
         }
         centerNodes = new ArrayList<>();
         selectedItems = new ArrayList<>();
@@ -131,10 +131,11 @@ public class CenterPane extends ScrollPane {
         File[] content;
         try {
             content = directory.listFiles();
-        } catch (Exception e) {
-            printError("No existe '"+path+"'", e);
+        } catch (Exception ex) {
+            printError("No existe '"+path+"'", ex);
             return;
         }
+
         ArrayList<CenterNode> filesList = new ArrayList<>();
         ArrayList<CenterNode> directoriesList = new ArrayList<>();
 
@@ -187,29 +188,29 @@ public class CenterPane extends ScrollPane {
                     directoriesList.sort(compareByName);
                 }
             }
-
-            if (SHOW_PARENT) {
-                File parent = directory.getParentFile();
-                if (parent != null) {
-                    CenterNode parentNode = new CenterNode(parent);
-                    parentNode.setText("..");
-                    parentNode.setIcon(iconsMyme.getProperty("parent"), Color.valueOf(colorsMyme.getProperty("parent")));
-                    directoriesList.addFirst(parentNode);
-                }
-            }
-
-            if (SHOW_THIS) {
-                CenterNode thisNode = new CenterNode(directory);
-                thisNode.setText(".");
-                thisNode.setIcon(iconsMyme.getProperty("this"), Color.valueOf(colorsMyme.getProperty("this")));
-                directoriesList.addFirst(thisNode);
-            }
-
-            // Añadiendo nodos
-            if (IS_DIRECTORY_FIRST) centerNodes.addAll(directoriesList);
-            centerNodes.addAll(filesList);
-            if (!IS_DIRECTORY_FIRST) centerNodes.addAll(directoriesList);
         }
+
+        if (SHOW_PARENT) {
+            File parent = directory.getParentFile();
+            if (parent != null) {
+                CenterNode parentNode = new CenterNode(parent);
+                parentNode.setText("..");
+                parentNode.setIcon(iconsMyme.getProperty("parent"), Color.valueOf(colorsMyme.getProperty("parent")));
+                directoriesList.addFirst(parentNode);
+            }
+        }
+
+        if (SHOW_THIS) {
+            CenterNode thisNode = new CenterNode(directory);
+            thisNode.setText(".");
+            thisNode.setIcon(iconsMyme.getProperty("this"), Color.valueOf(colorsMyme.getProperty("this")));
+            directoriesList.addFirst(thisNode);
+        }
+
+        // Añadiendo nodos
+        if (IS_DIRECTORY_FIRST) centerNodes.addAll(directoriesList);
+        centerNodes.addAll(filesList);
+        if (!IS_DIRECTORY_FIRST) centerNodes.addAll(directoriesList);
 
         // Definiendo ids
         for (int i = 0; i < centerNodes.size(); i++) {

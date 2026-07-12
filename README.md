@@ -82,54 +82,66 @@ configuraciones:
 |   ORDER    |                          NAME, DATE, SIZE o MIME                           |
 
 - **_config.properties_**: Configuraciones principales.
-  - `terminal = String` : Comando a ejecutar al abrir una terminal.
-  - `save_bounds = boolean` : Si es true se guarda el tamaño de la ventana al
-    cerrarse.
-  - `save_path = boolean` : Si es true guarda la ultima ubicación.
-  - `save_selection = boolean` : Si es true guarda el ultimo item seleccionado.
-  - `top_buttons = String[][]` : Define los botones que aparecerán en el TopPane.
-    Los posibles botones son **back**, **forward**, **parent**, **search** (sin icono),
-    **clean**, **reload**. La sintaxis es _[{nombre;icono},{nombre;icono},...]_
-  - `right_width = double` : Ancho fijo del RightPane.
-  - `show_right_pane = boolean` : Define si se muestra el RightPane al iniciar.
-  - `show_miniatura = boolean` : Dentro del RightPane hay una miniatura, si es
-    true en caso de seleccionar una imagen esta se mostrará, si es false se
-    muestra siempre el icono.
-  - `fill_miniatura_like_icon = boolean` : Si es true, pinta las miniaturas con
-    el mismo color que el icono.
-  - `show_places = boolean` : Define si se muestran las ubicaciones en el LeftPane.
-  - `places = String[][]` : Define ubicaciones personalizadas que aparecerán en Lugares
-    en el LeftPane. Su sintaxis es _[{nombre;icono;direccion},{nombre;icono;direccion},...]_.
-  - `show_devices = boolean` : Si es true apareceran las particiones y la raiz en
-    el LeftPane.
-  - `is_directory_first = boolean` : Si es true se muestran los directorios
-    primero.
-  - `show_hidden = boolean` : Si es true se muestran los archivos y directorios
-    que empiezan por "."
-  - `show_this = boolean` : Si es true aparecerá un directorio llamado "." que
-    hace referencia a la ubicacion actual.
-  - `show_parent = boolean` : Si es true aparece un directorio llamado ".." que
-    hace referencia al directorio padre.
-  - `fill_text_file_like_icon = boolean` : Si es true los nombres de los archivos
-    tendrán el mismo color que sus iconos, si es false el color será el definido
-    por la propiedad "**unknow**" en _colors_binding.properties_.
-  - `fill_text_dir_like_icon = boolean` : Lo mismo que el anterior pero con los
-    directorios.
-  - `default_order = ORDER` : Define el orden predeterminado de los archivos y
-    directorios.
-  - `custom_order = String[][]` : Define el orden para directorios especificos. Su
-    sintaxis es _[{path;orden},{path;orden},...]_, el primer valor es String y el
-    segundo es ORDER.
-  - `bottom_buttons = String[]` : Define los botones que aparecen en el BottomPane.
-    Los posibles valores son _order_, _filter_.
-  - `order_icons = String[]` : Define los iconos de los botones para cambiar el orden.
-    El orden es [NAME,DATE,SIZE,MIME]
-  - `context_menu_icons = String[]` : Define los iconos del menu contextual que
-    aparece al hacer clic derecho sobre el CenterPane. El orden es el mismo que
-    aparece al abrir el menu.
-  - `check_clipboard_paste = boolean` : Si es true revisará el portapapeles del
-    sistema antes de abrir el menu contextual, si no lo hará cuando se presione el
-    item "pegar".
+  - **General :** 
+    - `terminal = String` : Comando a ejecutar al abrir una terminal.
+    - `save_bounds = boolean` : Si es true se guarda el tamaño de la ventana al
+      cerrarse.
+    - `save_path = boolean` : Si es true guarda la ultima ubicación.
+    - `save_selection = boolean` : Si es true guarda el ultimo item seleccionado.
+  - **Top Pane :**
+    - `top_buttons = String[][]` : Define los botones que aparecerán en el TopPane.
+      Los posibles botones son **back**, **forward**, **parent**, **search** (sin icono),
+      **clean**, **reload**. La sintaxis es _[{nombre;icono},{nombre;icono},...]_
+  - **Right Pane :**
+    - `right_width = double` : Ancho fijo del RightPane.
+    - `show_right_pane = boolean` : Define si se muestra el RightPane al iniciar.
+    - `show_miniatura = boolean` : Dentro del RightPane hay una miniatura, si es
+      true en caso de seleccionar una imagen esta se mostrará, si es false se
+      muestra siempre el icono.
+    - `fill_miniatura_like_icon = boolean` : Si es true, pinta las miniaturas con
+      el mismo color que el icono.
+  - **Bottom Pane :**
+    - `bottom_buttons = String[]` : Define los botones que aparecen en el BottomPane.
+      Los posibles valores son _order_, _filter_.
+    - `order_icons = String[]` : Define los iconos de los botones para cambiar el orden.
+      El orden es [NAME,DATE,SIZE,MIME]
+  - **Left Pane :**
+    - `show_places = boolean` : Define si se muestran las ubicaciones en el LeftPane.
+    - `places = String[][]` : Define ubicaciones personalizadas que aparecerán en Lugares
+      en el LeftPane. Su sintaxis es _[{nombre;icono;direccion},{nombre;icono;direccion},...]_.
+    - `show_devices = boolean` : Si es true apareceran los discos y particiones en
+      el LeftPane.
+    - `partition_icons = String[][]` : Define el icono y nombre de particiones especificas, el
+      resto tendra el icono de la propiedad "**partition**" en _icons_binding.properties_. La
+      sintaxis es _[{punto de montaje;icono;nombre},...]_.
+    - `show_unmounted = boolean` : Si es true se muestran las particiones que no estan montadas
+      en el LeftPane.
+  - **Center Pane :**
+    - `is_directory_first = boolean` : Si es true se muestran los directorios
+      primero.
+    - `show_hidden = boolean` : Si es true se muestran los archivos y directorios
+      que empiezan por "."
+    - `show_this = boolean` : Si es true aparecerá un directorio llamado "." que
+      hace referencia a la ubicacion actual.
+    - `show_parent = boolean` : Si es true aparece un directorio llamado ".." que
+      hace referencia al directorio padre.
+    - `fill_text_file_like_icon = boolean` : Si es true los nombres de los archivos
+      tendrán el mismo color que sus iconos, si es false el color será el definido
+      por la propiedad "**unknow**" en _colors_binding.properties_.
+    - `fill_text_dir_like_icon = boolean` : Lo mismo que el anterior pero con los
+      directorios.
+    - `default_order = ORDER` : Define el orden predeterminado de los archivos y
+      directorios.
+    - `custom_order = String[][]` : Define el orden para directorios especificos. Su
+      sintaxis es _[{path;orden},{path;orden},...]_, el primer valor es String y el
+      segundo es ORDER.
+  - **Context Menu :**
+    - `context_menu_icons = String[]` : Define los iconos del menu contextual que
+      aparece al hacer clic derecho sobre el CenterPane. El orden es el mismo que
+      aparece al abrir el menu.
+    - `check_clipboard_paste = boolean` : Si es true revisará el portapapeles del
+      sistema antes de abrir el menu contextual, si no lo hará cuando se presione el
+      item "pegar".
 
 - **_init_values.properties_**: Valores iniciales.
   - `height = double` : Alto inicial.
@@ -171,15 +183,25 @@ configuraciones:
   iconos y los colores que aparecerán al lado de cada archivo o directorio. Para
   definir que icono y color asignarle a cada archivo primero se fija en la extension, sino
   la encuentra definida en los archivos busca por tipo mime, sino le asigna
-  el icono y el color de la propiedad llamada "unknow".
+  el icono y el color de la propiedad llamada "**unknow**". <br/>
+  Los colores pueden estar en hexadecimal o pueden ser los nombres de las constantes que
+  aparecen en la [Api de JavaFX](https://docs.oracle.com/en/java/java-components/javafx/21/docs/javafx.graphics/javafx/scene/paint/Color.html). Existen algunas propiedades especiales que
+  siempre deben estar presentes, estas son:
+  - `unknow` : Es el valor que se utilizara en ultima instancia.
+  - `lock` : Utilizado para directorios bloqueados o archivos sin permisos de lectura.
+  - `this` : Utilizado para el directorio "." si _show_this_ es true.
+  - `parent` : Se usa para el directorio ".." si _show_parent_ es true.
+  - `disc` : Utilizado para los discos en el LeftPane si _show_devices_ es true.
+  - `partition` : Igual que _disc_ pero para las particiones.
 
 ## Tema
 
 Dentro del directorio de configuración **~/.config/filefx/** se encuentra un
 archivo llamado **_theme.css_**, aquí se especifica el estilo de los componentes
 en formato css. Las posibles propiedades están definidas en la
-[Guía de referencias CSS](https://docs.oracle.com/en/java/java-components/javafx/21/docs/javafx.graphics/javafx/scene/doc-files/cssref.html).
-Si no sabes css o no querés revisar, la guía la inteligencia artificial es muy util.
+[Guía de referencias CSS](https://docs.oracle.com/en/java/java-components/javafx/21/docs/javafx.graphics/javafx/scene/doc-files/cssref.html) y los colores de la [Api de JavaFX](https://docs.oracle.com/en/java/java-components/javafx/21/docs/javafx.graphics/javafx/scene/paint/Color.html)
+son soportados. <br/>
+Si no sabes css o no querés revisar la guía, la inteligencia artificial es muy util.
 A continuación se puede ver cada componente etiquetado y de que clase es:
 
 ![componentes.png](images/componentes.png)

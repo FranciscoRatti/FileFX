@@ -70,6 +70,9 @@ public class FileFX extends javafx.application.Application {
             SHOW_PLACES = Boolean.parseBoolean(config.getProperty("show_places"));
             PLACES = splitTwoTimes(config.getProperty("places"));
             SHOW_DEVICES = Boolean.parseBoolean(config.getProperty("show_devices"));
+            PARTITION_ICONS = splitTwoTimes(config.getProperty("partition_icons"));
+            SHOW_UNMOUNTED = Boolean.parseBoolean(config.getProperty("show_unmounted"));
+            UNMOUNT_ICON = config.getProperty("unmount_icon");
 
             IS_DIRECTORY_FIRST = Boolean.parseBoolean(config.getProperty("is_directory_first"));
             SHOW_HIDDEN = Boolean.parseBoolean(config.getProperty("show_hidden"));
@@ -341,6 +344,9 @@ public class FileFX extends javafx.application.Application {
     public static boolean SHOW_PLACES;
     public static String[][] PLACES;
     public static boolean SHOW_DEVICES;
+    public static String[][] PARTITION_ICONS;
+    public static boolean SHOW_UNMOUNTED;
+    public static String UNMOUNT_ICON;
 
     public static boolean IS_DIRECTORY_FIRST;
     public static boolean SHOW_HIDDEN;

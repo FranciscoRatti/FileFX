@@ -4,12 +4,20 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import main.Lib;
+import node.Button;
+import node.CenterNode;
 import node.LeftNode;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import static main.FileFX.*;
-import static main.Lib.printInfo;
+import static main.Lib.*;
+import static panel.CenterPane.centerNodes;
 
 public class LeftPane extends VBox {
     public LeftPane() {
@@ -24,7 +32,7 @@ public class LeftPane extends VBox {
         ObservableList<Node> children = getChildren();
         children.clear();
 
-        if (SHOW_PLACES) {
+         if (SHOW_PLACES) {
             VBox placesBox = new VBox();
             ObservableList<Node> placesChildren = placesBox.getChildren();
 
@@ -39,19 +47,88 @@ public class LeftPane extends VBox {
                         ));
             }
 
-            placesBox.getChildren().add(new node.Separator(10, Orientation.HORIZONTAL));
+            placesBox.getChildren().add(new node.Separator(20, Orientation.HORIZONTAL));
             children.add(placesBox);
         }
 
         if (SHOW_DEVICES) {
             VBox devicesBox = new VBox();
+            ObservableList<Node> devicesChildren = devicesBox.getChildren();
 
             Label title = new Label("Dispositivos");
             title.setId("left_label_title");
+            devicesChildren.add(title);
 
-            Label rootDirectory = new LeftNode("Raiz", "\uEF81", "/");
+            // Tomar discos y particiones
+            try {
+                Process process = new ProcessBuilder("lsblk", "-f", "-P", "-o", "NAME,FSTYPE,LABEL,UUID,FSAVAIL,FSUSE%,MOUNTPOINT,SIZE,RM,TYPE").start();
+                process.waitFor();
+                try (InputStream in = process.getInputStream()) {
+                    String[] lines = new String(in.readAllBytes()).split("\n");
+                    for (String line : lines) {
 
-            devicesBox.getChildren().addAll(title, rootDirectory, new node.Separator(20, Orientation.HORIZONTAL));
+                        // Tomar meta datos
+                        String[] properties = line.split("\" ");
+                        String name = properties[0].split("=")[1].substring(1);
+                        String fstype = properties[1].split("=")[1].substring(1);
+                        String label = properties[2].split("=")[1].substring(1);
+                        String uuid = properties[3].split("=")[1].substring(1);
+                        String fsavail = properties[4].split("=")[1].substring(1);
+                        String fsuse = properties[5].split("=")[1].substring(1);
+                        String mountpoint = properties[6].split("=")[1].substring(1);
+                        String size = properties[7].split("=")[1].substring(1);
+                        String rm = properties[8].split("=")[1].substring(1);
+                        String type = properties[9].split("=")[1].substring(1);
+                        String labelName = label.equals("") ? name : label;
+
+                        // Si es disco
+                        if (type.equals("disk\"")) {
+                            devicesChildren.add(new LeftNode(labelName, iconsMyme.getProperty("disc"), null)
+                                    .setColor(Color.valueOf(colorsMyme.getProperty("disc"))));
+
+                        // Si es particion
+                        } else if (type.equals("part\"")){
+                            String icon = iconsMyme.getProperty("partition");
+                            if (!mountpoint.equals("")) {
+                                for (String[] partitionIcon : PARTITION_ICONS) {
+                                    if (partitionIcon[0].equals(mountpoint)) {
+                                        icon = partitionIcon[1];
+                                        labelName = partitionIcon[2];
+                                    }
+                                }
+
+                                if (rm.charAt(0) == '1') {
+                                    devicesChildren.add(new HBox(
+                                            new LeftNode(labelName, " "+icon, mountpoint)
+                                            .setColor(Color.valueOf(colorsMyme.getProperty("partition"))),
+                                            new Button(UNMOUNT_ICON, "Desmontar", "left_unmount", e -> {
+                                                try {
+                                                    printExecute("Expulsando '"+YELLOW+name+RESET+"'");
+                                                    new ProcessBuilder("udisksctl", "unmount", "-b", "/dev/"+name, "&&", "udisksctl", "power-off", "-b", "/dev/"+name)
+                                                            .start().waitFor();
+                                                    updateLeft();
+                                                } catch (Exception ex) {
+                                                    printError("Error expulsando '"+name+"'", ex);
+                                                }
+                                            })));
+                                } else {
+                                    devicesChildren.add(
+                                            new LeftNode(labelName, " "+icon, mountpoint)
+                                            .setColor(Color.valueOf(colorsMyme.getProperty("partition")))
+                                    );
+                                }
+                            } else if (SHOW_UNMOUNTED) {
+                                devicesChildren.add(new LeftNode(labelName, " "+icon, null)
+                                        .setColor(Color.valueOf(colorsMyme.getProperty("partition"))));
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                printError("Error al cargar particiones", e);
+            }
+
+            devicesChildren.add(new node.Separator(20, Orientation.HORIZONTAL));
             children.add(devicesBox);
         }
     }
