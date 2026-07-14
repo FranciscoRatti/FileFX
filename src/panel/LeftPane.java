@@ -9,20 +9,18 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import main.Lib;
 import node.Button;
-import node.CenterNode;
 import node.LeftNode;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import static main.FileFX.*;
 import static main.Lib.*;
-import static panel.CenterPane.centerNodes;
 
 public class LeftPane extends VBox {
     public LeftPane() {
         super(0);
         setId("left_pane");
+        setMaxWidth(LEFT_WIDTH);
 
         update();
     }
@@ -61,14 +59,14 @@ public class LeftPane extends VBox {
 
             // Tomar discos y particiones
             try {
-                Process process = new ProcessBuilder("lsblk", "-f", "-P", "-o", "NAME,FSTYPE,LABEL,UUID,FSAVAIL,FSUSE%,MOUNTPOINT,SIZE,RM,TYPE").start();
+                Process process = new ProcessBuilder("lsblk", "-f", "-P", "-o", "NAME,FSTYPE,LABEL,UUID,FSAVAIL,FSUSE%,MOUNTPOINT,SIZE,RM,TYPE,MODEL").start();
                 process.waitFor();
                 try (InputStream in = process.getInputStream()) {
                     String[] lines = new String(in.readAllBytes()).split("\n");
                     for (String line : lines) {
 
                         // Tomar meta datos
-                        String[] properties = line.split("\" ");
+                        String[] properties = line.substring(0, line.length()-1).split("\" ");
                         String name = properties[0].split("=")[1].substring(1);
                         String fstype = properties[1].split("=")[1].substring(1);
                         String label = properties[2].split("=")[1].substring(1);
@@ -79,15 +77,16 @@ public class LeftPane extends VBox {
                         String size = properties[7].split("=")[1].substring(1);
                         String rm = properties[8].split("=")[1].substring(1);
                         String type = properties[9].split("=")[1].substring(1);
-                        String labelName = label.equals("") ? name : label;
+                        String model = properties[10].split("=")[1].substring(1);
+                        String labelName = label.equals("") ? model.equals("") ? name : model : label;
 
                         // Si es disco
-                        if (type.equals("disk\"")) {
+                        if (type.equals("disk")) {
                             devicesChildren.add(new LeftNode(labelName, iconsMyme.getProperty("disc"), null)
                                     .setColor(Color.valueOf(colorsMyme.getProperty("disc"))));
 
                         // Si es particion
-                        } else if (type.equals("part\"")){
+                        } else if (type.equals("part")){
                             String icon = iconsMyme.getProperty("partition");
                             if (!mountpoint.equals("")) {
                                 for (String[] partitionIcon : PARTITION_ICONS) {

@@ -25,7 +25,7 @@ import java.util.LinkedList;
 import java.util.Optional;
 
 import static main.FileFX.*;
-import static panel.CenterPane.centerNodes;
+import static panel.CenterPane.*;
 import static panel.MainPane.*;
 
 public class Lib {
@@ -361,21 +361,26 @@ public class Lib {
             backBuffer.add(path);
             filter = null;
 
-            String oldPath = path;
-            path = Path.of(path).getParent().toString()+"/";
+            String oldPath = path.substring(0, path.length()-1);
+            path = Path.of(path).getParent().toString();
+            if (!path.equals("/")) path += "/";
 
             updateCenter();
             updateTop();
             updateRight();
 
             Platform.runLater(() -> {
-              for (CenterNode label : centerNodes) {
-                  if (label.getFile().getAbsolutePath().equals(oldPath)) {
-                      label.setSelected(true);
-                      centerPane.setSelectedOnCenter();
-                      break;
-                  }
-              }
+                boolean flag = false;
+                for (CenterNode label : centerNodes) {
+                    if (label.getFile().getAbsolutePath().equals(oldPath)) {
+                        label.setSelected(true);
+                        centerPane.setSelectedOnCenter();
+                        flag = true;
+                        break;
+                    }
+                }
+
+                if (!flag) selectThis();
           });
         }
     }

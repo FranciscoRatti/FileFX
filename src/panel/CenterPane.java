@@ -18,10 +18,8 @@ import node.CenterNode;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.regex.Pattern;
 
 import static main.FileFX.*;
 import static main.Lib.*;
@@ -87,7 +85,7 @@ public class CenterPane extends ScrollPane {
         });
 
         // Acciones generales
-        setOnMouseReleased(e -> {
+        setOnMouseClicked(e -> {
             MouseButton button = e.getButton();
             EventTarget target = e.getTarget();
 
@@ -254,7 +252,7 @@ public class CenterPane extends ScrollPane {
                 menuMultiple.isShowing() || menuCreate.isShowing() || menuTrash.isShowing();
     }
 
-    public void changeSelectKey(boolean isShiftDown, int step) {
+    public void moveCursor(boolean isShiftDown, int step) {
         if (!selectedItems.isEmpty()) {
 
             // Seleccion
@@ -365,15 +363,17 @@ public class CenterPane extends ScrollPane {
                 filter = null;
 
                 forwardBuffer.clear();
-                backBuffer.add(FileFX.path);
+                backBuffer.add(path);
                 path=absolutePath+"/";
 
                 printInfo("Entrando a '"+BLUE+path+RESET+"'");
 
-                updateCenter();
                 updateTop();
-                if (!centerNodes.isEmpty()) centerNodes.getFirst().setSelected(true);
-                updateRight();
+                updateCenter();
+                Platform.runLater(() -> {
+                    selectFirst();
+                    updateRight();
+                });
 
             // Si es archivo
             } else {
@@ -399,6 +399,40 @@ public class CenterPane extends ScrollPane {
                             (selectedItem.getBoundsInParent().getCenterY() - (viewportHeight / 2.0)) / scrollRange);
                 }
             });
+        }
+    }
+
+    public static void deselectAll() {
+        if (!selectedItems.isEmpty() && selectedItem != null) {
+            selectedItem = null;
+            for (CenterNode centerNode : selectedItems) centerNode.setSelected(false);
+            selectedItems.clear();
+
+            printInfo("Se deselecciono todo");
+        }
+    }
+    public static void selectThis() {
+        if (SHOW_THIS) {
+            CenterPane.centerNodes.getFirst().setSelected(true);
+            centerPane.setVvalue(0);
+        } else {
+            selectedItem = new CenterNode(new File(path));
+            selectedItem.setIcon(iconsMyme.getProperty("this"), Color.valueOf(colorsMyme.getProperty("this")));
+            selectedItems.add(selectedItem);
+        }
+    }
+    public static void selectFirst() {
+        if (!centerNodes.isEmpty()) {
+            int length = centerNodes.size();
+            if (SHOW_THIS && SHOW_PARENT && length > 2)
+                centerNodes.get(2).setSelected(true);
+            else if (SHOW_THIS || SHOW_PARENT && length > 1)
+                centerNodes.get(1).setSelected(true);
+            else
+                centerNodes.getFirst().setSelected(true);
+            centerPane.setVvalue(0);
+        } else {
+            selectThis();
         }
     }
 }

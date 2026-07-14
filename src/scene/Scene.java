@@ -11,15 +11,10 @@ import panel.RightPane;
 import panel.TopPane;
 
 import static main.FileFX.*;
-import static main.FileFX.back;
-import static main.FileFX.forward;
-import static main.FileFX.parent;
 import static main.Lib.*;
-import static main.Lib.back;
-import static main.Lib.forward;
-import static main.Lib.parent;
-import static panel.CenterPane.centerNodes;
+import static panel.CenterPane.*;
 import static panel.MainPane.*;
+import static panel.RightPane.changeShow;
 
 public class Scene extends javafx.scene.Scene {
     public Scene() {
@@ -59,17 +54,17 @@ public class Scene extends javafx.scene.Scene {
                     setKeyBindAction(trash, key, () -> trashFiles(parseFileLabelsToFiles(selectedItems)));
                     setKeyBindAction(rename, key, () -> RightPane.focusName());
 
-                    setKeyBindAction(up, key, () -> centerPane.changeSelectKey(false, -1));
+                    setKeyBindAction(up, key, () -> centerPane.moveCursor(false, -1));
                     setKeyBindAction(open, key, () -> CenterPane.openSelected());
-                    setKeyBindAction(down, key, () -> centerPane.changeSelectKey(false, 1));
+                    setKeyBindAction(down, key, () -> centerPane.moveCursor(false, 1));
                     setKeyBindAction(parent, key, () -> parent());
-                    setKeyBindAction(up_step, key, () -> centerPane.changeSelectKey(false, -3));
-                    setKeyBindAction(down_step, key, () -> centerPane.changeSelectKey(false, 3));
+                    setKeyBindAction(up_step, key, () -> centerPane.moveCursor(false, -3));
+                    setKeyBindAction(down_step, key, () -> centerPane.moveCursor(false, 3));
 
-                    setKeyBindAction(select_up, key, () -> centerPane.changeSelectKey(true, -1));
-                    setKeyBindAction(select_down, key, () -> centerPane.changeSelectKey(true, 1));
-                    setKeyBindAction(select_up_step, key, () -> centerPane.changeSelectKey(true, -5));
-                    setKeyBindAction(select_down_step, key, () -> centerPane.changeSelectKey(true, 5));
+                    setKeyBindAction(select_up, key, () -> centerPane.moveCursor(true, -1));
+                    setKeyBindAction(select_down, key, () -> centerPane.moveCursor(true, 1));
+                    setKeyBindAction(select_up_step, key, () -> centerPane.moveCursor(true, -5));
+                    setKeyBindAction(select_down_step, key, () -> centerPane.moveCursor(true, 5));
 
                     setKeyBindAction(back, key, () -> back());
                     setKeyBindAction(forward, key, () -> forward());
@@ -87,7 +82,7 @@ public class Scene extends javafx.scene.Scene {
                     });
 
                     setKeyBindAction(update_all, key, () -> updateAll());
-                    setKeyBindAction(change_show_right_pane, key, () -> mainPane.changeShowRightPane());
+                    setKeyBindAction(change_show_right_pane, key, () -> changeShow());
                 } catch (IllegalArgumentException ignored) {}
             } else {
                 try {

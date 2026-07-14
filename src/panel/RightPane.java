@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 
 import static main.FileFX.*;
 import static main.Lib.*;
-import static panel.MainPane.selectedItem;
+import static panel.MainPane.*;
 
 public class RightPane extends ScrollPane {
     private static RightNode nameNode;
@@ -31,6 +31,8 @@ public class RightPane extends ScrollPane {
 
     private VBox pane;
     private double paneWidth;
+
+    private static boolean isRightPaneShow;
 
     public RightPane() {
         paneWidth = RIGHT_WIDTH;
@@ -56,7 +58,7 @@ public class RightPane extends ScrollPane {
         Button close = new Button("x");
         close.setId("right_close_button");
         close.setOnAction(e -> {
-            mainPane.changeShowRightPane(false);
+            changeShow(false);
         });
         children.add(close);
 
@@ -66,14 +68,14 @@ public class RightPane extends ScrollPane {
 
             // Miniatura
             if (SHOW_MINIATURA &&
-                    !propertie.isDirectory() && extensionText != null &&
-                    (
-                            extensionText.equals("bmp") ||
-                                    extensionText.equals("gif") ||
-                                    extensionText.equals("jpeg") ||
-                                    extensionText.equals("jpg") ||
-                                    extensionText.equals("png")
-                    )) {
+                !propertie.isDirectory() && extensionText != null && (
+                    extensionText.equals("bmp") ||
+                    extensionText.equals("gif") ||
+                    extensionText.equals("jpeg") ||
+                    extensionText.equals("jpg") ||
+                    extensionText.equals("png")
+                )
+            ) {
                 Image image = new Image("file://" + propertie.getAbsolutePath());
                 ImageView miniatura = new ImageView(image);
                 miniatura.setPreserveRatio(true);
@@ -165,8 +167,20 @@ public class RightPane extends ScrollPane {
 
     public static void focusName() {
         nameNode.textField.requestFocus();
+        nameNode.textField.selectRange(0, selectedItem.getName().length()-selectedItem.getExtension().length()-1);
     }
-
+    public static void changeShow(boolean isRightPaneShow) {
+        RightPane.isRightPaneShow=isRightPaneShow;
+        if (isRightPaneShow) {
+            if (rightPane == null) rightPane = new RightPane();
+            mainPane.setRight(rightPane);
+        } else {
+            mainPane.setRight(null);
+        }
+    }
+    public static void changeShow() {
+        changeShow(!isRightPaneShow);
+    }
     public static boolean isAnyFocus() {
         return  (nameNode != null && nameNode.textField.isFocused()) ||
                 (sizeNode != null && sizeNode.textField.isFocused()) ||

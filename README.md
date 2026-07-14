@@ -6,6 +6,8 @@ teclado y ser altamente configurable. Para los iconos utiliza una
 **Nerd fonts**, estos se pueden encontrar en la [cheat sheet](https://www.nerdfonts.com/cheat-sheet).
 Tiene previsualization de imágenes.
 
+![vista-previa.png](images/vista-previa.png)
+
 ### Indices
 
 - [Depedencias](#dependencias)
@@ -106,6 +108,7 @@ configuraciones:
     - `order_icons = String[]` : Define los iconos de los botones para cambiar el orden.
       El orden es [NAME,DATE,SIZE,MIME]
   - **Left Pane :**
+    - `left_width = double` : Ancho fijo del LeftPane. 
     - `show_places = boolean` : Define si se muestran las ubicaciones en el LeftPane.
     - `places = String[][]` : Define ubicaciones personalizadas que aparecerán en Lugares
       en el LeftPane. Su sintaxis es _[{nombre;icono;direccion},{nombre;icono;direccion},...]_.
@@ -116,6 +119,7 @@ configuraciones:
       sintaxis es _[{punto de montaje;icono;nombre},...]_.
     - `show_unmounted = boolean` : Si es true se muestran las particiones que no estan montadas
       en el LeftPane.
+    - `unmount_icon = String` : Define el icono del boton de desmontar.
   - **Center Pane :**
     - `is_directory_first = boolean` : Si es true se muestran los directorios
       primero.
@@ -202,6 +206,6 @@ en formato css. Las posibles propiedades están definidas en la
 [Guía de referencias CSS](https://docs.oracle.com/en/java/java-components/javafx/21/docs/javafx.graphics/javafx/scene/doc-files/cssref.html) y los colores de la [Api de JavaFX](https://docs.oracle.com/en/java/java-components/javafx/21/docs/javafx.graphics/javafx/scene/paint/Color.html)
 son soportados. <br/>
 Si no sabes css o no querés revisar la guía, la inteligencia artificial es muy util.
-A continuación se puede ver cada componente etiquetado y de que clase es:
+A continuación se puede ver la etiqueta de cada componente y de que clase es:
 
 ![componentes.png](images/componentes.png)

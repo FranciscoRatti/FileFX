@@ -10,19 +10,16 @@ import panel.MainPane;
 import java.io.File;
 
 import static main.FileFX.*;
-import static main.Lib.printInfo;
-import static main.Lib.updateRight;
-import static panel.CenterPane.centerNodes;
-import static panel.CenterPane.openSelected;
-import static panel.MainPane.deselectAll;
-import static panel.MainPane.selectedItem;
+import static main.Lib.*;
+import static panel.CenterPane.*;
+import static panel.MainPane.*;
 
 public class CenterNode extends Label {
-    private FileProperties propertie;
+    private final FileProperties propertie;
     private Boolean selected;
-    private File file;
-    private boolean isDirectory;
-    private String fileName;
+    private final File file;
+    private final boolean isDirectory;
+    private final String fileName;
     private String extension = "";
     private String icon;
     private Label iconLabel;
@@ -40,11 +37,11 @@ public class CenterNode extends Label {
         isDirectory = file.isDirectory();
         fileName = file.getName();
         setText(fileName);
-        extension =  fileName.contains(".") && !isDirectory ? fileName.substring(fileName.lastIndexOf('.')+1) : null;
+        extension = fileName.contains(".") && !isDirectory ? fileName.substring(fileName.lastIndexOf('.')+1) : null;
 
         String colorText;
         if (file.canRead()) {
-            icon = iconsExtension.getProperty("." + extension);
+            icon = iconsExtension.getProperty("."+extension);
             if (icon == null) icon = iconsMyme.getProperty(propertie.getMimeType());
             if (icon == null) icon = iconsMyme.getProperty("unknow");
 

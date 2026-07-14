@@ -15,7 +15,7 @@ import java.util.List;
 
 import static main.Lib.*;
 import static main.FileFX.*;
-import static panel.CenterPane.centerNodes;
+import static panel.CenterPane.*;
 import static panel.MainPane.*;
 
 public class BottomPane extends HBox {
@@ -65,7 +65,7 @@ public class BottomPane extends HBox {
                             }
                             if (preSelectedList.isEmpty()) break;
                         }
-                        if (selectedItem == null && selectedItems.isEmpty()) selectThis();
+                        if (selectedItem == null && selectedItems.isEmpty()) selectFirst();
                         Platform.runLater(() -> centerPane.setSelectedOnCenter());
                         updateRight();
                     }

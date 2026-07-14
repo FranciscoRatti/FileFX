@@ -21,6 +21,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static main.Lib.*;
+import static panel.RightPane.changeShow;
 
 public class FileFX extends javafx.application.Application {
     public static Properties config;
@@ -67,6 +68,10 @@ public class FileFX extends javafx.application.Application {
             SHOW_MINIATURA = Boolean.parseBoolean(config.getProperty("show_miniatura"));
             FILL_MINIATURA_LIKE_ICON = Boolean.parseBoolean(config.getProperty("fill_miniatura_like_icon"));
 
+            BOTTOM_BUTTONS = split(config.getProperty("bottom_buttons"));
+            ORDER_ICONS = split(config.getProperty("order_icons"));
+
+            LEFT_WIDTH = Double.parseDouble(config.getProperty("left_width"));
             SHOW_PLACES = Boolean.parseBoolean(config.getProperty("show_places"));
             PLACES = splitTwoTimes(config.getProperty("places"));
             SHOW_DEVICES = Boolean.parseBoolean(config.getProperty("show_devices"));
@@ -82,9 +87,6 @@ public class FileFX extends javafx.application.Application {
             FILL_TEXT_DIR_LIKE_ICON = Boolean.parseBoolean(config.getProperty("fill_text_dir_like_icon"));
             DEFAULT_ORDER = ORDER.valueOf(config.getProperty("default_order"));
             CUSTOM_ORDER = splitTwoTimes(config.getProperty("custom_order"));
-
-            BOTTOM_BUTTONS = split(config.getProperty("bottom_buttons"));
-            ORDER_ICONS = split(config.getProperty("order_icons"));
 
             CONTEXT_MENU_ICONS = split(config.getProperty("context_menu_icons"));
             CHECK_CLIPBOARD_PASTE = Boolean.parseBoolean(config.getProperty("check_clipboard_paste"));
@@ -185,6 +187,7 @@ public class FileFX extends javafx.application.Application {
 
         printInfo("Cargando panel principal");
         mainPane = new MainPane();
+        changeShow(SHOW_RIGHT_PANE);
 
         printInfo("Cargando escena principal");
         scene = new Scene();
@@ -341,6 +344,10 @@ public class FileFX extends javafx.application.Application {
     public static boolean SHOW_MINIATURA;
     public static boolean FILL_MINIATURA_LIKE_ICON;
 
+    public static String[] BOTTOM_BUTTONS;
+    public static String[] ORDER_ICONS;
+
+    public static double LEFT_WIDTH;
     public static boolean SHOW_PLACES;
     public static String[][] PLACES;
     public static boolean SHOW_DEVICES;
@@ -356,9 +363,6 @@ public class FileFX extends javafx.application.Application {
     public static boolean FILL_TEXT_DIR_LIKE_ICON;
     public static ORDER DEFAULT_ORDER;
     public static String[][] CUSTOM_ORDER;
-
-    public static String[] BOTTOM_BUTTONS;
-    public static String[] ORDER_ICONS;
 
     public static String[] CONTEXT_MENU_ICONS;
     public static boolean CHECK_CLIPBOARD_PASTE;

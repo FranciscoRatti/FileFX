@@ -5,9 +5,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import main.FileFX;
 
-import static main.FileFX.nerdFont;
+import static main.FileFX.*;
 import static main.Lib.*;
-import static panel.MainPane.selectThis;
+import static panel.CenterPane.*;
 
 public class LeftNode extends Label {
     private final Label label;
