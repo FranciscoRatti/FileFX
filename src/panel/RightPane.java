@@ -22,12 +22,13 @@ import static panel.MainPane.*;
 
 public class RightPane extends ScrollPane {
     private static RightNode nameNode;
-    private static RightNode sizeNode;
-    private static RightNode dateTimeNode;
-    private static RightNode tipeNode;
     private static RightNode permissionsNode;
     private static RightNode ownerNode;
     private static RightNode groupNode;
+    private static RightNode sizeNode;
+    private static RightNode modifiedDateTimeNode;
+    private static RightNode createDateTimeNode;
+    private static RightNode tipeNode;
 
     private VBox pane;
     private double paneWidth;
@@ -105,37 +106,18 @@ public class RightPane extends ScrollPane {
 
             // Propiedades
             nameNode = new RightNode("Nombre :", selectedItem.getName(), !path.startsWith(TRASH + "files"));
-            nameNode.textField.setOnKeyPressed(e -> {
+            nameNode.value.setOnKeyPressed(e -> {
                 if (e.getCode().equals(KeyCode.ENTER)) {
-                    renameFile(propertie, nameNode.textField.getText());
+                    renameFile(propertie, nameNode.value.getText());
                 }
             });
 
             // Tamaño
-            long size = propertie.getSize();
-            String sizeText = String.valueOf(size);
-            int sizeTextLength = sizeText.length();
-
-            if (size >= 1000000000000L)
-                sizeText = sizeText.substring(0, sizeText.length() - 12) + "," + sizeText.substring(sizeTextLength - 12, sizeTextLength - 10) + " TB";
-            else if (size >= 1000000000)
-                sizeText = sizeText.substring(0, sizeText.length() - 9) + "," + sizeText.substring(sizeTextLength - 9, sizeTextLength - 7) + " GB";
-            else if (size >= 1000000)
-                sizeText = sizeText.substring(0, sizeText.length() - 6) + "," + sizeText.substring(sizeTextLength - 6, sizeTextLength - 4) + " MB";
-            else if (size >= 1000)
-                sizeText = sizeText.substring(0, sizeTextLength - 3) + "," + sizeText.substring(sizeTextLength - 3, sizeTextLength - 1) + " KB";
-            else sizeText += " BI";
-
-            sizeNode = new RightNode("Tamaño :", sizeText, false);
+            sizeNode = new RightNode("Tamaño :", propertie.getSizeString(), false);
 
             // Fecha
-            LocalDateTime dateTime = propertie.getDateTime();
-            LocalDateTime now = LocalDateTime.now();
-            dateTimeNode = new RightNode("Fecha :",
-                    dateTime.isAfter(now.minusDays(1)) ? dateTime.getHour() + ":" + dateTime.getMinute() :
-                            dateTime.isAfter(now.minusYears(1)) ? dateTime.getDayOfMonth() + "/" + dateTime.getMonthValue() :
-                            dateTime.getDayOfMonth() + "/" + dateTime.getMonthValue() + "/" + dateTime.getYear(),
-                    false);
+            modifiedDateTimeNode = new RightNode("Modificacion :", propertie.getModifiedString(), false);
+            createDateTimeNode = new RightNode("Creacion     :", propertie.getCreationString(), false);
 
             // Tipo mime
             tipeNode = new RightNode("Tipo :", propertie.getMimeType(), false);
@@ -143,8 +125,8 @@ public class RightPane extends ScrollPane {
             // Permisos
             permissionsNode = new RightNode("Permisos :",
                     new String(propertie.getOwnerPermissions()) +
-                            new String(propertie.getGroupPermissions()) +
-                            new String(propertie.getOtherPermissions()),
+                    new String(propertie.getGroupPermissions()) +
+                    new String(propertie.getOtherPermissions()),
                     false);
 
             // Usuario y grupo
@@ -155,7 +137,8 @@ public class RightPane extends ScrollPane {
                     new node.Separator(10, Orientation.HORIZONTAL),
                     nameNode,
                     sizeNode,
-                    dateTimeNode,
+                    modifiedDateTimeNode,
+                    createDateTimeNode,
                     tipeNode,
                     new node.Separator(20, Orientation.HORIZONTAL),
                     permissionsNode,
@@ -166,8 +149,8 @@ public class RightPane extends ScrollPane {
     }
 
     public static void focusName() {
-        nameNode.textField.requestFocus();
-        nameNode.textField.selectRange(0, selectedItem.getName().length()-selectedItem.getExtension().length()-1);
+        nameNode.value.requestFocus();
+        nameNode.value.selectRange(0, selectedItem.getName().length()-selectedItem.getExtension().length()-2);
     }
     public static void changeShow(boolean isRightPaneShow) {
         RightPane.isRightPaneShow=isRightPaneShow;
@@ -182,12 +165,12 @@ public class RightPane extends ScrollPane {
         changeShow(!isRightPaneShow);
     }
     public static boolean isAnyFocus() {
-        return  (nameNode != null && nameNode.textField.isFocused()) ||
-                (sizeNode != null && sizeNode.textField.isFocused()) ||
-                (dateTimeNode != null && dateTimeNode.textField.isFocused()) ||
-                (tipeNode != null && tipeNode.textField.isFocused()) ||
-                (permissionsNode != null && permissionsNode.textField.isFocused()) ||
-                (ownerNode != null && ownerNode.textField.isFocused()) ||
-                (groupNode != null && groupNode.textField.isFocused());
+        return  (nameNode != null && nameNode.value.isFocused()) ||
+                (sizeNode != null && sizeNode.value.isFocused()) ||
+                (modifiedDateTimeNode != null && modifiedDateTimeNode.value.isFocused()) ||
+                (tipeNode != null && tipeNode.value.isFocused()) ||
+                (permissionsNode != null && permissionsNode.value.isFocused()) ||
+                (ownerNode != null && ownerNode.value.isFocused()) ||
+                (groupNode != null && groupNode.value.isFocused());
     }
 }

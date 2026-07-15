@@ -1,15 +1,19 @@
 package panel;
 
+import entity.PartitionProperties;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import main.Lib;
 import node.Button;
 import node.LeftNode;
+import stage.PartitionStage;
 
 import java.io.InputStream;
 
@@ -67,59 +71,59 @@ public class LeftPane extends VBox {
 
                         // Tomar meta datos
                         String[] properties = line.substring(0, line.length()-1).split("\" ");
-                        String name = properties[0].split("=")[1].substring(1);
-                        String fstype = properties[1].split("=")[1].substring(1);
-                        String label = properties[2].split("=")[1].substring(1);
-                        String uuid = properties[3].split("=")[1].substring(1);
-                        String fsavail = properties[4].split("=")[1].substring(1);
-                        String fsuse = properties[5].split("=")[1].substring(1);
-                        String mountpoint = properties[6].split("=")[1].substring(1);
-                        String size = properties[7].split("=")[1].substring(1);
-                        String rm = properties[8].split("=")[1].substring(1);
-                        String type = properties[9].split("=")[1].substring(1);
-                        String model = properties[10].split("=")[1].substring(1);
-                        String labelName = label.equals("") ? model.equals("") ? name : model : label;
+                        PartitionProperties part = new PartitionProperties(properties);
+                        PartitionStage stage = new PartitionStage(part);
+                        LeftNode node = new LeftNode(
+                                part.labelText,
+                                part.icon,
+                                part.type == PartitionProperties.TYPE.PART ? !part.mountpoint.isEmpty() ? part.mountpoint : null : null
+                        );
+                        node.setColor(Color.valueOf(colorsMyme.getProperty(part.type.toString().toLowerCase())));
+                        node.setOnMouseReleased(e -> {
+                            if (e.getButton() == MouseButton.SECONDARY) stage.showAndWait();
+                        });
 
                         // Si es disco
-                        if (type.equals("disk")) {
-                            devicesChildren.add(new LeftNode(labelName, iconsMyme.getProperty("disc"), null)
-                                    .setColor(Color.valueOf(colorsMyme.getProperty("disc"))));
+                        if (part.type == PartitionProperties.TYPE.DISK) {
+                            node.getTooltip().setText(part.labelText);
+
+                            devicesChildren.add(node);
+                        }
 
                         // Si es particion
-                        } else if (type.equals("part")){
-                            String icon = iconsMyme.getProperty("partition");
-                            if (!mountpoint.equals("")) {
-                                for (String[] partitionIcon : PARTITION_ICONS) {
-                                    if (partitionIcon[0].equals(mountpoint)) {
-                                        icon = partitionIcon[1];
-                                        labelName = partitionIcon[2];
-                                    }
-                                }
+                        else if (part.type == PartitionProperties.TYPE.PART){
 
-                                if (rm.charAt(0) == '1') {
-                                    devicesChildren.add(new HBox(
-                                            new LeftNode(labelName, " "+icon, mountpoint)
-                                            .setColor(Color.valueOf(colorsMyme.getProperty("partition"))),
+                            // Si esta montado
+                            if (!part.mountpoint.isEmpty()) {
+
+                                // Si se puede desmontar
+                                if (part.rm.charAt(0) == '1') {
+                                    devicesChildren.add(
+                                        new HBox(
+                                            node,
                                             new Button(UNMOUNT_ICON, "Desmontar", "left_unmount", e -> {
                                                 try {
-                                                    printExecute("Expulsando '"+YELLOW+name+RESET+"'");
-                                                    new ProcessBuilder("udisksctl", "unmount", "-b", "/dev/"+name, "&&", "udisksctl", "power-off", "-b", "/dev/"+name)
+                                                    printExecute("Expulsando '"+YELLOW+part.name+RESET+"'");
+                                                    new ProcessBuilder("udisksctl", "unmount", "-b", "/dev/"+part.name, "&&", "udisksctl", "power-off", "-b", "/dev/"+part.name)
                                                             .start().waitFor();
                                                     updateLeft();
                                                 } catch (Exception ex) {
-                                                    printError("Error expulsando '"+name+"'", ex);
+                                                    printError("Error expulsando '"+part.name+"'", ex);
                                                 }
-                                            })));
-                                } else {
-                                    devicesChildren.add(
-                                            new LeftNode(labelName, " "+icon, mountpoint)
-                                            .setColor(Color.valueOf(colorsMyme.getProperty("partition")))
+                                            })
+                                        )
                                     );
                                 }
-                            } else if (SHOW_UNMOUNTED) {
-                                devicesChildren.add(new LeftNode(labelName, " "+icon, null)
-                                        .setColor(Color.valueOf(colorsMyme.getProperty("partition"))));
+
+                                // Si no se puede desmontar
+                                else {
+                                    node.setTooltip(null);
+                                    devicesChildren.add(node);
+                                }
                             }
+
+                            // Si no esta montado
+                            else if (SHOW_UNMOUNTED) devicesChildren.add(node);
                         }
                     }
                 }

@@ -82,6 +82,7 @@ configuraciones:
 |  String[]  |            Lista de texto, su<br/>sintaxis es [valor,valor,...]            |
 | String[][] | Lista de listas de texto, su<br/>sintaxis es [{valor;...},{valor;...},...] |
 |   ORDER    |                          NAME, DATE, SIZE o MIME                           |
+|  COLUMNS   |         PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATION, TYPE          |
 
 - **_config.properties_**: Configuraciones principales.
   - **General :** 
@@ -139,6 +140,7 @@ configuraciones:
     - `custom_order = String[][]` : Define el orden para directorios especificos. Su
       sintaxis es _[{path;orden},{path;orden},...]_, el primer valor es String y el
       segundo es ORDER.
+      - `columns = COLUMNS[]` : Define las columnas del CenterPane.
   - **Context Menu :**
     - `context_menu_icons = String[]` : Define los iconos del menu contextual que
       aparece al hacer clic derecho sobre el CenterPane. El orden es el mismo que

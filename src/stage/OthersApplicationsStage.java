@@ -28,13 +28,10 @@ import static panel.MainPane.selectedItem;
 import static panel.MainPane.selectedItems;
 
 public class OthersApplicationsStage extends Stage {
-    public static VBox pane;
-    public static Scene scene;
-
     public OthersApplicationsStage() {
         setTitle("Abrir con");
 
-        pane = new VBox();
+        VBox pane = new VBox();
         pane.setId("other_pane");
 
         ScrollPane scrollPane = new ScrollPane(pane);
@@ -45,7 +42,7 @@ public class OthersApplicationsStage extends Stage {
         StackPane mainPane = new StackPane(scrollPane);
         mainPane.setId("main_pane");
 
-        scene = new Scene(mainPane);
+        Scene scene = new Scene(mainPane);
         scene.getStylesheets().add("file://"+CONFIG_PATH+"theme.css");
         setScene(scene);
 
@@ -117,17 +114,15 @@ public class OthersApplicationsStage extends Stage {
         };
         new Thread(task).start();
 
-        setOnShown(e -> {
-            Platform.runLater(() -> {
-                double width = pane.getWidth()+17.0;
-                setMaxWidth(width);
-                setWidth(width);
+        setOnShown(e -> Platform.runLater(() -> {
+            double width = pane.getWidth()+17.0;
+            setMaxWidth(width);
+            setWidth(width);
 
-                setHeight(500);
-                setMaxHeight(pane.getHeight());
+            setHeight(500);
+            setMaxHeight(pane.getHeight());
 
-                centerOnScreen();
-            });
-        });
+            Platform.runLater(() -> centerOnScreen());
+        }));
     }
 }

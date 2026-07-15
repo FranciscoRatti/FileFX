@@ -1,11 +1,12 @@
 package node;
 
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import main.FileFX;
 
-import static main.FileFX.*;
+import static main.FileFX.nerdFont;
 import static main.Lib.*;
 import static panel.CenterPane.*;
 
@@ -19,9 +20,6 @@ public class LeftNode extends Label {
         label.setId("left_place_icon");
         setGraphic(label);
 
-        setId("left_place_label");
-        setMaxWidth(Double.MAX_VALUE);
-
         if (path != null) {
             setOnMouseClicked(e -> {
                 if (e.getButton().equals(MouseButton.PRIMARY)) {
@@ -31,13 +29,17 @@ public class LeftNode extends Label {
                     backBuffer.add(FileFX.path);
                     FileFX.path = path;
 
-                    updateCenter();
-                    selectThis();
                     updateTop();
+                    updateCenter();
+                    selectFirst();
                     updateRight();
                 }
             });
         }
+
+        setId("left_place_label");
+        setMaxWidth(Double.MAX_VALUE);
+        setTooltip(new Tooltip(path));
     }
 
     public void setIcon(String icon) {

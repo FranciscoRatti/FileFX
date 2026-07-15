@@ -47,6 +47,7 @@ public class Lib {
     public static final String BLUE = "\u001B[34m";
 
     public enum ORDER {NAME, DATE, SIZE, MIME}
+    public enum COLUMNS {PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATION, TYPE}
 
     public static final LinkedList<String> backBuffer = new LinkedList<>();
     public static final LinkedList<String> forwardBuffer = new LinkedList<>();
@@ -335,9 +336,9 @@ public class Lib {
             path = backBuffer.removeLast();
             filter = null;
 
-            updateCenter();
-            selectThis();
             updateTop();
+            updateCenter();
+            selectFirst();
             updateRight();
         }
     }
@@ -348,9 +349,9 @@ public class Lib {
             path = forwardBuffer.removeLast();
             filter = null;
 
-            updateCenter();
-            selectThis();
             updateTop();
+            updateCenter();
+            selectFirst();
             updateRight();
         }
     }
@@ -367,8 +368,6 @@ public class Lib {
 
             updateCenter();
             updateTop();
-            updateRight();
-
             Platform.runLater(() -> {
                 boolean flag = false;
                 for (CenterNode label : centerNodes) {
@@ -380,8 +379,9 @@ public class Lib {
                     }
                 }
 
-                if (!flag) selectThis();
-          });
+                if (!flag) selectFirst();
+            });
+            updateRight();
         }
     }
 

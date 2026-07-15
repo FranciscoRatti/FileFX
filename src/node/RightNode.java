@@ -8,24 +8,24 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
 public class RightNode extends HBox {
-    public Label label;
-    public TextField textField;
+    public Label title;
+    public TextField value;
 
-    public RightNode(String title, String text, boolean editable) {
-        super(10);
+    public RightNode(String title, String value, boolean editable) {
         setAlignment(Pos.CENTER_LEFT);
         setMaxWidth(Double.MAX_VALUE);
-        label = new Label(title);
-        label.setId("right_label");
-        label.setMinWidth(Region.USE_PREF_SIZE);
-        getChildren().add(label);
 
-        textField = new TextField(text);
-        textField.setId("right_component");
-        textField.setEditable(editable);
-        textField.setMaxWidth(Double.MAX_VALUE);
-        setHgrow(textField, Priority.ALWAYS);
+        this.title = new Label(title);
+        this.title.setId("right_label");
+        this.title.setMinWidth(Region.USE_PREF_SIZE);
+        getChildren().add(this.title);
 
-        getChildren().add(textField);
+        this.value = new TextField(value);
+        this.value.setId("right_component");
+        this.value.setEditable(editable);
+        this.value.setMaxWidth(Double.MAX_VALUE);
+        setHgrow(this.value, Priority.ALWAYS);
+
+        getChildren().add(this.value);
     }
 }

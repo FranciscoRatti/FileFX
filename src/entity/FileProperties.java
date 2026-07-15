@@ -32,7 +32,8 @@ public class FileProperties extends File{
             group = attributes.group().getName();
 
             size = attributes.size();
-            dateTime = LocalDateTime.ofInstant(attributes.lastModifiedTime().toInstant(), ZoneId.systemDefault());
+            modifiedDateTime = LocalDateTime.ofInstant(attributes.lastModifiedTime().toInstant(), ZoneId.systemDefault());
+            creationDateTime = LocalDateTime.ofInstant(attributes.creationTime().toInstant(), ZoneId.systemDefault());
 
             // Mime Type
             try {
@@ -57,7 +58,7 @@ public class FileProperties extends File{
                             trashProperties.load(input);
 
                             setTrashPath(trashProperties.getProperty("Path"));
-                            setDateTime(LocalDateTime.parse(trashProperties.getProperty("DeletionDate")));
+                            setModifiedDateTime(LocalDateTime.parse(trashProperties.getProperty("DeletionDate")));
                         } catch (Exception e) {
                             printError("Error al leer archivo '"+trashInfo.getAbsolutePath()+"'", e);
                         }
@@ -66,17 +67,17 @@ public class FileProperties extends File{
                 }
             }
         } catch (Exception e) {
-            ownerPermissions = new char[]{'-', '-', '-'};
-            groupPermissions = new char[]{'-', '-', '-'};
-            otherPermissions = new char[]{'-', '-', '-'};
+            if (ownerPermissions == null) ownerPermissions = new char[]{'-', '-', '-'};
+            if (groupPermissions == null) groupPermissions = new char[]{'-', '-', '-'};
+            if (otherPermissions == null) otherPermissions = new char[]{'-', '-', '-'};
 
-            owner = "?";
-            group = "?";
+            if (owner == null) owner = "?";
+            if (group == null) group = "?";
 
-            size = 0L;
-            dateTime = LocalDateTime.now();
-            mimeType = "?";
-            trashPath = null;
+            if (size == 0) size = 0L;
+            if (modifiedDateTime == null) modifiedDateTime = LocalDateTime.now();
+            if (creationDateTime == null) creationDateTime = LocalDateTime.now();
+            if (mimeType == null) mimeType = "?";
             printError("Error al leer las propiedades de '"+getAbsolutePath()+"'", e);
         }
     }
@@ -89,7 +90,7 @@ public class FileProperties extends File{
                 ", owner="+owner+
                 ", group="+group+
                 ", size="+size+
-                ", dateTime="+dateTime.toString()+
+                ", dateTime="+ modifiedDateTime.toString()+
                 ", mimeType="+mimeType+"]";
     }
 
@@ -99,8 +100,11 @@ public class FileProperties extends File{
     private String owner;
     private String group;
     private long size;
-    private LocalDateTime dateTime;
+    private LocalDateTime modifiedDateTime;
+    private LocalDateTime creationDateTime;
     private String mimeType;
+    private String trashPath;
+    private File trashInfo;
 
     public char[] getOwnerPermissions() {return ownerPermissions;}
     public char[] getGroupPermissions() {return groupPermissions;}
@@ -108,14 +112,52 @@ public class FileProperties extends File{
     public String getOwner() {return owner;}
     public String getGroup() {return group;}
     public long getSize() {return size;}
+    public String getSizeString() {
+        String sizeText = String.valueOf(size);
+        int sizeTextLength = sizeText.length();
+
+        if (size >= 1000000000000L)
+            sizeText = sizeText.substring(0, sizeText.length() - 12) + "," + sizeText.substring(sizeTextLength - 12, sizeTextLength - 10) + " TB";
+        else if (size >= 1000000000)
+            sizeText = sizeText.substring(0, sizeText.length() - 9) + "," + sizeText.substring(sizeTextLength - 9, sizeTextLength - 7) + " GB";
+        else if (size >= 1000000)
+            sizeText = sizeText.substring(0, sizeText.length() - 6) + "," + sizeText.substring(sizeTextLength - 6, sizeTextLength - 4) + " MB";
+        else if (size >= 1000)
+            sizeText = sizeText.substring(0, sizeTextLength - 3) + "," + sizeText.substring(sizeTextLength - 3, sizeTextLength - 1) + " KB";
+        else sizeText += " BI";
+
+        return sizeText;
+    }
+    public LocalDateTime getModifiedDateTime() {return modifiedDateTime;}
+    public String getModifiedString() {
+        LocalDateTime now = LocalDateTime.now();
+
+        String hour = String.valueOf(modifiedDateTime.getHour());
+        String minute = String.valueOf(modifiedDateTime.getMinute());
+        String day = String.valueOf(modifiedDateTime.getDayOfMonth());
+        String month = String.valueOf(modifiedDateTime.getMonthValue());
+
+        return  modifiedDateTime.isAfter(now.minusDays(1)) ? (hour.length() == 1 ? "0"+hour : hour) + ":" + (minute.length() == 1 ? "0"+minute : minute) :
+                (day.length() == 1 ? "0"+day : day) + "/" + (month.length() == 1 ? "0"+month : month) +
+                (modifiedDateTime.isAfter(now.minusYears(1)) ? "" : "/" + modifiedDateTime.getYear());
+    }
+    public LocalDateTime getCreationDateTime() {return creationDateTime;}
+    public String getCreationString() {
+        LocalDateTime now = LocalDateTime.now();
+
+        String hour = String.valueOf(creationDateTime.getHour());
+        String minute = String.valueOf(creationDateTime.getMinute());
+        String day = String.valueOf(creationDateTime.getDayOfMonth());
+        String month = String.valueOf(creationDateTime.getMonthValue());
+
+        return  creationDateTime.isAfter(now.minusDays(1)) ? (hour.length() == 1 ? "0"+hour : hour) + ":" + (minute.length() == 1 ? "0"+minute : minute) :
+                (day.length() == 1 ? "0"+day : day) + "/" + (month.length() == 1 ? "0"+month : month) +
+                (creationDateTime.isAfter(now.minusYears(1)) ? "" : "/" + creationDateTime.getYear());
+    }
     public String getMimeType() {return mimeType;}
-
-    public void setDateTime(LocalDateTime dateTime) {this.dateTime=dateTime;}
-    public LocalDateTime getDateTime() {return dateTime;}
-
-    private String trashPath;
-    public void setTrashPath(String trashPath) {this.trashPath=trashPath;}
     public String getTrashPath() {return trashPath;}
-    private File trashInfo;
     public File getTrashInfo() {return trashInfo;}
+
+    public void setModifiedDateTime(LocalDateTime modifiedDateTime) {this.modifiedDateTime = modifiedDateTime;}
+    public void setTrashPath(String trashPath) {this.trashPath=trashPath;}
 }

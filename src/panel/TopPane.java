@@ -17,6 +17,7 @@ import java.util.Optional;
 import static main.FileFX.*;
 import static main.Lib.*;
 import static panel.CenterPane.centerNodes;
+import static panel.CenterPane.selectFirst;
 
 public class TopPane extends HBox {
     private static Button back = null;
@@ -86,8 +87,9 @@ public class TopPane extends HBox {
                                 path = TRASH+"files/";
 
                                 updateTop();
-                                updateRight();
                                 updateCenter();
+                                selectFirst();
+                                updateRight();
                             }
                         }
                     });

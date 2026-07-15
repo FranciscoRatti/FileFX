@@ -88,6 +88,12 @@ public class FileFX extends javafx.application.Application {
             DEFAULT_ORDER = ORDER.valueOf(config.getProperty("default_order"));
             CUSTOM_ORDER = splitTwoTimes(config.getProperty("custom_order"));
 
+            String[] columnsText = split(config.getProperty("columns"));
+            if (columnsText != null) {
+                COLUMNS = new COLUMNS[columnsText.length];
+                for (int i = 0; i < columnsText.length; i++) COLUMNS[i] = Lib.COLUMNS.valueOf(columnsText[i].toUpperCase());
+            }
+
             CONTEXT_MENU_ICONS = split(config.getProperty("context_menu_icons"));
             CHECK_CLIPBOARD_PASTE = Boolean.parseBoolean(config.getProperty("check_clipboard_paste"));
 
@@ -240,7 +246,8 @@ public class FileFX extends javafx.application.Application {
     }
 
     private String[] split(String text) {
-        return text.substring(1, text.length()-1).split(",");
+        if (text.equals("[]")) return null;
+        else return text.substring(1, text.length()-1).split(",");
     }
     private String[][] splitTwoTimes(String text) {
         String[] split = text.substring(1, text.length()-1).split(",");
@@ -363,6 +370,7 @@ public class FileFX extends javafx.application.Application {
     public static boolean FILL_TEXT_DIR_LIKE_ICON;
     public static ORDER DEFAULT_ORDER;
     public static String[][] CUSTOM_ORDER;
+    public static COLUMNS[] COLUMNS;
 
     public static String[] CONTEXT_MENU_ICONS;
     public static boolean CHECK_CLIPBOARD_PASTE;
