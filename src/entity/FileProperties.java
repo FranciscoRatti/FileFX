@@ -18,6 +18,7 @@ import static main.Lib.printError;
 public class FileProperties extends File{
     public FileProperties(File file) {
         super(file.toURI());
+        isDirectory = isDirectory();
 
         try {
             Path path = toPath();
@@ -31,7 +32,11 @@ public class FileProperties extends File{
             owner = attributes.owner().getName();
             group = attributes.group().getName();
 
-            size = attributes.size();
+            if (isDirectory) {
+                File[] children = listFiles();
+                size = children == null ? 0 : children.length;
+            } else size = attributes.size();
+
             modifiedDateTime = LocalDateTime.ofInstant(attributes.lastModifiedTime().toInstant(), ZoneId.systemDefault());
             creationDateTime = LocalDateTime.ofInstant(attributes.creationTime().toInstant(), ZoneId.systemDefault());
 
@@ -94,6 +99,7 @@ public class FileProperties extends File{
                 ", mimeType="+mimeType+"]";
     }
 
+    public final boolean isDirectory;
     private char[] ownerPermissions;
     private char[] groupPermissions;
     private char[] otherPermissions;
@@ -113,20 +119,24 @@ public class FileProperties extends File{
     public String getGroup() {return group;}
     public long getSize() {return size;}
     public String getSizeString() {
-        String sizeText = String.valueOf(size);
-        int sizeTextLength = sizeText.length();
+        if (isDirectory) {
+            return String.valueOf(size);
+        } else {
+            String sizeText = String.valueOf(size);
+            int sizeTextLength = sizeText.length();
 
-        if (size >= 1000000000000L)
-            sizeText = sizeText.substring(0, sizeText.length() - 12) + "," + sizeText.substring(sizeTextLength - 12, sizeTextLength - 10) + " TB";
-        else if (size >= 1000000000)
-            sizeText = sizeText.substring(0, sizeText.length() - 9) + "," + sizeText.substring(sizeTextLength - 9, sizeTextLength - 7) + " GB";
-        else if (size >= 1000000)
-            sizeText = sizeText.substring(0, sizeText.length() - 6) + "," + sizeText.substring(sizeTextLength - 6, sizeTextLength - 4) + " MB";
-        else if (size >= 1000)
-            sizeText = sizeText.substring(0, sizeTextLength - 3) + "," + sizeText.substring(sizeTextLength - 3, sizeTextLength - 1) + " KB";
-        else sizeText += " BI";
+            if (size >= 1000000000000L)
+                sizeText = sizeText.substring(0, sizeText.length() - 12) + "," + sizeText.substring(sizeTextLength - 12, sizeTextLength - 10) + " TB";
+            else if (size >= 1000000000)
+                sizeText = sizeText.substring(0, sizeText.length() - 9) + "," + sizeText.substring(sizeTextLength - 9, sizeTextLength - 7) + " GB";
+            else if (size >= 1000000)
+                sizeText = sizeText.substring(0, sizeText.length() - 6) + "," + sizeText.substring(sizeTextLength - 6, sizeTextLength - 4) + " MB";
+            else if (size >= 1000)
+                sizeText = sizeText.substring(0, sizeTextLength - 3) + "," + sizeText.substring(sizeTextLength - 3, sizeTextLength - 1) + " KB";
+            else sizeText += " BI";
 
-        return sizeText;
+            return sizeText;
+        }
     }
     public LocalDateTime getModifiedDateTime() {return modifiedDateTime;}
     public String getModifiedString() {

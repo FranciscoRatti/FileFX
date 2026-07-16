@@ -9,10 +9,10 @@ public class PartitionNode {
 
     public PartitionNode(String title, String value, boolean editable) {
         this.title = new Label(title);
-        this.title.setId("partition_title");
+        this.title.setId("PartitionNode_title");
 
         this.value = new TextField(value);
-        this.value.setId("partition_value");
+        this.value.setId("PartitionNode_value");
         this.value.setEditable(editable);
         this.value.setMaxWidth(Double.MAX_VALUE);
     }

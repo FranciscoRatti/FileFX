@@ -22,7 +22,11 @@ public class Button extends javafx.scene.control.Button {
     }
 
     public void changeId(String id) {
-        label.setId(id+"_label");
+        label.setId(id+"_icon");
         setId(id+"_button");
+    }
+    public void addSuffixId(String suffix) {
+        label.setId(label.getId()+suffix);
+        setId(getId()+suffix);
     }
 }

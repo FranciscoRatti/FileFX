@@ -28,16 +28,16 @@ public class TopPane extends HBox {
     private static Button reload = null;
 
     public TopPane() {
-        setId("top_pane");
+        setId("TopPane");
 
         for (String[] button : TOP_BUTTONS) {
             switch (button[0]) {
-                case "back" -> back = new Button(button[1], "Deshacer", "top", e -> back());
-                case "forward" -> forward = new Button(button[1], "Rehacer", "top", e -> forward());
-                case "parent" -> parent = new Button(button[1], "Ir arriba", "top", e -> parent());
+                case "back" -> back = new Button(button[1], "Deshacer", "TopNode", e -> back());
+                case "forward" -> forward = new Button(button[1], "Rehacer", "TopNode", e -> forward());
+                case "parent" -> parent = new Button(button[1], "Ir arriba", "TopNode", e -> parent());
                 case "search" -> {
                     search = new TextField();
-                    search.setId("top_text_field");
+                    search.setId("Top_search");
                     search.setPrefColumnCount(200);
                     search.setOnKeyPressed(e -> {
                         KeyCode key = e.getCode();
@@ -68,7 +68,7 @@ public class TopPane extends HBox {
                     });
                 }
                 case "clean" -> {
-                    clean = new Button(button[1], "Limpiar papelera", "top", e -> restoreSelected());
+                    clean = new Button(button[1], "Limpiar papelera", "TopNode", e -> restoreSelected());
                     clean.setOnAction(e -> {
                         Optional<ButtonType> result = showAlert(new Alert(Alert.AlertType.CONFIRMATION), "Todos los archivos de papelera\nseran eliminados permanentemente", "ADVERTENCIA");
                         if (result.isPresent()) {
@@ -94,7 +94,7 @@ public class TopPane extends HBox {
                         }
                     });
                 }
-                case "reload" -> reload = new Button(button[1], "Recargar", "top", e -> updateAll());
+                case "reload" -> reload = new Button(button[1], "Recargar", "TopNode", e -> updateAll());
             }
         }
 

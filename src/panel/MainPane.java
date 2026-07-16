@@ -6,9 +6,6 @@ import node.CenterNode;
 import java.io.File;
 import java.util.ArrayList;
 
-import static main.FileFX.*;
-import static panel.RightPane.changeShow;
-
 public class MainPane extends BorderPane {
     public static TopPane topPane;
     public static RightPane rightPane;
@@ -33,7 +30,7 @@ public class MainPane extends BorderPane {
         leftPane = new LeftPane();
         setLeft(leftPane);
 
-        setId("main_pane");
+        setId("MainPane");
     }
 
     public static File[] parseFileLabelsToFiles(ArrayList<CenterNode> centerNodeList) {

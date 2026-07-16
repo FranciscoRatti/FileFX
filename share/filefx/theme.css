@@ -2,120 +2,120 @@
 
 .tooltip > .label,
 .menu-item, .menu-item > .label,
-#top_text_field,
-#right_close_button, #right_component,
-#bottom_text_field, #bottom_label, #bottom_selected_label,
-#left_place_label,
-#other_button,
-#partition_value
+#Top_search,
+#Right_close, #RightNode_value,
+#Bottom_textfield, #BottomNode_icon, #BottomNode_icon-selected,
+#LeftNode_label,
+#OtherNode,
+#PartitionNode_value
 {-fx-text-fill: white; -fx-font-family: "Noto Sans Mono";}
 
-#top_label,
-#right_label,
-#left_label_title, #left_unmount_label,
-#center_label, #center_label_focus,
-#center_column, #center_column_focus,
-#partition_title
+#TopNode_icon,
+#RightNode_title,
+#Left_title, #LeftNode_unmount_icon,
+#CenterNode_name, #CenterNode_name-focus,
+#CenterNode_column, #CenterNode_column-focus,
+#PartitionNode_title
 {-fx-font-family: "Noto Sans Mono";}
 
 .menu-item
 {-fx-font-size: 11;}
 
-#right_close_button, #right_label
+#Right_close, #RightNode_title
 {-fx-font-size: 12;}
 
-#right_component,
-#left_place_label, #left_unmount_label,
-#center_label, #center_label_focus,
-#center_column, #center_column_focus,
-#partition_title
+#RightNode_value,
+#LeftNode_label, #LeftNode_unmount_icon,
+#CenterNode_name, #CenterNode_name-focus,
+#CenterNode_column, #CenterNode_column-focus,
+#PartitionNode_title
 {-fx-font-size: 13;}
 
-#top_text_field,
-#bottom_text_field, #bottom_label, #bottom_selected_label,
-#left_label_title,
-#partition_value
+#Top_search,
+#Bottom_textfield, #BottomNode_icon, #BottomNode_icon-selected,
+#Left_title,
+#PartitionNode_value
 {-fx-font-size: 14;}
 
-#top_label
+#TopNode_icon
 {-fx-font-size: 18;}
 
 
 /*-- COLOR DE FONDO --------------------------------------------------------------------------------------------------*/
 
-#right_close_button:hover, #right_component:hover, #right_component:focused,
-#bottom_selected_button,
-#left_place_label:hover, #left_unmount_button:hover,
-#center_box_b1:hover, #center_box_b2:hover,
+#Right_close:hover, #RightNode_value:hover, #RightNode_value:focused,
+#BottomNode_button-selected,
+#LeftNode_label:hover, #LeftNode_unmount_button:hover,
+#CenterNode_boxB1:hover, #CenterNode_boxB2:hover,
 .scroll-pane > .scroll-bar:vertical .thumb:hover,
-#partition_value:hover, #partition_value:focused
+#PartitionNode_value:hover, #PartitionNode_value:focused
 {-fx-background-color: gray;}
 
-.menu-item, #other_pane, #other_button,
+.menu-item, #OtherPane, #OtherNode,
 .scroll-pane > .scroll-bar:vertical .thumb
 {-fx-background-color: #404040FF;}
 
-#top_button, #top_text_field,
-#bottom_text_field, #bottom_button,
-#center_box_b2,
-#partition_value
+#TopNode_button, #Top_search,
+#Bottom_textfield, #BottomNode_button,
+#CenterNode_boxB2,
+#PartitionNode_value
 {-fx-background-color: #373737;}
 
-#main_pane, #top_pane, #right_pane, #bottom_pane #left_pane,
-#right_close_button, #right_component,
-#left_label_title, #left_place_label, #left_unmount_button,
-#center_box_b1,
+#MainPane, #TopPane, #RightPane_pane, #BottomPane, #LeftPane,
+#Right_close, #RightNode_value,
+#Left_title, #LeftNode_label, #LeftNode_unmount_button,
+#CenterNode_boxB1,
 .scroll-pane > .scroll-bar:vertical .track,
-#partition_column, #partition_pane
+#PartitionColumn, #PartitionPane
 {-fx-background-color: #232323FF;}
 
 
 /*-- BORDE -----------------------------------------------------------------------------------------------------------*/
 
-.menu-item, #top_pane, #right_scroll_pane, #bottom_pane, #left_pane,
-#top_button, #top_text_field,
-#bottom_text_field, #bottom_button, #bottom_selected_button,
-#center_box_b1, #center_box_b2,
-#center_box_focus_b1, #center_box_focus_b2,
-#other_button, .scroll-pane > .scroll-bar:vertical .thumb
+.menu-item, #TopPane, #RightPane, #BottomPane, #LeftPane,
+#TopNode_button, #Top_search,
+#Bottom_textfield, #BottomNode_button, #BottomNode_button-selected,
+#CenterNode_boxB1, #CenterNode_boxB2,
+#CenterNode_boxB1-focus, #CenterNode_boxB2-focus,
+#OtherNode, .scroll-pane > .scroll-bar:vertical .thumb
 {-fx-border-style: solid;}
 
-.menu-item, #other_button, .scroll-pane > .scroll-bar:vertical .thumb,
-#bottom_button, #bottom_selected_button
+.menu-item, #OtherNode, .scroll-pane > .scroll-bar:vertical .thumb,
+#BottomNode_button, #BottomNode_button-selected
 {-fx-border-radius: 1;}
 
-#top_button, #top_text_field, #bottom_text_field
+#TopNode_button, #Top_search, #Bottom_textfield
 {-fx-border-radius: 2;}
 
-.menu-item, #top_button, #top_text_field,
-#bottom_text_field, #bottom_button, #bottom_selected_button,
-#center_box_b1, #center_box_b2,
-#center_box_focus_b1, #center_box_focus_b2,
-#other_button
+.menu-item, #TopNode_button, #Top_search,
+#Bottom_textfield, #BottomNode_button, #BottomNode_button-selected,
+#CenterNode_boxB1, #CenterNode_boxB2,
+#CenterNode_boxB1-focus, #CenterNode_boxB2-focus,
+#OtherNode
 {-fx-border-width: 1;}
 
 .menu-item:hover, .menu-item:focused,
-#top_button:hover, #top_text_field:hover, #top_text_field:focused,
-#bottom_text_field:hover, #bottom_text_field:focused,
-#bottom_button:hover, #bottom_selected_button:hover,
-#center_box_b1:hover, #center_box_b2:hover,
-#other_button:hover, #other_button:focused,
+#TopNode_button:hover, #Top_search:hover, #Top_search:focused,
+#Bottom_textfield:hover, #Bottom_textfield:focused,
+#BottomNode_button:hover, #BottomNode_button-selected:hover,
+#CenterNode_boxB1:hover, #CenterNode_boxB2:hover,
+#OtherNode:hover, #OtherNode:focused,
 .scroll-pane > .scroll-bar:vertical .thumb:hover
 {-fx-border-color: white;}
 
-#bottom_selected_button,
-.menu-item, #other_button, .scroll-pane > .scroll-bar:vertical .thumb
+#BottomNode_button-selected, #OtherNode,
+.menu-item, .scroll-pane > .scroll-bar:vertical .thumb
 {-fx-border-color: gray;}
 
-#top_button, #top_text_field,
-#bottom_text_field, #bottom_button,
-#center_box_b2
+#TopNode_button, #Top_search,
+#Bottom_textfield, #BottomNode_button,
+#CenterNode_boxB2
 {-fx-border-color: #333333;}
 
-#center_box_b1
+#CenterNode_boxB1
 {-fx-border-color: #232323FF;}
 
-#top_pane, #right_scroll_pane, #bottom_pane, #left_pane
+#TopPane, #RightPane, #BottomPane, #LeftPane
 {-fx-border-color: #131313;}
 
 
@@ -144,95 +144,95 @@
     -fx-hide-delay: 0ms;
 }
 
-#top_label, #bottom_label, #bottom_selected_label {
+#TopNode_icon, #BottomNode_icon, #BottomNode_icon-selected {
     -fx-fill: white;
     -fx-alignment: CENTER;
 }
 
-#top_button, #top_text_field {-fx-max-height: 35;}
-#top_button {-fx-padding: 0 16 3 10;}
-#top_pane {
+#TopNode_button, #Top_search {-fx-max-height: 35;}
+#TopNode_button {-fx-padding: 0 16 3 10;}
+#TopPane {
     -fx-spacing: 10;
     -fx-padding: 5;
     -fx-border-width: 0 0 2 0;
 }
 
-#right_scroll_pane {-fx-border-width: 0 0 0 2;}
-#right_close_button {-fx-padding: 0 4 2 4;}
-#right_component {-fx-padding: 1 2 1 2;}
-#right_miniatura {-fx-font-size: 170;}
-#right_label {
+#RightPane {-fx-border-width: 0 0 0 2;}
+#Right_close {-fx-padding: 0 4 2 4;}
+#RightNode_value {-fx-padding: 1 2 1 2;}
+#Right_miniatura {-fx-font-size: 170;}
+#RightNode_title {
     -fx-padding: 0 10 0 10;
     -fx-text-fill: lightgray;
 }
 
-#bottom_pane {
+#BottomPane {
     -fx-spacing: 8;
     -fx-border-width: 2 0 0 0;
     -fx-padding: 5 8 5 8;
 }
-#bottom_text_field {-fx-padding: 2 8 2 8;}
-#bottom_button, #bottom_selected_button {-fx-padding: 1 10 1 5;}
-#bottom_selected_label {-fx-font-weight: bold;}
+#Bottom_textfield {-fx-padding: 2 8 2 8;}
+#BottomNode_button, #BottomNode_button-selected {-fx-padding: 1 10 1 5;}
+#BottomNode_icon-selected {-fx-font-weight: bold;}
 
-#left_pane {-fx-border-width: 0 2 0 0;}
-#left_label_title {
+#LeftPane {-fx-border-width: 0 2 0 0;}
+#Left_title {
     -fx-text-fill: lightgray;
     -fx-label-padding: 2 10 2 5;
     -fx-font-weight: bold;
 }
-#left_place_label {
+#LeftNode_label {
     -fx-label-padding: 4 10 4 10;
     -fx-graphic-text-gap: 15;
 }
-#left_place_icon {
+#LeftNode_icon {
     -fx-font-size: 15;
     -fx-alignment: CENTER-RIGHT;
     -fx-text-fill: white;
 }
-#left_unmount_label {-fx-fill: lightgray;}
-#left_unmount_button {
+#LeftNode_unmount_icon {-fx-fill: lightgray;}
+#LeftNode_unmount_button {
     -fx-padding: 4 10 4 3;
     -fx-border-width: 0;
 }
 
-#center_label, #center_label_focus {-fx-label-padding: 2;}
-#center_column, #center_column_focus {-fx-padding: 2 10 2 10;}
-#center_label_focus {-fx-font-weight: bold;}
-#center_box_b1, #center_box_b2, #center_box_focus_b1, #center_box_focus_b2 {-fx-spacing: 10;}
-#center_box_focus_b1:hover, #center_box_focus_b2:hover {
+#CenterNode_name, #CenterNode_name-focus {-fx-label-padding: 2;}
+#CenterNode_column, #CenterNode_column-focus {-fx-padding: 2 10 2 10;}
+#CenterNode_name-focus {-fx-font-weight: bold;}
+#CenterNode_boxB1, #CenterNode_boxB2, #CenterNode_boxB1-focus, #CenterNode_boxB2-focus {-fx-spacing: 10;}
+#CenterNode_boxB1-focus:hover, #CenterNode_boxB2-focus:hover {
     -fx-background-color: #41aeff;
     -fx-border-color: #41aeff;
 }
-#center_box_focus_b1, #center_box_focus_b2 {
+#CenterNode_boxB1-focus, #CenterNode_boxB2-focus {
     -fx-background-color: #0095c8;
     -fx-border-color: #0095c8;
 }
 
-#center_icon, #center_icon_focus, #top_button {-fx-label-padding: 0 5 0 5;}
+#CenterNode_icon, #CenterNode_icon-focus, #TopNode_button {-fx-label-padding: 0 5 0 5;}
 
-#other_button {
+#OtherNode {
     -fx-alignment: CENTER-LEFT;
     -fx-content-display: LEFT;
 }
 
-#context_menu_icon {
+#ContexMenu_icon {
     -fx-font-size: 12;
     -fx-alignment: CENTER;
     -fx-text-fill: white;
     -fx-label-padding: 0 10 0 0;
 }
 
-#partition_title, #partition_value {
+#PartitionNode_title, #PartitionNode_value {
     -fx-pref-height: 26px;
     -fx-min-height: 26px;
     -fx-max-height: 26px;
     -fx-padding: 2 4 2 4;
 }
-#partition_title {
+#PartitionNode_title {
     -fx-text-fill: lightgray;
 }
-#partition_column {
+#PartitionColumn {
     -fx-padding: 10;
     -fx-spacing: 3;
 }

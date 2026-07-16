@@ -82,7 +82,7 @@ configuraciones:
 |  String[]  |            Lista de texto, su<br/>sintaxis es [valor,valor,...]            |
 | String[][] | Lista de listas de texto, su<br/>sintaxis es [{valor;...},{valor;...},...] |
 |   ORDER    |                          NAME, DATE, SIZE o MIME                           |
-|  COLUMNS   |         PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATION, TYPE          |
+|  COLUMNS   |          PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATED, TYPE          |
 
 - **_config.properties_**: Configuraciones principales.
   - **General :** 

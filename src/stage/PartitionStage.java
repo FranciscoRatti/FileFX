@@ -1,10 +1,8 @@
 package stage;
 
 import entity.PartitionProperties;
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import node.PartitionNode;
@@ -61,13 +59,13 @@ public class PartitionStage extends Stage {
             );
         }
 
-        titlesPane.setId("partition_column");
+        titlesPane.setId("PartitionColumn");
         titlesPane.setAlignment(Pos.CENTER_RIGHT);
-        valuesPane.setId("partition_column");
+        valuesPane.setId("PartitionColumn");
         valuesPane.setAlignment(Pos.CENTER_RIGHT);
 
         HBox mainPane = new HBox(titlesPane, valuesPane);
-        mainPane.setId("partition_pane");
+        mainPane.setId("PartitionPane");
 
         Scene scene = new Scene(mainPane);
         scene.getStylesheets().add("file://"+CONFIG_PATH+"theme.css");

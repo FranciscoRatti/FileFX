@@ -28,17 +28,17 @@ public class BottomPane extends HBox {
         for (String button : BOTTOM_BUTTONS) {
             if (button.equals("order")) {
                 orderButtons = new Button[]{
-                        new Button(ORDER_ICONS[0], "Nombre", "bottom", e -> changeOrder(ORDER.NAME)),
-                        new Button(ORDER_ICONS[1], "Fecha", "bottom", e -> changeOrder(ORDER.DATE)),
-                        new Button(ORDER_ICONS[2], "Tamaño", "bottom", e -> changeOrder(ORDER.SIZE)),
-                        new Button(ORDER_ICONS[3], "Tipo", "bottom", e -> changeOrder(ORDER.MIME))
+                        new Button(ORDER_ICONS[0], "Nombre", "BottomNode", e -> changeOrder(ORDER.NAME)),
+                        new Button(ORDER_ICONS[1], "Fecha", "BottomNode", e -> changeOrder(ORDER.DATE)),
+                        new Button(ORDER_ICONS[2], "Tamaño", "BottomNode", e -> changeOrder(ORDER.SIZE)),
+                        new Button(ORDER_ICONS[3], "Tipo", "BottomNode", e -> changeOrder(ORDER.MIME))
                 };
                 selectOrder();
                 children.add(new HBox(2, orderButtons));
 
             } else if (button.equals("filter")) {
                 filter = new TextField("");
-                filter.setId("bottom_text_field");
+                filter.setId("Bottom_textfield");
                 filter.setPromptText("Filtro");
                 filter.setMaxWidth(Double.MAX_VALUE);
                 HBox.setHgrow(filter, Priority.ALWAYS);
@@ -75,7 +75,7 @@ public class BottomPane extends HBox {
             }
         }
 
-        setId("bottom_pane");
+        setId("BottomPane");
     }
 
     public static void focusFilter() {filter.requestFocus();}
@@ -108,28 +108,28 @@ public class BottomPane extends HBox {
     public void selectOrder() {
         switch (DEFAULT_ORDER) {
             case DATE -> {
-                orderButtons[0].changeId("bottom");
-                orderButtons[1].changeId("bottom_selected");
-                orderButtons[2].changeId("bottom");
-                orderButtons[3].changeId("bottom");
+                orderButtons[0].changeId("BottomNode");
+                orderButtons[1].addSuffixId("-selected");
+                orderButtons[2].changeId("BottomNode");
+                orderButtons[3].changeId("BottomNode");
             }
             case SIZE -> {
-                orderButtons[0].changeId("bottom");
-                orderButtons[1].changeId("bottom");
-                orderButtons[2].changeId("bottom_selected");
-                orderButtons[3].changeId("bottom");
+                orderButtons[0].changeId("BottomNode");
+                orderButtons[1].changeId("BottomNode");
+                orderButtons[2].addSuffixId("-selected");
+                orderButtons[3].changeId("BottomNode");
             }
             case MIME -> {
-                orderButtons[0].changeId("bottom");
-                orderButtons[1].changeId("bottom");
-                orderButtons[2].changeId("bottom");
-                orderButtons[3].changeId("bottom_selected");
+                orderButtons[0].changeId("BottomNode");
+                orderButtons[1].changeId("BottomNode");
+                orderButtons[2].changeId("BottomNode");
+                orderButtons[3].addSuffixId("-selected");
             }
             default -> {
-                orderButtons[0].changeId("bottom_selected");
-                orderButtons[1].changeId("bottom");
-                orderButtons[2].changeId("bottom");
-                orderButtons[3].changeId("bottom");
+                orderButtons[0].addSuffixId("-selected");
+                orderButtons[1].changeId("BottomNode");
+                orderButtons[2].changeId("BottomNode");
+                orderButtons[3].changeId("BottomNode");
             }
         }
     }

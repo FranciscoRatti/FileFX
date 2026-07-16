@@ -113,6 +113,8 @@ public class CenterPane extends ScrollPane {
 
             e.consume();
         });
+
+        setId("CenterPane");
     }
 
     public void update() {
@@ -230,17 +232,21 @@ public class CenterPane extends ScrollPane {
                         case Lib.COLUMNS.GROUP -> node.createColumn(properties.getGroup());
                         case Lib.COLUMNS.SIZE -> {
                             String sizeString = properties.getSizeString();
+                            int length = sizeString.length();
                             node.createColumn(
-                                    sizeString.length() == 4 ? "     "+sizeString :
-                                            sizeString.length() == 5 ? "    "+sizeString :
-                                            sizeString.length() == 6 ? "   "+sizeString :
-                                            sizeString.length() == 7 ? "  "+sizeString :
-                                            sizeString.length() == 8 ? " "+sizeString :
-                                            sizeString
+                                    length == 1 ? "        "+sizeString :
+                                    length == 2 ? "       "+sizeString :
+                                    length == 3 ? "      "+sizeString :
+                                    length == 4 ? "     "+sizeString :
+                                    length == 5 ? "    "+sizeString :
+                                    length == 6 ? "   "+sizeString :
+                                    length == 7 ? "  "+sizeString :
+                                    length == 8 ? " "+sizeString :
+                                    sizeString
                             );
                         }
                         case Lib.COLUMNS.MODIFIED -> node.createColumn(properties.getModifiedString());
-                        case Lib.COLUMNS.CREATION -> node.createColumn(properties.getCreationString());
+                        case Lib.COLUMNS.CREATED -> node.createColumn(properties.getCreationString());
                         case Lib.COLUMNS.TYPE -> node.createColumn(properties.getMimeType());
                     }
                 }
@@ -326,13 +332,14 @@ public class CenterPane extends ScrollPane {
                     CenterNode lastSelectedItem = selectedItem;
 
                     for (CenterNode centerNode : centerNodes) {
+                        boolean flag = centerNode.equals(labelStepSelected) || centerNode.equals(lastSelectedItem);
                         if (beSelected) {
-                            if (centerNode.equals(labelStepSelected) || centerNode.equals(lastSelectedItem)) {
+                            if (flag) {
                                 break;
                             } else {
                                 centerNode.setSelected(true);
                             }
-                        } else if (centerNode.equals(labelStepSelected) || centerNode.equals(lastSelectedItem)) {
+                        } else if (flag) {
                             beSelected = true;
                         }
                     }

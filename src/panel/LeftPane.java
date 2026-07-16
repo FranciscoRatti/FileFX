@@ -22,11 +22,9 @@ import static main.Lib.*;
 
 public class LeftPane extends VBox {
     public LeftPane() {
-        super(0);
-        setId("left_pane");
         setMaxWidth(LEFT_WIDTH);
-
         update();
+        setId("LeftPane");
     }
 
     public void update() {
@@ -39,7 +37,7 @@ public class LeftPane extends VBox {
             ObservableList<Node> placesChildren = placesBox.getChildren();
 
             Label title = new Label("Lugares");
-            title.setId("left_label_title");
+            title.setId("Left_title");
             placesChildren.add(title);
 
             for (String[] place : PLACES) {
@@ -58,7 +56,7 @@ public class LeftPane extends VBox {
             ObservableList<Node> devicesChildren = devicesBox.getChildren();
 
             Label title = new Label("Dispositivos");
-            title.setId("left_label_title");
+            title.setId("Left_title");
             devicesChildren.add(title);
 
             // Tomar discos y particiones
@@ -101,7 +99,7 @@ public class LeftPane extends VBox {
                                     devicesChildren.add(
                                         new HBox(
                                             node,
-                                            new Button(UNMOUNT_ICON, "Desmontar", "left_unmount", e -> {
+                                            new Button(UNMOUNT_ICON, "Desmontar", "LeftNode_unmount", e -> {
                                                 try {
                                                     printExecute("Expulsando '"+YELLOW+part.name+RESET+"'");
                                                     new ProcessBuilder("udisksctl", "unmount", "-b", "/dev/"+part.name, "&&", "udisksctl", "power-off", "-b", "/dev/"+part.name)

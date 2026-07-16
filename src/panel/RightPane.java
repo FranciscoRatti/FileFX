@@ -14,8 +14,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import node.RightNode;
 
-import java.time.LocalDateTime;
-
 import static main.FileFX.*;
 import static main.Lib.*;
 import static panel.MainPane.*;
@@ -28,9 +26,9 @@ public class RightPane extends ScrollPane {
     private static RightNode sizeNode;
     private static RightNode modifiedDateTimeNode;
     private static RightNode createDateTimeNode;
-    private static RightNode tipeNode;
+    private static RightNode typeNode;
 
-    private VBox pane;
+    private final VBox pane;
     private double paneWidth;
 
     private static boolean isRightPaneShow;
@@ -39,16 +37,16 @@ public class RightPane extends ScrollPane {
         paneWidth = RIGHT_WIDTH;
 
         pane = new VBox();
-        pane.setId("right_pane");
+        pane.setId("RightPane_pane");
         pane.setPrefWidth(paneWidth);
 
+        update();
+
         setHbarPolicy(ScrollBarPolicy.NEVER);
-        setId("right_scroll_pane");
         setStyle("-fx-background: transparent; -fx-background-color: transparent;");
         setFitToWidth(true);
         setContent(pane);
-
-        update();
+        setId("RightPane");
     }
 
     public void update() {
@@ -57,7 +55,7 @@ public class RightPane extends ScrollPane {
         children.clear();
 
         Button close = new Button("x");
-        close.setId("right_close_button");
+        close.setId("Right_close");
         close.setOnAction(e -> {
             changeShow(false);
         });
@@ -93,7 +91,7 @@ public class RightPane extends ScrollPane {
             } else {
                 Text label = new Text(selectedItem.getIcon());
                 label.setFont(nerdFont);
-                label.setId("right_miniatura");
+                label.setId("Right_miniatura");
 
                 if (FILL_MINIATURA_LIKE_ICON) label.setFill(selectedItem.getColor());
                 else label.setFill(UNKNOW_COLOR);
@@ -116,11 +114,11 @@ public class RightPane extends ScrollPane {
             sizeNode = new RightNode("Tamaño :", propertie.getSizeString(), false);
 
             // Fecha
-            modifiedDateTimeNode = new RightNode("Modificacion :", propertie.getModifiedString(), false);
-            createDateTimeNode = new RightNode("Creacion     :", propertie.getCreationString(), false);
+            createDateTimeNode = new RightNode("Creado :", propertie.getCreationString(), false);
+            modifiedDateTimeNode = new RightNode("Modificado :", propertie.getModifiedString(), false);
 
             // Tipo mime
-            tipeNode = new RightNode("Tipo :", propertie.getMimeType(), false);
+            typeNode = new RightNode("Tipo :", propertie.getMimeType(), false);
 
             // Permisos
             permissionsNode = new RightNode("Permisos :",
@@ -137,9 +135,9 @@ public class RightPane extends ScrollPane {
                     new node.Separator(10, Orientation.HORIZONTAL),
                     nameNode,
                     sizeNode,
-                    modifiedDateTimeNode,
                     createDateTimeNode,
-                    tipeNode,
+                    modifiedDateTimeNode,
+                    typeNode,
                     new node.Separator(20, Orientation.HORIZONTAL),
                     permissionsNode,
                     ownerNode,
@@ -150,7 +148,7 @@ public class RightPane extends ScrollPane {
 
     public static void focusName() {
         nameNode.value.requestFocus();
-        nameNode.value.selectRange(0, selectedItem.getName().length()-selectedItem.getExtension().length()-2);
+        nameNode.value.selectRange(0, selectedItem.getName().length()-selectedItem.getExtension().length()-1);
     }
     public static void changeShow(boolean isRightPaneShow) {
         RightPane.isRightPaneShow=isRightPaneShow;
@@ -168,7 +166,8 @@ public class RightPane extends ScrollPane {
         return  (nameNode != null && nameNode.value.isFocused()) ||
                 (sizeNode != null && sizeNode.value.isFocused()) ||
                 (modifiedDateTimeNode != null && modifiedDateTimeNode.value.isFocused()) ||
-                (tipeNode != null && tipeNode.value.isFocused()) ||
+                (createDateTimeNode != null && createDateTimeNode.value.isFocused()) ||
+                (typeNode != null && typeNode.value.isFocused()) ||
                 (permissionsNode != null && permissionsNode.value.isFocused()) ||
                 (ownerNode != null && ownerNode.value.isFocused()) ||
                 (groupNode != null && groupNode.value.isFocused());

@@ -1,7 +1,6 @@
 package node;
 
 import entity.FileProperties;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -64,7 +63,7 @@ public class CenterNode extends HBox {
 
         // Nodo
         label = new Label(fileName);
-        label.setId("center_label");
+        label.setId("CenterNode_name");
         label.setMaxWidth(Double.MAX_VALUE);
         setHgrow(label, Priority.ALWAYS);
         getChildren().add(label);
@@ -128,11 +127,11 @@ public class CenterNode extends HBox {
             String id = getId();
             if (selected) {
                 printInfo("Se selecciono '" + Lib.BLUE + fileName + Lib.RESET + "'");
-                setId((id.charAt(id.length() - 1) == '1') ? "center_box_focus_b1" : "center_box_focus_b2");
-                label.setId("center_label_focus");
-                iconLabel.setId("center_icon_focus");
+                setId((id.charAt(15) == '1') ? "CenterNode_boxB1-focus" : "CenterNode_boxB2-focus");
+                label.setId("CenterNode_name-focus");
+                iconLabel.setId("CenterNode_icon-focus");
                 if (!columns.isEmpty()) for (Label column : columns)
-                    column.setId("center_column_focus");
+                    column.setId("CenterNode_column-focus");
 
                 label.setStyle("-fx-text-fill: rgb("+FOCUS_COLOR.getRed()*255+","+FOCUS_COLOR.getGreen()*255+","+FOCUS_COLOR.getBlue()*255+");");
                 iconLabel.setStyle("-fx-text-fill: rgb("+FOCUS_COLOR.getRed()*255+","+FOCUS_COLOR.getGreen()*255+","+FOCUS_COLOR.getBlue()*255+");");
@@ -142,11 +141,11 @@ public class CenterNode extends HBox {
                 MainPane.selectedItem = this;
                 MainPane.selectedItems.add(this);
             } else {
-                setId((id.charAt(id.length() - 1) == '1') ? "center_box_b1" : "center_box_b2");
-                label.setId("center_label");
-                iconLabel.setId("center_icon");
+                setId((id.charAt(15) == '1') ? "CenterNode_boxB1" : "CenterNode_boxB2");
+                label.setId("CenterNode_name");
+                iconLabel.setId("CenterNode_icon");
                 if (!columns.isEmpty()) for (Label column : columns)
-                    column.setId("center_column");
+                    column.setId("CenterNode_column");
 
                 setColor(label);
                 iconLabel.setStyle("-fx-text-fill: rgb("+colorRGB[0]+","+colorRGB[1]+","+colorRGB[2]+");");
@@ -161,7 +160,7 @@ public class CenterNode extends HBox {
 
         this.icon=icon;
         iconLabel = new Label(icon);
-        iconLabel.setId("center_icon");
+        iconLabel.setId("CenterNode_icon");
         iconLabel.setFont(nerdFont);
         iconLabel.setStyle("-fx-text-fill: rgb("+colorRGB[0]+","+colorRGB[1]+","+colorRGB[2]+");");
         label.setGraphic(iconLabel);
@@ -181,12 +180,12 @@ public class CenterNode extends HBox {
     }
     public void setIndex(int index) {
       this.index = index;
-      setId((index % 2 == 0) ? "center_box_b1" : "center_box_b2");
+      setId((index % 2 == 0) ? "CenterNode_boxB1" : "CenterNode_boxB2");
     }
 
     public void createColumn(String value) {
         Label column = new Label(value);
-        column.setId("center_column");
+        column.setId("CenterNode_column");
         setColor(column);
         getChildren().add(column);
         columns.add(column);

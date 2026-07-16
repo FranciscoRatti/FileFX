@@ -16,12 +16,12 @@ public class RightNode extends HBox {
         setMaxWidth(Double.MAX_VALUE);
 
         this.title = new Label(title);
-        this.title.setId("right_label");
+        this.title.setId("RightNode_title");
         this.title.setMinWidth(Region.USE_PREF_SIZE);
         getChildren().add(this.title);
 
         this.value = new TextField(value);
-        this.value.setId("right_component");
+        this.value.setId("RightNode_value");
         this.value.setEditable(editable);
         this.value.setMaxWidth(Double.MAX_VALUE);
         setHgrow(this.value, Priority.ALWAYS);

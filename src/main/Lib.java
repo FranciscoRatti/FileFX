@@ -47,7 +47,7 @@ public class Lib {
     public static final String BLUE = "\u001B[34m";
 
     public enum ORDER {NAME, DATE, SIZE, MIME}
-    public enum COLUMNS {PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATION, TYPE}
+    public enum COLUMNS {PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATED, TYPE}
 
     public static final LinkedList<String> backBuffer = new LinkedList<>();
     public static final LinkedList<String> forwardBuffer = new LinkedList<>();
@@ -282,7 +282,7 @@ public class Lib {
     private static Label createIconItem(String text) {
         Label icon = new Label(text);
         icon.setFont(nerdFont);
-        icon.setId("context_menu_icon");
+        icon.setId("ContexMenu_icon");
         return icon;
     }
 

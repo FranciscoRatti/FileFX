@@ -17,7 +17,7 @@ public class LeftNode extends Label {
 
         label = new Label(icon);
         label.setFont(nerdFont);
-        label.setId("left_place_icon");
+        label.setId("LeftNode_icon");
         setGraphic(label);
 
         if (path != null) {
@@ -37,7 +37,7 @@ public class LeftNode extends Label {
             });
         }
 
-        setId("left_place_label");
+        setId("LeftNode_label");
         setMaxWidth(Double.MAX_VALUE);
         setTooltip(new Tooltip(path));
     }

@@ -32,7 +32,7 @@ public class OthersApplicationsStage extends Stage {
         setTitle("Abrir con");
 
         VBox pane = new VBox();
-        pane.setId("other_pane");
+        pane.setId("OtherPane");
 
         ScrollPane scrollPane = new ScrollPane(pane);
         scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
@@ -40,7 +40,7 @@ public class OthersApplicationsStage extends Stage {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
         StackPane mainPane = new StackPane(scrollPane);
-        mainPane.setId("main_pane");
+        mainPane.setId("MainPane");
 
         Scene scene = new Scene(mainPane);
         scene.getStylesheets().add("file://"+CONFIG_PATH+"theme.css");
@@ -97,7 +97,7 @@ public class OthersApplicationsStage extends Stage {
 
                     Button button = new Button(app.getName(), icon);
                     button.setMaxWidth(Double.MAX_VALUE);
-                    button.setId("other_button");
+                    button.setId("OtherNode");
                     button.setOnAction(e -> {
                         if (selectedItems != null && !selectedItems.isEmpty()) {
                             FileFX.othersApplicationsStage.close();
