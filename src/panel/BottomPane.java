@@ -54,7 +54,6 @@ public class BottomPane extends HBox {
                         ArrayList<CenterNode> preSelectedList = new ArrayList<>(List.copyOf(selectedItems));
                         updateCenter();
                         if (!centerNodes.isEmpty()) centerNodes.getFirst().requestFocus();
-                        deselectAll();
                         for (CenterNode centerNode : centerNodes) {
                             for (CenterNode preSelected : preSelectedList) {
                                 if (preSelected.getName().equals(centerNode.getName())) {

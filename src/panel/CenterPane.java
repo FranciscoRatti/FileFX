@@ -1,6 +1,5 @@
 package panel;
 
-import entity.FileProperties;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventTarget;
@@ -9,7 +8,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
@@ -21,6 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static main.FileFX.*;
 import static main.Lib.*;
@@ -31,6 +31,7 @@ import static panel.MainPane.*;
 
 public class CenterPane extends ScrollPane {
     public static ArrayList<CenterNode> centerNodes;
+    private static final Lock lock = new ReentrantLock();
 
     private static ContextMenu menu;
     private static ContextMenu menuFile;
@@ -42,9 +43,9 @@ public class CenterPane extends ScrollPane {
     private VBox pane;
 
     private final Comparator<CenterNode> compareByName = Comparator.comparing(CenterNode::getName, String.CASE_INSENSITIVE_ORDER);
-    private final Comparator<CenterNode> compareByDate = Comparator.comparing(n -> n.getPropertie().getModifiedDateTime());
-    private final Comparator<CenterNode> compareBySize = Comparator.comparing(n -> n.getPropertie().getSize());
-    private final Comparator<CenterNode> compareByMime = Comparator.comparing(n -> n.getPropertie().getMimeType(), String.CASE_INSENSITIVE_ORDER);
+    private final Comparator<CenterNode> compareByDate = Comparator.comparing(n -> n.getFileProperties().getModifiedDateTime());
+    private final Comparator<CenterNode> compareBySize = Comparator.comparing(n -> n.getFileProperties().getSize());
+    private final Comparator<CenterNode> compareByMime = Comparator.comparing(n -> n.getFileProperties().getMimeType(), String.CASE_INSENSITIVE_ORDER);
 
     public CenterPane() {
         if (!new File(path).exists()) {
@@ -97,7 +98,14 @@ public class CenterPane extends ScrollPane {
             } else if (button.equals(MouseButton.FORWARD)) {
                 forward();
             } else if (button.equals(MouseButton.PRIMARY)) {
-                if (!isChildrenOf(pane, (Node) target)) {
+                boolean isChildren = false;
+                Node n = (Node) target;
+                while (n != null) {
+                    if (n == pane) isChildren = true;
+                    n = n.getParent();
+                }
+
+                if (!isChildren) {
                     if (isAnyShow()) hideAll();
                     else {
                         deselectAll();
@@ -122,10 +130,8 @@ public class CenterPane extends ScrollPane {
 
         // Reiniciando
         centerNodes.clear();
-        selectedItems.clear();
-        selectedItem = null;
-        ObservableList<Node> childrensList = pane.getChildren();
-        childrensList.clear();
+        ObservableList<Node> children = pane.getChildren();
+        children.clear();
 
         // Tomar contenido
         File directory = new File(path);
@@ -148,12 +154,12 @@ public class CenterPane extends ScrollPane {
 
                 if (filter != null) {
                     if (file.getName().contains(filter)) {
-                        CenterNode centerNode = new CenterNode(file);
+                        CenterNode centerNode = new CenterNode(file, true);
                         if (file.isDirectory()) directoriesList.add(centerNode);
                         else filesList.add(centerNode);
                     }
                 } else {
-                    CenterNode centerNode = new CenterNode(file);
+                    CenterNode centerNode = new CenterNode(file, true);
                     if (file.isDirectory()) directoriesList.add(centerNode);
                     else filesList.add(centerNode);
                 }
@@ -164,7 +170,7 @@ public class CenterPane extends ScrollPane {
             for (String[] customOrder : CUSTOM_ORDER) {
                 if (path.equals(
                         customOrder[0].charAt(0) == '~' ? HOME+(customOrder[0].substring(1)) :
-                        customOrder[0].startsWith("trash") ? TRASH+"files"+(customOrder[0].substring(5)) :
+                        customOrder[0].startsWith("trash") ? Lib.TRASH+"files"+(customOrder[0].substring(5)) :
                         customOrder[0])) {
                     order = ORDER.valueOf(customOrder[1]);
                     break;
@@ -194,16 +200,16 @@ public class CenterPane extends ScrollPane {
         if (SHOW_PARENT) {
             File parent = directory.getParentFile();
             if (parent != null) {
-                CenterNode parentNode = new CenterNode(parent);
-                parentNode.label.setText("..");
+                CenterNode parentNode = new CenterNode(parent, true);
+                parentNode.name.setText("..");
                 parentNode.setIcon(iconsMyme.getProperty("parent"), Color.valueOf(colorsMyme.getProperty("parent")));
                 directoriesList.addFirst(parentNode);
             }
         }
 
         if (SHOW_THIS) {
-            CenterNode thisNode = new CenterNode(directory);
-            thisNode.label.setText(".");
+            CenterNode thisNode = new CenterNode(directory, true);
+            thisNode.name.setText(".");
             thisNode.setIcon(iconsMyme.getProperty("this"), Color.valueOf(colorsMyme.getProperty("this")));
             directoriesList.addFirst(thisNode);
         }
@@ -212,47 +218,14 @@ public class CenterPane extends ScrollPane {
         centerNodes.addAll(filesList);
         if (!IS_DIRECTORY_FIRST) centerNodes.addAll(directoriesList);
 
-        // Definiendo ids
-        for (int i = 0; i < centerNodes.size(); i++) {
-            centerNodes.get(i).setIndex(i);
-        }
-
         // Añadir nodos
-        for (CenterNode node : centerNodes) {
-            FileProperties properties = node.getPropertie();
-            if (COLUMNS != null) {
-                for (Lib.COLUMNS column : COLUMNS) {
-                    switch (column) {
-                        case Lib.COLUMNS.PERMISSIONS -> node.createColumn(
-                                new String(properties.getOwnerPermissions()) +
-                                        new String(properties.getGroupPermissions()) +
-                                        new String(properties.getOtherPermissions())
-                        );
-                        case Lib.COLUMNS.OWNER -> node.createColumn(properties.getOwner());
-                        case Lib.COLUMNS.GROUP -> node.createColumn(properties.getGroup());
-                        case Lib.COLUMNS.SIZE -> {
-                            String sizeString = properties.getSizeString();
-                            int length = sizeString.length();
-                            node.createColumn(
-                                    length == 1 ? "        "+sizeString :
-                                    length == 2 ? "       "+sizeString :
-                                    length == 3 ? "      "+sizeString :
-                                    length == 4 ? "     "+sizeString :
-                                    length == 5 ? "    "+sizeString :
-                                    length == 6 ? "   "+sizeString :
-                                    length == 7 ? "  "+sizeString :
-                                    length == 8 ? " "+sizeString :
-                                    sizeString
-                            );
-                        }
-                        case Lib.COLUMNS.MODIFIED -> node.createColumn(properties.getModifiedString());
-                        case Lib.COLUMNS.CREATED -> node.createColumn(properties.getCreationString());
-                        case Lib.COLUMNS.TYPE -> node.createColumn(properties.getMimeType());
-                    }
-                }
+        if (!centerNodes.isEmpty()) {
+            for (int i = 0; i < centerNodes.size(); i++) {
+                CenterNode node = centerNodes.get(i);
+                node.setIndex(i);
+                node.addColumns();
+                children.add(node);
             }
-
-            childrensList.add(node);
         }
     }
 
@@ -263,7 +236,7 @@ public class CenterPane extends ScrollPane {
         printInfo("Mostrando menu");
         if (selectedItems.isEmpty()) {
             menu.show(anchor, mouseLocation.x, mouseLocation.y);
-        } else if (path.startsWith(TRASH+"files")) {
+        } else if (path.startsWith(Lib.TRASH+"files")) {
             menuTrash.show(anchor, mouseLocation.x, mouseLocation.y);
         } else if (selectedItems.size() == 1) {
             if (selectedItems.getFirst().getFile().isDirectory()) menuDirectory.show(anchor, mouseLocation.x, mouseLocation.y);
@@ -291,9 +264,11 @@ public class CenterPane extends ScrollPane {
     }
 
     public void moveCursor(boolean isShiftDown, int step) {
+        if (step == 0) return;
+
         if (!selectedItems.isEmpty()) {
 
-            // Seleccion
+            // Seleccion -----------------------------------------------------------------------------------------------
 
             int selectedItemIndex = selectedItem.getIndex();
             CenterNode labelStepSelected = null;
@@ -353,7 +328,7 @@ public class CenterPane extends ScrollPane {
         }
         updateRight();
 
-        // Scroll
+        // Scroll ------------------------------------------------------------------------------------------------------
 
         double contentHeight = pane.getBoundsInLocal().getHeight();
         double viewportHeight = getViewportBounds().getHeight();
@@ -393,7 +368,7 @@ public class CenterPane extends ScrollPane {
         }
     }
     public static void openSelected() {
-        if (selectedItem != null && !selectedItem.label.getText().equals(".")) {
+        if (selectedItem != null && !selectedItem.name.getText().equals(".")) {
             File file = selectedItem.getFile();
             String absolutePath = file.getAbsolutePath();
 
@@ -452,16 +427,19 @@ public class CenterPane extends ScrollPane {
     }
     public static void selectThis() {
         if (SHOW_THIS) {
+            lock.lock();
             CenterPane.centerNodes.getFirst().setSelected(true);
             centerPane.setVvalue(0);
+            lock.unlock();
         } else {
-            selectedItem = new CenterNode(new File(path));
+            selectedItem = new CenterNode(new File(path), true);
             selectedItem.setIcon(iconsMyme.getProperty("this"), Color.valueOf(colorsMyme.getProperty("this")));
             selectedItems.add(selectedItem);
         }
     }
     public static void selectFirst() {
         if (!centerNodes.isEmpty()) {
+            lock.lock();
             int length = centerNodes.size();
             if (SHOW_THIS && SHOW_PARENT && length > 2)
                 centerNodes.get(2).setSelected(true);
@@ -470,6 +448,7 @@ public class CenterPane extends ScrollPane {
             else
                 centerNodes.getFirst().setSelected(true);
             centerPane.setVvalue(0);
+            lock.unlock();
         } else {
             selectThis();
         }

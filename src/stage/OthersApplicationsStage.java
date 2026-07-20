@@ -21,8 +21,8 @@ import java.util.Comparator;
 import java.util.Objects;
 
 import static main.FileFX.desktopApplications;
-import static main.FileFX.lock;
 import static main.Lib.CONFIG_PATH;
+import static main.Lib.lock;
 import static main.Lib.printOk;
 import static panel.MainPane.selectedItem;
 import static panel.MainPane.selectedItems;

@@ -18,25 +18,25 @@ import static panel.CenterPane.*;
 import static panel.MainPane.*;
 
 public class CenterNode extends HBox {
-    private final FileProperties propertie;
+    private FileProperties properties;
     private Boolean selected;
-    private final File file;
+    private File file;
     private final boolean isDirectory;
     private final String fileName;
     private String extension = "";
-    private String icon;
-    private Label iconLabel;
+    private String iconText;
     private Color color;
     private double[] colorRGB;
     private int index;
-    
-    public Label label;
+
+    private Label icon;
+    public Label name;
     public ArrayList<Label> columns;
 
-    public CenterNode(File file) {
+    public CenterNode(File file, boolean selectable) {
 
         // Propiedades
-        propertie = new FileProperties(file);
+        properties = new FileProperties(file);
         selected = false;
 
         this.file = file;
@@ -46,34 +46,32 @@ public class CenterNode extends HBox {
 
         String colorText;
         if (file.canRead()) {
-            icon = iconsExtension.getProperty("."+extension);
-            if (icon == null) icon = iconsMyme.getProperty(propertie.getMimeType());
-            if (icon == null) icon = iconsMyme.getProperty("unknow");
+            iconText = iconsExtension.getProperty("."+extension);
+            if (iconText == null) iconText = iconsMyme.getProperty(properties.getMimeType());
+            if (iconText == null) iconText = iconsMyme.getProperty("unknow");
 
             colorText = colorsExtension.getProperty("."+extension);
-            if (colorText == null) colorText = colorsMyme.getProperty(propertie.getMimeType());
+            if (colorText == null) colorText = colorsMyme.getProperty(properties.getMimeType());
             if (colorText == null) colorText = colorsMyme.getProperty("unknow");
         } else {
-            icon = iconsMyme.getProperty("lock");
+            iconText = iconsMyme.getProperty("lock");
             colorText = colorsMyme.getProperty("lock");
         }
 
-        color = Color.valueOf(colorText);
-        colorRGB = new double[]{color.getRed()*255, color.getGreen()*255, color.getBlue()*255};
-
         // Nodo
-        label = new Label(fileName);
-        label.setId("CenterNode_name");
-        label.setMaxWidth(Double.MAX_VALUE);
-        setHgrow(label, Priority.ALWAYS);
-        getChildren().add(label);
+        name = new Label(fileName);
+        name.setId("CenterNode_name");
+        name.setMaxWidth(Double.MAX_VALUE);
+        setHgrow(name, Priority.ALWAYS);
+        getChildren().add(name);
 
-        columns = new ArrayList<>();
+        // Icono
+        setIcon(iconText, Color.valueOf(colorText));
+        colorRGB = new double[]{color.getRed()*255, color.getGreen()*255, color.getBlue()*255};
+        setColor(name);
 
-        setIcon(icon, color);
-        setColor(label);
-
-        setOnMouseReleased(e -> {
+        // Evento
+        if (selectable) setOnMouseReleased(e -> {
             MouseButton button = e.getButton();
             int clickCount = e.getClickCount();
 
@@ -103,8 +101,17 @@ public class CenterNode extends HBox {
                         }
                     }
 
-                    setSelected(true);
-
+                    if (!selected) {
+                        setSelected(true);
+                    } else {
+                        setSelected(false);
+                        selectedItems.remove(this);
+                        if (selectedItem == this) {
+                            if (selectedItems.isEmpty()) selectedItem = null;
+                            else selectedItem = selectedItems.getFirst();
+                        }
+                        if (selectedItems.isEmpty()) selectThis();
+                    }
                     updateRight();
                 } else if (clickCount == 2) {
                     openSelected();
@@ -113,11 +120,31 @@ public class CenterNode extends HBox {
         });
     }
 
+    public CenterNode(String text) {
+        selected = false;
+        isDirectory = false;
+        fileName = text;
+
+        // Color
+        color = Color.valueOf(colorsMyme.getProperty("unknow"));
+        colorRGB = new double[]{color.getRed()*255, color.getGreen()*255, color.getBlue()*255};
+
+        // Nodo
+        name = new Label(fileName);
+        name.setId("CenterNode_name");
+        name.setMaxWidth(Double.MAX_VALUE);
+        setHgrow(name, Priority.ALWAYS);
+        getChildren().add(name);
+
+        // Icono
+        setColor(name);
+    }
+
     public File getFile() {return file;}
     public String getName() {return fileName;}
-    public String getIcon() {return icon;}
+    public String getIcon() {return iconText;}
     public Color getColor() {return color;}
-    public FileProperties getPropertie() {return propertie;}
+    public FileProperties getFileProperties() {return properties;}
     public String getExtension() {return extension;}
     public int getIndex() {return index;}
 
@@ -128,27 +155,27 @@ public class CenterNode extends HBox {
             if (selected) {
                 printInfo("Se selecciono '" + Lib.BLUE + fileName + Lib.RESET + "'");
                 setId((id.charAt(15) == '1') ? "CenterNode_boxB1-focus" : "CenterNode_boxB2-focus");
-                label.setId("CenterNode_name-focus");
-                iconLabel.setId("CenterNode_icon-focus");
+                name.setId("CenterNode_name-focus");
+                icon.setId("CenterNode_icon-focus");
                 if (!columns.isEmpty()) for (Label column : columns)
                     column.setId("CenterNode_column-focus");
 
-                label.setStyle("-fx-text-fill: rgb("+FOCUS_COLOR.getRed()*255+","+FOCUS_COLOR.getGreen()*255+","+FOCUS_COLOR.getBlue()*255+");");
-                iconLabel.setStyle("-fx-text-fill: rgb("+FOCUS_COLOR.getRed()*255+","+FOCUS_COLOR.getGreen()*255+","+FOCUS_COLOR.getBlue()*255+");");
+                name.setStyle("-fx-text-fill: rgb("+FOCUS_COLOR.getRed()*255+","+FOCUS_COLOR.getGreen()*255+","+FOCUS_COLOR.getBlue()*255+");");
+                icon.setStyle("-fx-text-fill: rgb("+FOCUS_COLOR.getRed()*255+","+FOCUS_COLOR.getGreen()*255+","+FOCUS_COLOR.getBlue()*255+");");
                 if (!columns.isEmpty()) for (Label column : columns)
                         column.setStyle("-fx-text-fill: rgb("+FOCUS_COLOR.getRed()*255+","+FOCUS_COLOR.getGreen()*255+","+FOCUS_COLOR.getBlue()*255+");");
 
-                MainPane.selectedItem = this;
-                MainPane.selectedItems.add(this);
+                selectedItem = this;
+                selectedItems.add(this);
             } else {
                 setId((id.charAt(15) == '1') ? "CenterNode_boxB1" : "CenterNode_boxB2");
-                label.setId("CenterNode_name");
-                iconLabel.setId("CenterNode_icon");
+                name.setId("CenterNode_name");
+                icon.setId("CenterNode_icon");
                 if (!columns.isEmpty()) for (Label column : columns)
                     column.setId("CenterNode_column");
 
-                setColor(label);
-                iconLabel.setStyle("-fx-text-fill: rgb("+colorRGB[0]+","+colorRGB[1]+","+colorRGB[2]+");");
+                setColor(name);
+                icon.setStyle("-fx-text-fill: rgb("+colorRGB[0]+","+colorRGB[1]+","+colorRGB[2]+");");
                 if (!columns.isEmpty()) for (Label column : columns)
                     setColor(column);
             }
@@ -158,12 +185,12 @@ public class CenterNode extends HBox {
         this.color = color;
         colorRGB = new double[]{color.getRed()*255, color.getGreen()*255, color.getBlue()*255};
 
-        this.icon=icon;
-        iconLabel = new Label(icon);
-        iconLabel.setId("CenterNode_icon");
-        iconLabel.setFont(nerdFont);
-        iconLabel.setStyle("-fx-text-fill: rgb("+colorRGB[0]+","+colorRGB[1]+","+colorRGB[2]+");");
-        label.setGraphic(iconLabel);
+        this.iconText =icon;
+        this.icon = new Label(icon);
+        this.icon.setId("CenterNode_icon");
+        this.icon.setFont(nerdFont);
+        this.icon.setStyle("-fx-text-fill: rgb("+colorRGB[0]+","+colorRGB[1]+","+colorRGB[2]+");");
+        name.setGraphic(this.icon);
     }
     public void setColor(Label label) {
         if (isDirectory) {
@@ -181,6 +208,41 @@ public class CenterNode extends HBox {
     public void setIndex(int index) {
       this.index = index;
       setId((index % 2 == 0) ? "CenterNode_boxB1" : "CenterNode_boxB2");
+    }
+
+    public void addColumns() {
+        columns = new ArrayList<>();
+        if (COLUMNS != null) {
+            for (Lib.COLUMNS column : COLUMNS) {
+                switch (column) {
+                    case Lib.COLUMNS.PERMISSIONS -> createColumn(
+                            new String(properties.getOwnerPermissions()) +
+                                    new String(properties.getGroupPermissions()) +
+                                    new String(properties.getOtherPermissions())
+                    );
+                    case Lib.COLUMNS.OWNER -> createColumn(properties.getOwner());
+                    case Lib.COLUMNS.GROUP -> createColumn(properties.getGroup());
+                    case Lib.COLUMNS.SIZE -> {
+                        String sizeString = properties.getSizeString();
+                        int length = sizeString.length();
+                        createColumn(
+                                length == 1 ? "        "+sizeString :
+                                        length == 2 ? "       "+sizeString :
+                                        length == 3 ? "      "+sizeString :
+                                        length == 4 ? "     "+sizeString :
+                                        length == 5 ? "    "+sizeString :
+                                        length == 6 ? "   "+sizeString :
+                                        length == 7 ? "  "+sizeString :
+                                        length == 8 ? " "+sizeString :
+                                        sizeString
+                        );
+                    }
+                    case Lib.COLUMNS.MODIFIED -> createColumn(properties.getModifiedString());
+                    case Lib.COLUMNS.CREATED -> createColumn(properties.getCreationString());
+                    case Lib.COLUMNS.TYPE -> createColumn(properties.getMimeType());
+                }
+            }
+        }
     }
 
     public void createColumn(String value) {

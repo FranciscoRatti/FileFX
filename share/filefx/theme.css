@@ -3,7 +3,7 @@
 .tooltip > .label,
 .menu-item, .menu-item > .label,
 #Top_search,
-#Right_close, #RightNode_value,
+#Right_close, #RightNode_value, #Right_miniatura_lineB1, #Right_miniatura_lineB2,
 #Bottom_textfield, #BottomNode_icon, #BottomNode_icon-selected,
 #LeftNode_label,
 #OtherNode,
@@ -11,14 +11,15 @@
 {-fx-text-fill: white; -fx-font-family: "Noto Sans Mono";}
 
 #TopNode_icon,
-#RightNode_title,
+#RightNode_title, #Right_miniatura_void,
 #Left_title, #LeftNode_unmount_icon,
 #CenterNode_name, #CenterNode_name-focus,
 #CenterNode_column, #CenterNode_column-focus,
 #PartitionNode_title
 {-fx-font-family: "Noto Sans Mono";}
 
-.menu-item
+.menu-item,
+#Right_miniatura_lineB1, #Right_miniatura_lineB2
 {-fx-font-size: 11;}
 
 #Right_close, #RightNode_title
@@ -32,6 +33,7 @@
 {-fx-font-size: 13;}
 
 #Top_search,
+#Right_miniatura_void,
 #Bottom_textfield, #BottomNode_icon, #BottomNode_icon-selected,
 #Left_title,
 #PartitionNode_value
@@ -61,10 +63,13 @@
 #PartitionNode_value
 {-fx-background-color: #373737;}
 
+#Right_miniatura_lineB2
+{-fx-background-color: #292929;}
+
 #MainPane, #TopPane, #RightPane_pane, #BottomPane, #LeftPane,
 #Right_close, #RightNode_value,
 #Left_title, #LeftNode_label, #LeftNode_unmount_button,
-#CenterNode_boxB1,
+#CenterNode_boxB1, #Right_miniatura_lineB1,
 .scroll-pane > .scroll-bar:vertical .track,
 #PartitionColumn, #PartitionPane
 {-fx-background-color: #232323FF;}
@@ -74,6 +79,7 @@
 
 .menu-item, #TopPane, #RightPane, #BottomPane, #LeftPane,
 #TopNode_button, #Top_search,
+#Right_miniatura_pane,
 #Bottom_textfield, #BottomNode_button, #BottomNode_button-selected,
 #CenterNode_boxB1, #CenterNode_boxB2,
 #CenterNode_boxB1-focus, #CenterNode_boxB2-focus,
@@ -81,6 +87,7 @@
 {-fx-border-style: solid;}
 
 .menu-item, #OtherNode, .scroll-pane > .scroll-bar:vertical .thumb,
+#Right_miniatura_pane,
 #BottomNode_button, #BottomNode_button-selected
 {-fx-border-radius: 1;}
 
@@ -88,6 +95,7 @@
 {-fx-border-radius: 2;}
 
 .menu-item, #TopNode_button, #Top_search,
+#Right_miniatura_pane,
 #Bottom_textfield, #BottomNode_button, #BottomNode_button-selected,
 #CenterNode_boxB1, #CenterNode_boxB2,
 #CenterNode_boxB1-focus, #CenterNode_boxB2-focus,
@@ -103,8 +111,9 @@
 .scroll-pane > .scroll-bar:vertical .thumb:hover
 {-fx-border-color: white;}
 
-#BottomNode_button-selected, #OtherNode,
-.menu-item, .scroll-pane > .scroll-bar:vertical .thumb
+.menu-item, .scroll-pane > .scroll-bar:vertical .thumb,
+#Right_miniatura_pane,
+#BottomNode_button-selected, #OtherNode
 {-fx-border-color: gray;}
 
 #TopNode_button, #Top_search,

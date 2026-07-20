@@ -52,7 +52,10 @@ public class FileProperties extends File{
 
             // Trash Path
             if (path.startsWith(TRASH+"files")) {
-                for (File trashInfo : new File(TRASH+"info").listFiles()) {
+                File infoDir = new File(TRASH+"info");
+                if (!infoDir.exists()) infoDir.mkdir();
+
+                for (File trashInfo : infoDir.listFiles()) {
                     String trashInfoName = trashInfo.getName();
                     if (trashInfoName.substring(0, trashInfoName.length()-10).equals(file.getName())) {
 

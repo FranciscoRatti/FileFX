@@ -103,6 +103,10 @@ configuraciones:
       muestra siempre el icono.
     - `fill_miniatura_like_icon = boolean` : Si es true, pinta las miniaturas con
       el mismo color que el icono.
+    - `show_inside_directories` : Si es true se muestran los archivos dentro de directorios en las
+      miniaturas.
+    - `show_inside_files` : Si es true se muestran las lineas de texto de archivos lejibles en las
+      miniaturas.
   - **Bottom Pane :**
     - `bottom_buttons = String[]` : Define los botones que aparecen en el BottomPane.
       Los posibles valores son _order_, _filter_.
@@ -170,10 +174,14 @@ configuraciones:
   - `parent` : Atrás.
   - `up_step` : Arriba 3 posiciones.
   - `down_step` : Abajo 3 posiciones.
+  - `first` : Primer elemento.
+  - `last` : Ultimo elemento.
   - `select_up` : Seleccionar arriba.
   - `select_down` : Seleccionar abajo.
   - `select_up_step` : Seleccionar arriba 3 posiciones.
   - `select_down_step` : Seleccionar abajo 3 posiciones.
+  - `select_first` : Seleccionar hasta el primero.
+  - `select_last` : Seleccionar hasta el ultimo.
   - `back` : Deshacer.
   - `forward` : Rehacer.
   - `open_shell` : Abrir una terminal aquí.
@@ -184,6 +192,7 @@ configuraciones:
   - `deselect_all` : Deseleccionar todo.
   - `update_all` : Actualizar todo.
   - `change_show_right_pane` : Mostrar o esconder RightPane.
+  - `change_show_hidden` : Cambiar mostrar archivos ocultos.
 
 - **_colors_binding.properties_**, **_icons_binding.properties_**: Define los
   iconos y los colores que aparecerán al lado de cada archivo o directorio. Para

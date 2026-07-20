@@ -17,8 +17,6 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static main.Lib.*;
 import static panel.RightPane.changeShow;
@@ -34,7 +32,6 @@ public class FileFX extends javafx.application.Application {
 
     public static Font nerdFont;
     public static String path = "";
-    public static final Lock lock = new ReentrantLock();
 
     public static ArrayList<DesktopApplication> desktopApplications;
     public static Stage othersApplicationsStage;
@@ -67,6 +64,8 @@ public class FileFX extends javafx.application.Application {
             SHOW_RIGHT_PANE = Boolean.parseBoolean(config.getProperty("show_right_pane"));
             SHOW_MINIATURA = Boolean.parseBoolean(config.getProperty("show_miniatura"));
             FILL_MINIATURA_LIKE_ICON = Boolean.parseBoolean(config.getProperty("fill_miniatura_like_icon"));
+            SHOW_INSIDE_DIRECTORIES = Boolean.parseBoolean(config.getProperty("show_inside_directories"));
+            SHOW_INSIDE_FILES = Boolean.parseBoolean(config.getProperty("show_inside_files"));
 
             BOTTOM_BUTTONS = split(config.getProperty("bottom_buttons"));
             ORDER_ICONS = split(config.getProperty("order_icons"));
@@ -259,37 +258,41 @@ public class FileFX extends javafx.application.Application {
     }
 
     public static void updateKeyBinding() {
-        cut = getKeyCombination("cut");
-        copy = getKeyCombination("copy");
-        paste = getKeyCombination("paste");
-        remove = getKeyCombination("remove");
-        trash = getKeyCombination("trash");
-        rename = getKeyCombination("rename");
+        CUT = getKeyCombination("cut");
+        COPY = getKeyCombination("copy");
+        PASTE = getKeyCombination("paste");
+        REMOVE = getKeyCombination("remove");
+        TRASH = getKeyCombination("trash");
+        RENAME = getKeyCombination("rename");
 
-        up = getKeyCombination("up");
-        open = getKeyCombination("open");
-        down = getKeyCombination("down");
-        parent = getKeyCombination("parent");
-        up_step = getKeyCombination("up_step");
-        down_step = getKeyCombination("down_step");
+        UP = getKeyCombination("up");
+        OPEN = getKeyCombination("open");
+        DOWN = getKeyCombination("down");
+        PARENT = getKeyCombination("parent");
+        UP_STEP = getKeyCombination("up_step");
+        DOWN_STEP = getKeyCombination("down_step");
+        FIRST = getKeyCombination("first");
+        LAST = getKeyCombination("last");
 
-        select_up = getKeyCombination("select_up");
-        select_down = getKeyCombination("select_down");
-        select_up_step = getKeyCombination("select_up_step");
-        select_down_step = getKeyCombination("select_down_step");
+        SELECT_UP = getKeyCombination("select_up");
+        SELECT_DOWN = getKeyCombination("select_down");
+        SELECT_UP_STEP = getKeyCombination("select_up_step");
+        SELECT_DOWN_STEP = getKeyCombination("select_down_step");
+        SELECT_FIRST = getKeyCombination("select_first");
+        SELECT_LAST = getKeyCombination("select_last");
 
-        back = getKeyCombination("back");
-        forward = getKeyCombination("forward");
+        BACK = getKeyCombination("back");
+        FORWARD = getKeyCombination("forward");
 
-        open_shell = getKeyCombination("open_shell");
-        show_menu = getKeyCombination("show_menu");
-        show_menu_create = getKeyCombination("show_menu_create");
-        focus_path = getKeyCombination("focus_path");
-        focus_filter = getKeyCombination("focus_filter");
-
-        deselect_all = getKeyCombination("deselect_all");
-        update_all = getKeyCombination("update_all");
-        change_show_right_pane = getKeyCombination("change_show_right_pane");
+        OPEN_SHELL = getKeyCombination("open_shell");
+        SHOW_MENU = getKeyCombination("show_menu");
+        SHOW_MENU_CREATE = getKeyCombination("show_menu_create");
+        FOCUS_PATH = getKeyCombination("focus_path");
+        FOCUS_FILTER = getKeyCombination("focus_filter");
+        DESELECT_ALL = getKeyCombination("deselect_all");
+        UPDATE_ALL = getKeyCombination("update_all");
+        CHANGE_SHOW_RIGHT_PANE = getKeyCombination("change_show_right_pane");
+        CHANGE_SHOW_HIDDEN = getKeyCombination("change_show_hidden");
     }
     public static KeyCombination[] getKeyCombination(String keyName) {
         String property = keyBinding.getProperty(keyName);
@@ -306,37 +309,41 @@ public class FileFX extends javafx.application.Application {
     }
 
     // Combinaciones de tecla
-    public static KeyCombination[] cut;
-    public static KeyCombination[] copy;
-    public static KeyCombination[] paste;
-    public static KeyCombination[] remove;
-    public static KeyCombination[] trash;
-    public static KeyCombination[] rename;
+    public static KeyCombination[] CUT;
+    public static KeyCombination[] COPY;
+    public static KeyCombination[] PASTE;
+    public static KeyCombination[] REMOVE;
+    public static KeyCombination[] TRASH;
+    public static KeyCombination[] RENAME;
 
-    public static KeyCombination[] up;
-    public static KeyCombination[] open;
-    public static KeyCombination[] down;
-    public static KeyCombination[] parent;
-    public static KeyCombination[] up_step;
-    public static KeyCombination[] down_step;
+    public static KeyCombination[] UP;
+    public static KeyCombination[] OPEN;
+    public static KeyCombination[] DOWN;
+    public static KeyCombination[] PARENT;
+    public static KeyCombination[] UP_STEP;
+    public static KeyCombination[] DOWN_STEP;
+    public static KeyCombination[] FIRST;
+    public static KeyCombination[] LAST;
 
-    public static KeyCombination[] select_up;
-    public static KeyCombination[] select_down;
-    public static KeyCombination[] select_up_step;
-    public static KeyCombination[] select_down_step;
+    public static KeyCombination[] SELECT_UP;
+    public static KeyCombination[] SELECT_DOWN;
+    public static KeyCombination[] SELECT_UP_STEP;
+    public static KeyCombination[] SELECT_DOWN_STEP;
+    public static KeyCombination[] SELECT_FIRST;
+    public static KeyCombination[] SELECT_LAST;
 
-    public static KeyCombination[] back;
-    public static KeyCombination[] forward;
+    public static KeyCombination[] BACK;
+    public static KeyCombination[] FORWARD;
 
-    public static KeyCombination[] open_shell;
-    public static KeyCombination[] show_menu;
-    public static KeyCombination[] show_menu_create;
-    public static KeyCombination[] focus_path;
-    public static KeyCombination[] focus_filter;
-
-    public static KeyCombination[] deselect_all;
-    public static KeyCombination[] update_all;
-    public static KeyCombination[] change_show_right_pane;
+    public static KeyCombination[] OPEN_SHELL;
+    public static KeyCombination[] SHOW_MENU;
+    public static KeyCombination[] SHOW_MENU_CREATE;
+    public static KeyCombination[] FOCUS_PATH;
+    public static KeyCombination[] FOCUS_FILTER;
+    public static KeyCombination[] DESELECT_ALL;
+    public static KeyCombination[] UPDATE_ALL;
+    public static KeyCombination[] CHANGE_SHOW_RIGHT_PANE;
+    public static KeyCombination[] CHANGE_SHOW_HIDDEN;
 
     // Configuracion
     public static String TERMINAL;
@@ -350,6 +357,8 @@ public class FileFX extends javafx.application.Application {
     public static boolean SHOW_RIGHT_PANE;
     public static boolean SHOW_MINIATURA;
     public static boolean FILL_MINIATURA_LIKE_ICON;
+    public static boolean SHOW_INSIDE_DIRECTORIES;
+    public static boolean SHOW_INSIDE_FILES;
 
     public static String[] BOTTOM_BUTTONS;
     public static String[] ORDER_ICONS;

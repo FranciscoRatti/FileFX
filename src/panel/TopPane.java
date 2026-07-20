@@ -8,6 +8,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
+import main.Lib;
 import node.CenterNode;
 import node.Button;
 
@@ -47,7 +48,7 @@ public class TopPane extends HBox {
                             if (!text.endsWith("/")) text+="/";
 
                             if (text.startsWith("~")) text = HOME+text.substring(1);
-                            else if (text.startsWith("trash")) text = TRASH+"files"+text.substring(5);
+                            else if (text.startsWith("trash")) text = Lib.TRASH+"files"+text.substring(5);
 
                             if (!new File(text).exists()) {
                                 printError("El archivo o directorio "+text+" no existe", null);
@@ -78,13 +79,13 @@ public class TopPane extends HBox {
                                 // Eliminar
                                 try {
                                     printExecute("Limpiando la papelera");
-                                    new ProcessBuilder("rm", "-Rf", TRASH+"files", TRASH+"info").start().waitFor();
-                                    new ProcessBuilder("mkdir", TRASH+"files", TRASH+"info").start().waitFor();
+                                    new ProcessBuilder("rm", "-Rf", Lib.TRASH+"files", Lib.TRASH+"info").start().waitFor();
+                                    new ProcessBuilder("mkdir", Lib.TRASH+"files", Lib.TRASH+"info").start().waitFor();
                                 } catch (Exception ex) {
                                     printError("Error al eliminar archivo", ex);
                                 }
 
-                                path = TRASH+"files/";
+                                path = Lib.TRASH+"files/";
 
                                 updateTop();
                                 updateCenter();
@@ -115,11 +116,11 @@ public class TopPane extends HBox {
                 case "search"  -> {
                     children.add(search);
                     search.setText(
-                            path.startsWith(TRASH+"files") ? "trash"+path.substring(HOME.length()+25) :
+                            path.startsWith(Lib.TRASH+"files") ? "trash"+path.substring(HOME.length()+25) :
                             path.startsWith(HOME) ? "~"+path.substring(HOME.length()) :
                             path);
                 }
-                case "clean" -> {if (path.startsWith(TRASH+"files")) children.add(clean);}
+                case "clean" -> {if (path.startsWith(Lib.TRASH+"files")) children.add(clean);}
                 case "reload"  -> children.add(reload);
             }
         }

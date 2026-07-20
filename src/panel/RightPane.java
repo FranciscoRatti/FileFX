@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,7 +13,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import main.Lib;
+import node.CenterNode;
 import node.RightNode;
+
+import java.io.*;
+import java.util.ArrayList;
 
 import static main.FileFX.*;
 import static main.Lib.*;
@@ -62,12 +68,13 @@ public class RightPane extends ScrollPane {
         children.add(close);
 
         if (selectedItem != null) {
-            FileProperties propertie = selectedItem.getPropertie();
+            FileProperties properties = selectedItem.getFileProperties();
             String extensionText = selectedItem.getExtension();
 
             // Miniatura
+            StackPane miniaturaPane = new StackPane();
             if (SHOW_MINIATURA &&
-                !propertie.isDirectory() && extensionText != null && (
+                !properties.isDirectory && extensionText != null && (
                     extensionText.equals("bmp") ||
                     extensionText.equals("gif") ||
                     extensionText.equals("jpeg") ||
@@ -75,19 +82,97 @@ public class RightPane extends ScrollPane {
                     extensionText.equals("png")
                 )
             ) {
-                Image image = new Image("file://" + propertie.getAbsolutePath());
+                Image image = new Image("file://" + properties.getAbsolutePath());
                 ImageView miniatura = new ImageView(image);
                 miniatura.setPreserveRatio(true);
 
                 int imageWidth = (int) image.getWidth();
                 int imageHeight = (int) image.getHeight();
-                if (imageWidth < imageHeight) miniatura.setFitHeight(paneWidth - 5);
-                else miniatura.setFitWidth(paneWidth - 5);
+                if (imageWidth < imageHeight) miniatura.setFitHeight(paneWidth - 3);
+                else miniatura.setFitWidth(paneWidth - 3);
 
-                StackPane miniaturaPane = new StackPane(miniatura);
-                miniaturaPane.setMinSize(paneWidth, paneWidth);
+                miniaturaPane.getChildren().add(miniatura);
 
-                children.addAll(miniaturaPane);
+            } else if (
+                    (SHOW_INSIDE_DIRECTORIES && properties.isDirectory) ||
+                    (SHOW_INSIDE_FILES && properties.getMimeType().startsWith("text/"))
+            ) {
+                VBox insideBox = new VBox();
+                ObservableList<Node> childrenInside = insideBox.getChildren();
+
+                ScrollPane insidePane = new ScrollPane(insideBox);
+                insidePane.setId("Right_miniatura_pane");
+                insidePane.setHbarPolicy(ScrollBarPolicy.NEVER);
+                insidePane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+                insidePane.setFitToWidth(true);
+
+                // Si es directorio
+                if (properties.isDirectory) {
+                    ArrayList<CenterNode> insideNodes;
+                    File[] content = properties.listFiles();
+
+                    if (content.length > 0) {
+                        insideNodes = new ArrayList<>();
+
+                        ArrayList<CenterNode> filesList = new ArrayList<>();
+                        ArrayList<CenterNode> directoriesList = new ArrayList<>();
+
+                        int size;
+                        for (size = 0; size < content.length && size < 50; size++) {
+                            File file = content[size];
+                            CenterNode node = new CenterNode(file, false);
+
+                            if (file.isDirectory()) directoriesList.add(node);
+                            else filesList.add(node);
+                        }
+
+                        if (IS_DIRECTORY_FIRST) insideNodes.addAll(directoriesList);
+                        insideNodes.addAll(filesList);
+                        if (!IS_DIRECTORY_FIRST) insideNodes.addAll(directoriesList);
+
+                        if (size == 50) {
+                            CenterNode node = new CenterNode("[...]");
+                            insideNodes.add(node);
+                        }
+
+                        for (int i = 0; i < insideNodes.size(); i++) {
+                            CenterNode node = insideNodes.get(i);
+                            node.setIndex(i);
+                            childrenInside.add(node);
+                        }
+
+                        miniaturaPane.getChildren().add(insidePane);
+                    } else {
+                        Text insideVoid = new Text("Vacio");
+                        insideVoid.setId("Right_miniatura_void");
+                        miniaturaPane.getChildren().add(insideVoid);
+                    }
+
+                // Si es archivo
+                } else {
+                    try (BufferedReader reader = new BufferedReader(new FileReader(selectedItem.getFile()))) {
+                        String lineText;
+                        int index = 0;
+                        while ((lineText = reader.readLine()) != null && index < 200) {
+                            Label line = new Label(lineText);
+                            line.setMaxWidth(Double.MAX_VALUE);
+                            line.setId(index % 2 == 0 ? "Right_miniatura_lineB1" : "Right_miniatura_lineB2");
+                            childrenInside.add(line);
+                            index++;
+                        }
+
+                        if (index == 200) {
+                            Label line = new Label("[...]");
+                            line.setMaxWidth(Double.MAX_VALUE);
+                            line.setId("Right_miniatura_lineB1");
+                            childrenInside.add(line);
+                        }
+
+                        miniaturaPane.getChildren().add(insidePane);
+                    } catch (Exception e) {
+                        printError("Error al leer interior del archivo "+selectedItem.getFile().getAbsolutePath(), e);
+                    }
+                }
             } else {
                 Text label = new Text(selectedItem.getIcon());
                 label.setFont(nerdFont);
@@ -96,40 +181,41 @@ public class RightPane extends ScrollPane {
                 if (FILL_MINIATURA_LIKE_ICON) label.setFill(selectedItem.getColor());
                 else label.setFill(UNKNOW_COLOR);
 
-                StackPane miniaturaPane = new StackPane(label);
-                miniaturaPane.setMinSize(paneWidth, paneWidth);
-
-                children.add(miniaturaPane);
+                miniaturaPane.getChildren().add(label);
             }
 
+            miniaturaPane.setMinSize(paneWidth, paneWidth);
+            miniaturaPane.setMaxSize(paneWidth, paneWidth);
+            children.add(miniaturaPane);
+
             // Propiedades
-            nameNode = new RightNode("Nombre :", selectedItem.getName(), !path.startsWith(TRASH + "files"));
+            nameNode = new RightNode("Nombre :", selectedItem.getName(), !path.startsWith(Lib.TRASH + "files"));
             nameNode.value.setOnKeyPressed(e -> {
                 if (e.getCode().equals(KeyCode.ENTER)) {
-                    renameFile(propertie, nameNode.value.getText());
+                    renameFile(properties, nameNode.value.getText());
                 }
             });
 
             // Tamaño
-            sizeNode = new RightNode("Tamaño :", propertie.getSizeString(), false);
+            sizeNode = new RightNode("Tamaño :", properties.getSizeString(), false);
 
             // Fecha
-            createDateTimeNode = new RightNode("Creado :", propertie.getCreationString(), false);
-            modifiedDateTimeNode = new RightNode("Modificado :", propertie.getModifiedString(), false);
+            createDateTimeNode = new RightNode("Creado :", properties.getCreationString(), false);
+            modifiedDateTimeNode = new RightNode("Modificado :", properties.getModifiedString(), false);
 
             // Tipo mime
-            typeNode = new RightNode("Tipo :", propertie.getMimeType(), false);
+            typeNode = new RightNode("Tipo :", properties.getMimeType(), false);
 
             // Permisos
             permissionsNode = new RightNode("Permisos :",
-                    new String(propertie.getOwnerPermissions()) +
-                    new String(propertie.getGroupPermissions()) +
-                    new String(propertie.getOtherPermissions()),
+                    new String(properties.getOwnerPermissions()) +
+                    new String(properties.getGroupPermissions()) +
+                    new String(properties.getOtherPermissions()),
                     false);
 
             // Usuario y grupo
-            ownerNode = new RightNode("Usuario :", propertie.getOwner(), true);
-            groupNode = new RightNode("Grupo   :", propertie.getGroup(), true);
+            ownerNode = new RightNode("Usuario :", properties.getOwner(), true);
+            groupNode = new RightNode("Grupo   :", properties.getGroup(), true);
 
             children.addAll(
                     new node.Separator(10, Orientation.HORIZONTAL),
