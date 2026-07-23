@@ -189,6 +189,8 @@ configuraciones:
   - `show_menu_create` : Crear menu o directorio.
   - `focus_path` : Pasarle el foco a la barra de busqueda.
   - `focus_filter` : Pasarle el foco a la barra de filtro.
+  - `focus_inside` : Si _show_inside_files_ es true, le pasa el foco al interior del archivo seleccionado.
+  - `save_inside` : Si _show_inside_files_ es true, guarda los cambios del interior del archivo seleccionado.
   - `deselect_all` : Deseleccionar todo.
   - `update_all` : Actualizar todo.
   - `change_show_right_pane` : Mostrar o esconder RightPane.

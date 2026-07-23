@@ -3,7 +3,7 @@
 .tooltip > .label,
 .menu-item, .menu-item > .label,
 #Top_search,
-#Right_close, #RightNode_value, #Right_miniatura_lineB1, #Right_miniatura_lineB2,
+#Right_close, #RightNode_value, #Right_miniatura_text,
 #Bottom_textfield, #BottomNode_icon, #BottomNode_icon-selected,
 #LeftNode_label,
 #OtherNode,
@@ -18,8 +18,10 @@
 #PartitionNode_title
 {-fx-font-family: "Noto Sans Mono";}
 
-.menu-item,
-#Right_miniatura_lineB1, #Right_miniatura_lineB2
+#Right_miniatura_text
+{-fx-font-size: 10;}
+
+.menu-item
 {-fx-font-size: 11;}
 
 #Right_close, #RightNode_title
@@ -49,12 +51,12 @@
 #BottomNode_button-selected,
 #LeftNode_label:hover, #LeftNode_unmount_button:hover,
 #CenterNode_boxB1:hover, #CenterNode_boxB2:hover,
-.scroll-pane > .scroll-bar:vertical .thumb:hover,
+.scroll-pane > .scroll-bar .thumb:hover,
 #PartitionNode_value:hover, #PartitionNode_value:focused
 {-fx-background-color: gray;}
 
 .menu-item, #OtherPane, #OtherNode,
-.scroll-pane > .scroll-bar:vertical .thumb
+.scroll-pane > .scroll-bar .thumb
 {-fx-background-color: #404040FF;}
 
 #TopNode_button, #Top_search,
@@ -63,14 +65,11 @@
 #PartitionNode_value
 {-fx-background-color: #373737;}
 
-#Right_miniatura_lineB2
-{-fx-background-color: #292929;}
-
 #MainPane, #TopPane, #RightPane_pane, #BottomPane, #LeftPane,
-#Right_close, #RightNode_value,
+#Right_close, #RightNode_value, #Right_miniatura_text .content, #Right_miniatura_pane > .corner,
 #Left_title, #LeftNode_label, #LeftNode_unmount_button,
-#CenterNode_boxB1, #Right_miniatura_lineB1,
-.scroll-pane > .scroll-bar:vertical .track,
+#CenterNode_boxB1,
+.scroll-pane > .scroll-bar .track,
 #PartitionColumn, #PartitionPane
 {-fx-background-color: #232323FF;}
 
@@ -83,10 +82,10 @@
 #Bottom_textfield, #BottomNode_button, #BottomNode_button-selected,
 #CenterNode_boxB1, #CenterNode_boxB2,
 #CenterNode_boxB1-focus, #CenterNode_boxB2-focus,
-#OtherNode, .scroll-pane > .scroll-bar:vertical .thumb
+#OtherNode, .scroll-pane > .scroll-bar .thumb
 {-fx-border-style: solid;}
 
-.menu-item, #OtherNode, .scroll-pane > .scroll-bar:vertical .thumb,
+.menu-item, #OtherNode, .scroll-pane > .scroll-bar .thumb,
 #Right_miniatura_pane,
 #BottomNode_button, #BottomNode_button-selected
 {-fx-border-radius: 1;}
@@ -108,10 +107,10 @@
 #BottomNode_button:hover, #BottomNode_button-selected:hover,
 #CenterNode_boxB1:hover, #CenterNode_boxB2:hover,
 #OtherNode:hover, #OtherNode:focused,
-.scroll-pane > .scroll-bar:vertical .thumb:hover
+.scroll-pane > .scroll-bar .thumb:hover
 {-fx-border-color: white;}
 
-.menu-item, .scroll-pane > .scroll-bar:vertical .thumb,
+.menu-item, .scroll-pane > .scroll-bar .thumb,
 #Right_miniatura_pane,
 #BottomNode_button-selected, #OtherNode
 {-fx-border-color: gray;}
@@ -146,7 +145,11 @@
     -fx-padding: 0;
     -fx-background-color: transparent;
 }
-.scroll-pane > .scroll-bar:vertical > .thumb {-fx-border-radius: 5;}
+.scroll-pane > .scroll-bar > .thumb {-fx-border-radius: 5;}
+.scroll-pane > .corner {
+    -fx-background-color: #232323FF;
+    -fx-background-insets: 0;
+}
 
 .tooltip {
     -fx-show-delay: 50ms;
@@ -173,6 +176,13 @@
 #RightNode_title {
     -fx-padding: 0 10 0 10;
     -fx-text-fill: lightgray;
+}
+#Right_miniatura_text {
+    -fx-padding: 0;
+    -fx-highlight-fill: #0095c8;
+    -fx-highlight-text-fill: white;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 #BottomPane {

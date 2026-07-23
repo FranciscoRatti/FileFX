@@ -34,16 +34,8 @@ public class Scene extends javafx.scene.Scene {
     private KeyCombination key;
     public void updateKeyBinding() {
         addEventFilter(KeyEvent.KEY_PRESSED, e -> {
-            try {
-                KeyCode keyCode = e.getCode();
-                key =
-                    e.isControlDown() ? new KeyCodeCombination(keyCode, KeyCombination.CONTROL_DOWN) :
-                    e.isShiftDown() ? new KeyCodeCombination(keyCode, KeyCombination.SHIFT_DOWN) :
-                    e.isAltDown() ? new KeyCodeCombination(keyCode, KeyCombination.ALT_DOWN) :
-                    e.isMetaDown() ? new KeyCodeCombination(keyCode, KeyCombination.META_DOWN) :
-                    e.isShortcutDown() ? new KeyCodeCombination(keyCode, KeyCombination.SHORTCUT_DOWN) :
-                    new KeyCodeCombination(keyCode);
-            } catch (IllegalArgumentException ignored) {return;}
+            key = getKeyCombination(e);
+            if (key == null) return;
 
             if (!isAnyFocus()) {
                 e.consume();
@@ -79,6 +71,8 @@ public class Scene extends javafx.scene.Scene {
                     if (setKeyBindAction(SHOW_MENU_CREATE, () -> CenterPane.showMenuCreate())) return;
                     if (setKeyBindAction(FOCUS_PATH, () -> Platform.runLater(() -> TopPane.focusSearch()))) return;
                     if (setKeyBindAction(FOCUS_FILTER, () -> Platform.runLater(() -> BottomPane.focusFilter()))) return;
+                    if (setKeyBindAction(FOCUS_INSIDE, () -> Platform.runLater(() -> RightPane.focusInside()))) return;
+                    if (setKeyBindAction(SAVE_INSIDE, () -> RightPane.saveInside())) return;
                     if (setKeyBindAction(DESELECT_ALL, () ->{
                         deselectAll();
                         selectThis();
@@ -100,6 +94,7 @@ public class Scene extends javafx.scene.Scene {
             }
         });
     }
+
     public boolean setKeyBindAction(KeyCombination[] keyCombinations, Runnable action) {
         for (KeyCombination keyCombination : keyCombinations) {
             if (keyCombination.equals(key)) {
@@ -108,5 +103,17 @@ public class Scene extends javafx.scene.Scene {
             }
         }
         return false;
+    }
+
+    public static KeyCombination getKeyCombination(KeyEvent e) {
+        try {
+            KeyCode keyCode = e.getCode();
+            return e.isControlDown() ? new KeyCodeCombination(keyCode, KeyCombination.CONTROL_DOWN) :
+                    e.isShiftDown() ? new KeyCodeCombination(keyCode, KeyCombination.SHIFT_DOWN) :
+                    e.isAltDown() ? new KeyCodeCombination(keyCode, KeyCombination.ALT_DOWN) :
+                    e.isMetaDown() ? new KeyCodeCombination(keyCode, KeyCombination.META_DOWN) :
+                    e.isShortcutDown() ? new KeyCodeCombination(keyCode, KeyCombination.SHORTCUT_DOWN) :
+                    new KeyCodeCombination(keyCode);
+        } catch (IllegalArgumentException ignored) {return null;}
     }
 }

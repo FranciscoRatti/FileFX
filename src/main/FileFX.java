@@ -289,6 +289,8 @@ public class FileFX extends javafx.application.Application {
         SHOW_MENU_CREATE = getKeyCombination("show_menu_create");
         FOCUS_PATH = getKeyCombination("focus_path");
         FOCUS_FILTER = getKeyCombination("focus_filter");
+        FOCUS_INSIDE = getKeyCombination("focus_inside");
+        SAVE_INSIDE = getKeyCombination("save_inside");
         DESELECT_ALL = getKeyCombination("deselect_all");
         UPDATE_ALL = getKeyCombination("update_all");
         CHANGE_SHOW_RIGHT_PANE = getKeyCombination("change_show_right_pane");
@@ -340,6 +342,8 @@ public class FileFX extends javafx.application.Application {
     public static KeyCombination[] SHOW_MENU_CREATE;
     public static KeyCombination[] FOCUS_PATH;
     public static KeyCombination[] FOCUS_FILTER;
+    public static KeyCombination[] FOCUS_INSIDE;
+    public static KeyCombination[] SAVE_INSIDE;
     public static KeyCombination[] DESELECT_ALL;
     public static KeyCombination[] UPDATE_ALL;
     public static KeyCombination[] CHANGE_SHOW_RIGHT_PANE;

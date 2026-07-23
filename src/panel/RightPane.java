@@ -4,18 +4,18 @@ import entity.FileProperties;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import main.Lib;
 import node.CenterNode;
 import node.RightNode;
+import scene.Scene;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ import static main.Lib.*;
 import static panel.MainPane.*;
 
 public class RightPane extends ScrollPane {
+    private static TextArea textNode;
     private static RightNode nameNode;
     private static RightNode permissionsNode;
     private static RightNode ownerNode;
@@ -35,7 +36,7 @@ public class RightPane extends ScrollPane {
     private static RightNode typeNode;
 
     private final VBox pane;
-    private double paneWidth;
+    private final double paneWidth;
 
     private static boolean isRightPaneShow;
 
@@ -62,9 +63,7 @@ public class RightPane extends ScrollPane {
 
         Button close = new Button("x");
         close.setId("Right_close");
-        close.setOnAction(e -> {
-            changeShow(false);
-        });
+        close.setOnAction(e -> changeShow(false));
         children.add(close);
 
         if (selectedItem != null) {
@@ -72,9 +71,10 @@ public class RightPane extends ScrollPane {
             String extensionText = selectedItem.getExtension();
 
             // Miniatura
-            StackPane miniaturaPane = new StackPane();
-            if (SHOW_MINIATURA &&
-                !properties.isDirectory && extensionText != null && (
+            textNode = null;
+
+            // Si es imagen
+            if (SHOW_MINIATURA && !properties.isDirectory && extensionText != null && (
                     extensionText.equals("bmp") ||
                     extensionText.equals("gif") ||
                     extensionText.equals("jpeg") ||
@@ -91,88 +91,83 @@ public class RightPane extends ScrollPane {
                 if (imageWidth < imageHeight) miniatura.setFitHeight(paneWidth - 3);
                 else miniatura.setFitWidth(paneWidth - 3);
 
-                miniaturaPane.getChildren().add(miniatura);
+                children.add(createMiniatura(miniatura));
 
-            } else if (
-                    (SHOW_INSIDE_DIRECTORIES && properties.isDirectory) ||
-                    (SHOW_INSIDE_FILES && properties.getMimeType().startsWith("text/"))
-            ) {
+            // Si es directorio
+            } else if (SHOW_INSIDE_DIRECTORIES && properties.isDirectory) {
                 VBox insideBox = new VBox();
-                ObservableList<Node> childrenInside = insideBox.getChildren();
+                ObservableList<Node> childrenBox = insideBox.getChildren();
 
-                ScrollPane insidePane = new ScrollPane(insideBox);
-                insidePane.setId("Right_miniatura_pane");
-                insidePane.setHbarPolicy(ScrollBarPolicy.NEVER);
-                insidePane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
-                insidePane.setFitToWidth(true);
+                ArrayList<CenterNode> insideNodes;
+                File[] content = properties.listFiles();
 
-                // Si es directorio
-                if (properties.isDirectory) {
-                    ArrayList<CenterNode> insideNodes;
-                    File[] content = properties.listFiles();
+                if (content.length > 0) {
+                    insideNodes = new ArrayList<>();
 
-                    if (content.length > 0) {
-                        insideNodes = new ArrayList<>();
+                    ArrayList<CenterNode> filesList = new ArrayList<>();
+                    ArrayList<CenterNode> directoriesList = new ArrayList<>();
 
-                        ArrayList<CenterNode> filesList = new ArrayList<>();
-                        ArrayList<CenterNode> directoriesList = new ArrayList<>();
+                    int size;
+                    for (size = 0; size < content.length && size < 50; size++) {
+                        File file = content[size];
+                        CenterNode node = new CenterNode(file, false);
 
-                        int size;
-                        for (size = 0; size < content.length && size < 50; size++) {
-                            File file = content[size];
-                            CenterNode node = new CenterNode(file, false);
-
-                            if (file.isDirectory()) directoriesList.add(node);
-                            else filesList.add(node);
-                        }
-
-                        if (IS_DIRECTORY_FIRST) insideNodes.addAll(directoriesList);
-                        insideNodes.addAll(filesList);
-                        if (!IS_DIRECTORY_FIRST) insideNodes.addAll(directoriesList);
-
-                        if (size == 50) {
-                            CenterNode node = new CenterNode("[...]");
-                            insideNodes.add(node);
-                        }
-
-                        for (int i = 0; i < insideNodes.size(); i++) {
-                            CenterNode node = insideNodes.get(i);
-                            node.setIndex(i);
-                            childrenInside.add(node);
-                        }
-
-                        miniaturaPane.getChildren().add(insidePane);
-                    } else {
-                        Text insideVoid = new Text("Vacio");
-                        insideVoid.setId("Right_miniatura_void");
-                        miniaturaPane.getChildren().add(insideVoid);
+                        if (file.isDirectory()) directoriesList.add(node);
+                        else filesList.add(node);
                     }
 
-                // Si es archivo
+                    if (IS_DIRECTORY_FIRST) insideNodes.addAll(directoriesList);
+                    insideNodes.addAll(filesList);
+                    if (!IS_DIRECTORY_FIRST) insideNodes.addAll(directoriesList);
+
+                    if (size == 50) {
+                        CenterNode node = new CenterNode("[...]");
+                        insideNodes.add(node);
+                    }
+
+                    for (int i = 0; i < insideNodes.size(); i++) {
+                        CenterNode node = insideNodes.get(i);
+                        node.setIndex(i);
+                        childrenBox.add(node);
+                    }
+
+                    children.add(createInside(insideBox));
                 } else {
-                    try (BufferedReader reader = new BufferedReader(new FileReader(selectedItem.getFile()))) {
-                        String lineText;
-                        int index = 0;
-                        while ((lineText = reader.readLine()) != null && index < 200) {
-                            Label line = new Label(lineText);
-                            line.setMaxWidth(Double.MAX_VALUE);
-                            line.setId(index % 2 == 0 ? "Right_miniatura_lineB1" : "Right_miniatura_lineB2");
-                            childrenInside.add(line);
-                            index++;
-                        }
+                    Text insideVoid = new Text("Vacio");
+                    insideVoid.setId("Right_miniatura_void");
 
-                        if (index == 200) {
-                            Label line = new Label("[...]");
-                            line.setMaxWidth(Double.MAX_VALUE);
-                            line.setId("Right_miniatura_lineB1");
-                            childrenInside.add(line);
-                        }
-
-                        miniaturaPane.getChildren().add(insidePane);
-                    } catch (Exception e) {
-                        printError("Error al leer interior del archivo "+selectedItem.getFile().getAbsolutePath(), e);
-                    }
+                    children.add(createMiniatura(insideVoid));
                 }
+
+            // Si es archivo
+            } else if (SHOW_INSIDE_FILES && properties.getMimeType().startsWith("text")) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(selectedItem.getFile()))) {
+                    String lineText;
+                    StringBuilder result = new StringBuilder();
+                    while ((lineText = reader.readLine()) != null) {
+                        result.append(lineText).append("\n");
+                    }
+                    result.deleteCharAt(result.length()-1);
+
+                    textNode = new TextArea(result.toString());
+                    textNode.setId("Right_miniatura_text");
+                    textNode.setOnKeyPressed(e -> {
+                        KeyCombination key = Scene.getKeyCombination(e);
+                        if (key != null) for (KeyCombination keyCombination : SAVE_INSIDE) {
+                            if (key.equals(keyCombination)) {
+                                saveInside();
+                                updateRight();
+                                break;
+                            }
+                        }
+                    });
+
+                    children.add(createInside(textNode));
+                } catch (Exception e) {
+                    printError("Error al leer interior del archivo "+selectedItem.getFile().getAbsolutePath(), e);
+                }
+
+            // Si es especial
             } else {
                 Text label = new Text(selectedItem.getIcon());
                 label.setFont(nerdFont);
@@ -181,12 +176,8 @@ public class RightPane extends ScrollPane {
                 if (FILL_MINIATURA_LIKE_ICON) label.setFill(selectedItem.getColor());
                 else label.setFill(UNKNOW_COLOR);
 
-                miniaturaPane.getChildren().add(label);
+                children.add(createMiniatura(label));
             }
-
-            miniaturaPane.setMinSize(paneWidth, paneWidth);
-            miniaturaPane.setMaxSize(paneWidth, paneWidth);
-            children.add(miniaturaPane);
 
             // Propiedades
             nameNode = new RightNode("Nombre :", selectedItem.getName(), !path.startsWith(Lib.TRASH + "files"));
@@ -232,10 +223,47 @@ public class RightPane extends ScrollPane {
         }
     }
 
+    public StackPane createMiniatura(Node node) {
+        StackPane miniaturaPane = new StackPane(node);
+        miniaturaPane.setMinSize(paneWidth, paneWidth);
+        miniaturaPane.setMaxSize(paneWidth, paneWidth);
+        return miniaturaPane;
+    }
+    public ScrollPane createInside(Node node) {
+        ScrollPane insidePane = new ScrollPane(node);
+        insidePane.setId("Right_miniatura_pane");
+        insidePane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+        insidePane.setHbarPolicy(ScrollBarPolicy.NEVER);
+        insidePane.setFitToWidth(true);
+        insidePane.setFitToHeight(true);
+        insidePane.setMinSize(paneWidth, paneWidth);
+        insidePane.setMaxSize(paneWidth, paneWidth);
+        return insidePane;
+    }
+    public static void saveInside() {
+        if (textNode != null) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(selectedItem.getFile()))) {
+                printExecute("Guardando cambios en '"+YELLOW+selectedItem.getName()+RESET+"'");
+                String[] lines = textNode.getText().split("\n");
+                writer.write(lines[0]);
+                for (int i = 1; i < lines.length; i++) {
+                    writer.newLine();
+                    writer.write(lines[i]);
+                }
+            } catch (Exception ex) {
+                printError("Error al guardar cambios en '"+selectedItem.getName()+"'", ex);
+            }
+        }
+    }
+
+    public static void focusInside() {
+        if (textNode != null) textNode.requestFocus();
+    }
     public static void focusName() {
         nameNode.value.requestFocus();
         nameNode.value.selectRange(0, selectedItem.getName().length()-selectedItem.getExtension().length()-1);
     }
+
     public static void changeShow(boolean isRightPaneShow) {
         RightPane.isRightPaneShow=isRightPaneShow;
         if (isRightPaneShow) {
@@ -249,7 +277,8 @@ public class RightPane extends ScrollPane {
         changeShow(!isRightPaneShow);
     }
     public static boolean isAnyFocus() {
-        return  (nameNode != null && nameNode.value.isFocused()) ||
+        return  (textNode != null && textNode.isFocused()) ||
+                (nameNode != null && nameNode.value.isFocused()) ||
                 (sizeNode != null && sizeNode.value.isFocused()) ||
                 (modifiedDateTimeNode != null && modifiedDateTimeNode.value.isFocused()) ||
                 (createDateTimeNode != null && createDateTimeNode.value.isFocused()) ||
