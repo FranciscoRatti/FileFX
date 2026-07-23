@@ -1,29 +1,19 @@
 package main;
 
-import entity.DesktopApplication;
-import entity.FileProperties;
+import entity.*;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import node.CenterNode;
-import panel.CenterPane;
-import panel.MainPane;
 import panel.RightPane;
 
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.awt.datatransfer.*;
+import java.io.*;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.*;
+import java.util.concurrent.locks.*;
 
 import static main.FileFX.*;
 import static panel.CenterPane.*;
@@ -122,8 +112,8 @@ public class Lib {
     private static MenuItem createNewOpenItem(String icon) {
         MenuItem item = new MenuItem("Abrir", createIconItem(icon));
         item.setOnAction(e -> {
-            if (selectedItem != null) {
-                CenterPane.openSelected();
+            if (centerPane.selectedItem != null) {
+                centerPane.openSelected();
             }
         });
         return item;
@@ -136,7 +126,7 @@ public class Lib {
             lock.lock();
             childrens.clear();
 
-            String mimeType = selectedItem.getFileProperties().getMimeType();
+            String mimeType = centerPane.selectedItem.getFileProperties().getMimeType();
             for (DesktopApplication app : desktopApplications) {
                 boolean isMimeTypeEqual = false;
 
@@ -154,7 +144,7 @@ public class Lib {
 
                 MenuItem item = new MenuItem(app.getName(), imageIcon);
                 item.setOnAction(ev -> {
-                    app.openWith(selectedItem);
+                    app.openWith(centerPane.selectedItem);
                 });
                 childrens.add(item);
               }
@@ -182,8 +172,8 @@ public class Lib {
             if (!input.isEmpty()) fileName = input;
 
             newFile = new File(path + "/" + fileName);
-            if (selectedItems.size() == 1) {
-                File selectedFile = selectedItems.getFirst().getFile();
+            if (centerPane.selectedItems.size() == 1) {
+                File selectedFile = centerPane.selectedItems.getFirst().getFile();
                 if (selectedFile.isDirectory()) newFile = new File(selectedFile.getAbsolutePath() + "/" + fileName);
             }
             createNewFile(newFile);
@@ -204,8 +194,8 @@ public class Lib {
           if (!input.isEmpty()) directoryName = input;
 
           newDirectory = new File(path + "/" + directoryName);
-          if (selectedItems.size() == 1) {
-              File selectedFile = selectedItems.getFirst().getFile();
+          if (centerPane.selectedItems.size() == 1) {
+              File selectedFile = centerPane.selectedItems.getFirst().getFile();
               if (selectedFile.isDirectory()) newDirectory = new File(selectedFile.getAbsolutePath() + "/" + directoryName);
           }
           createNewDirectory(newDirectory);
@@ -225,7 +215,7 @@ public class Lib {
         MenuItem item = new MenuItem("Copiar", createIconItem(icon));
         if (COPY != null) item.setAccelerator(COPY[0]);
         item.setOnAction(e -> {
-            copyFilesToClipBoard(MainPane.parseFileLabelsToFiles(selectedItems), false);
+            copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), false);
         });
         return item;
     }
@@ -233,7 +223,7 @@ public class Lib {
         MenuItem item = new MenuItem("Cortar", createIconItem(icon));
         if (CUT != null) item.setAccelerator(CUT[0]);
         item.setOnAction(e -> {
-            copyFilesToClipBoard(MainPane.parseFileLabelsToFiles(selectedItems), true);
+            copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), true);
         });
         return item;
     }
@@ -259,7 +249,7 @@ public class Lib {
         MenuItem item = new MenuItem("Enviar a papelera", createIconItem(icon));
         if (FileFX.TRASH != null) item.setAccelerator(FileFX.TRASH[0]);
         item.setOnAction(e -> {
-            trashFiles(parseFileLabelsToFiles(selectedItems));
+            trashFiles(parseCenterNodesToFiles(centerPane.selectedItems));
         });
         return item;
     }
@@ -267,7 +257,7 @@ public class Lib {
         MenuItem item = new MenuItem("Eliminar", createIconItem(icon));
         if (REMOVE != null) item.setAccelerator(REMOVE[0]);
         item.setOnAction(e -> {
-            removeFiles(MainPane.parseFileLabelsToFiles(selectedItems));
+            removeFiles(parseCenterNodesToFiles(centerPane.selectedItems));
         });
         return item;
     }
@@ -302,7 +292,7 @@ public class Lib {
         updateTop();
         updateLeft();
         updateCenter();
-        selectFirst();
+        centerPane.selectFirst();
         updateRight();
     }
 
@@ -335,11 +325,11 @@ public class Lib {
             printExecute("Retrocediendo");
             forwardBuffer.add(path);
             path = backBuffer.removeLast();
-            filter = null;
+            centerPane.filter = null;
 
             updateTop();
             updateCenter();
-            selectFirst();
+            centerPane.selectFirst();
             updateRight();
         }
     }
@@ -348,11 +338,11 @@ public class Lib {
             printExecute("Volviendo");
             backBuffer.add(path);
             path = forwardBuffer.removeLast();
-            filter = null;
+            centerPane.filter = null;
 
             updateTop();
             updateCenter();
-            selectFirst();
+            centerPane.selectFirst();
             updateRight();
         }
     }
@@ -361,7 +351,7 @@ public class Lib {
             printExecute("Yendo al parent");
             forwardBuffer.clear();
             backBuffer.add(path);
-            filter = null;
+            centerPane.filter = null;
 
             String oldPath = path.substring(0, path.length()-1);
             path = Path.of(path).getParent().toString();
@@ -371,7 +361,7 @@ public class Lib {
             updateTop();
 
             boolean flag = false;
-            for (CenterNode label : centerNodes) {
+            for (CenterNode label : centerPane.centerNodes) {
                 if (label.getFile().getAbsolutePath().equals(oldPath)) {
                     label.setSelected(true);
                     centerPane.setSelectedOnCenter();
@@ -380,7 +370,7 @@ public class Lib {
                 }
             }
 
-            if (!flag) selectFirst();
+            if (!flag) centerPane.selectFirst();
 
             updateRight();
         }
@@ -396,7 +386,7 @@ public class Lib {
             }
 
             updateCenter();
-            for (CenterNode node : centerNodes)
+            for (CenterNode node : centerPane.centerNodes)
                 if (node.getName().equals(file.getName()))
                     node.setSelected(true);
         }
@@ -421,13 +411,20 @@ public class Lib {
                 printExecute("Renombrando archivo '" + BLUE + absolutePath + RESET + "' a '" + BLUE + newAbsolutePath + RESET + "'");
 
                 ProcessBuilder pb = new ProcessBuilder("mv", file.getAbsolutePath(), newAbsolutePath);
-                pb.start();
+                pb.start().waitFor();
 
-                selectedItems.clear();
-                selectedItem = null;
+                centerPane.selectedItems.clear();
+                centerPane.selectedItem = null;
 
                 updateRight();
                 updateCenter();
+                for (CenterNode centerNode : centerPane.centerNodes) {
+                    if (centerNode.getName().equals(newName)) {
+                        centerNode.setSelected(true);
+                        centerNode.requestFocus();
+                        break;
+                    }
+                }
             } catch (Exception e) {
                 printError("Error al renombrar '" + file.getAbsolutePath() + "'", e);
             }
@@ -488,6 +485,7 @@ public class Lib {
             }
 
             updateCenter();
+            centerPane.selectFirst();
         }
     }
     public static File[] getClipboardFiles() {
@@ -552,10 +550,10 @@ public class Lib {
         }
     }
     public static void restoreSelected() {
-        if (selectedItems != null && !selectedItems.isEmpty()) {
-            File[] files = new File[selectedItems.size()];
+        if (centerPane.selectedItems != null && !centerPane.selectedItems.isEmpty()) {
+            File[] files = new File[centerPane.selectedItems.size()];
             for (int i = 0; i < files.length; i++) {
-                files[i] = selectedItems.get(i).getFile();
+                files[i] = centerPane.selectedItems.get(i).getFile();
             }
 
             restoreFiles(files);
@@ -588,8 +586,8 @@ public class Lib {
                 }
             }
 
-            selectedItems.clear();
-            selectedItem = null;
+            centerPane.selectedItems.clear();
+            centerPane.selectedItem = null;
 
             updateRight();
             updateCenter();
@@ -653,8 +651,8 @@ public class Lib {
                 }
             }
 
-            selectedItems.clear();
-            selectedItem = null;
+            centerPane.selectedItems.clear();
+            centerPane.selectedItem = null;
 
             updateRight();
             updateCenter();
@@ -664,8 +662,8 @@ public class Lib {
     public static void openShell() {
         try {
             String shellPath = path;
-            if (selectedItem != null) {
-                File dir = selectedItem.getFile();
+            if (centerPane.selectedItem != null) {
+                File dir = centerPane.selectedItem.getFile();
                 if (dir.isDirectory()) shellPath = dir.getAbsolutePath();
             }
 

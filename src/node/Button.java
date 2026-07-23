@@ -1,7 +1,6 @@
 package node;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.event.*;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Text;
 

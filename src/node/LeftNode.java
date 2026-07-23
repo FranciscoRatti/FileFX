@@ -1,14 +1,13 @@
 package node;
 
-import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import main.FileFX;
 
-import static main.FileFX.nerdFont;
+import static main.FileFX.*;
 import static main.Lib.*;
-import static panel.CenterPane.*;
+import static panel.MainPane.*;
 
 public class LeftNode extends Label {
     private final Label label;
@@ -31,7 +30,7 @@ public class LeftNode extends Label {
 
                     updateTop();
                     updateCenter();
-                    selectFirst();
+                    centerPane.selectFirst();
                     updateRight();
                 }
             });
@@ -45,10 +44,9 @@ public class LeftNode extends Label {
     public void setIcon(String icon) {
         label.setText(icon);
     }
-    public LeftNode setColor(Color color) {
+    public void setColor(Color color) {
         String css = "-fx-text-fill: rgb("+color.getRed()*255+","+color.getGreen()*255+","+color.getBlue()*255+");";
         setStyle(css);
         label.setStyle(css);
-        return this;
     }
 }

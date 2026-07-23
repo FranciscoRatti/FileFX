@@ -5,24 +5,21 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import node.Button;
-import node.CenterNode;
+import javafx.scene.layout.*;
+import node.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static main.Lib.*;
 import static main.FileFX.*;
-import static panel.CenterPane.*;
 import static panel.MainPane.*;
 
 public class BottomPane extends HBox {
     private static TextField filter;
-    private Button[] orderButtons;
+    private static Button[] orderButtons;
 
     public BottomPane() {
+        setId("BottomPane");
         ObservableList<Node> children = getChildren();
 
         for (String button : BOTTOM_BUTTONS) {
@@ -46,15 +43,15 @@ public class BottomPane extends HBox {
                     KeyCode key = e.getCode();
 
                     if (key.equals(KeyCode.ENTER)) {
-                        MainPane.filter = filter.getText();
-                        if (MainPane.filter.isEmpty()) {
-                            MainPane.filter = null;
+                        centerPane.filter = filter.getText();
+                        if (centerPane.filter.isEmpty()) {
+                            centerPane.filter = null;
                         }
 
-                        ArrayList<CenterNode> preSelectedList = new ArrayList<>(List.copyOf(selectedItems));
+                        ArrayList<CenterNode> preSelectedList = new ArrayList<>(List.copyOf(centerPane.selectedItems));
                         updateCenter();
-                        if (!centerNodes.isEmpty()) centerNodes.getFirst().requestFocus();
-                        for (CenterNode centerNode : centerNodes) {
+                        if (!centerPane.centerNodes.isEmpty()) centerPane.centerNodes.getFirst().requestFocus();
+                        for (CenterNode centerNode : centerPane.centerNodes) {
                             for (CenterNode preSelected : preSelectedList) {
                                 if (preSelected.getName().equals(centerNode.getName())) {
                                     preSelectedList.remove(preSelected);
@@ -64,7 +61,7 @@ public class BottomPane extends HBox {
                             }
                             if (preSelectedList.isEmpty()) break;
                         }
-                        if (selectedItem == null && selectedItems.isEmpty()) selectFirst();
+                        if (centerPane.selectedItem == null && centerPane.selectedItems.isEmpty()) centerPane.selectFirst();
                         Platform.runLater(() -> centerPane.setSelectedOnCenter());
                         updateRight();
                     }
@@ -73,8 +70,6 @@ public class BottomPane extends HBox {
                 children.add(filter);
             }
         }
-
-        setId("BottomPane");
     }
 
     public static void focusFilter() {filter.requestFocus();}

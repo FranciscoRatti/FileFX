@@ -1,18 +1,14 @@
 package entity;
 
 import javafx.scene.image.Image;
-import main.Lib;
 import node.CenterNode;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.stream.Collectors;
 
 import static main.Lib.*;
 
 public class DesktopApplication {
-    private File desktopFile;
+    private final File desktopFile;
     private String exec;
     private boolean hasParameter = false;
     private String name;
@@ -113,7 +109,7 @@ public class DesktopApplication {
 
                     String iconPath = new String(process.getInputStream().readAllBytes()).strip();
                     if (iconPath.endsWith(".svg")) {
-                        File png = new File(Lib.CONFIG_PATH + "tmp.png");
+                        File png = new File(CONFIG_PATH + "tmp.png");
                         try {
                             Process parseSvg = new ProcessBuilder("rsvg-convert", "-w", "24", "-h", "24", "-o",
                                     png.getAbsolutePath(), iconPath).start();

@@ -1,6 +1,5 @@
 package node;
 
-import javafx.application.Platform;
 import javafx.scene.control.*;
 
 public class PartitionNode {

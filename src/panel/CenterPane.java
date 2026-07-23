@@ -15,59 +15,48 @@ import main.Lib;
 import node.CenterNode;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.locks.*;
 
 import static main.FileFX.*;
 import static main.Lib.*;
-import static main.Lib.back;
-import static main.Lib.forward;
-import static main.Lib.parent;
 import static panel.MainPane.*;
 
 public class CenterPane extends ScrollPane {
-    public static ArrayList<CenterNode> centerNodes;
-    private static final Lock lock = new ReentrantLock();
+    public ArrayList<CenterNode> centerNodes;
+    public ArrayList<CenterNode> selectedItems;
+    public CenterNode selectedItem;
+    public String filter = null;
+    private final VBox pane;
 
-    private static ContextMenu menu;
-    private static ContextMenu menuFile;
-    private static ContextMenu menuDirectory;
-    private static ContextMenu menuMultiple;
-    private static ContextMenu menuCreate;
-    private static ContextMenu menuTrash;
-
-    private VBox pane;
+    private final ContextMenu menu;
+    private final ContextMenu menuFile;
+    private final ContextMenu menuDirectory;
+    private final ContextMenu menuMultiple;
+    private final ContextMenu menuCreate;
+    private final ContextMenu menuTrash;
 
     private final Comparator<CenterNode> compareByName = Comparator.comparing(CenterNode::getName, String.CASE_INSENSITIVE_ORDER);
     private final Comparator<CenterNode> compareByDate = Comparator.comparing(n -> n.getFileProperties().getModifiedDateTime());
     private final Comparator<CenterNode> compareBySize = Comparator.comparing(n -> n.getFileProperties().getSize());
     private final Comparator<CenterNode> compareByMime = Comparator.comparing(n -> n.getFileProperties().getMimeType(), String.CASE_INSENSITIVE_ORDER);
 
+    private final Lock lock = new ReentrantLock();
+
     public CenterPane() {
+        setId("CenterPane");
+        setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+        setFitToWidth(true);
+
         if (!new File(path).exists()) {
             printError("El directorio inicial '"+path+"' no existe", null);
             path = HOME+"/";
         }
         centerNodes = new ArrayList<>();
         selectedItems = new ArrayList<>();
-
-        menu          = createContextMenu(0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1);
-        menuFile      = createContextMenu(1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1);
-        menuDirectory = createContextMenu(1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1);
-        menuMultiple  = createContextMenu(1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1);
-        menuCreate    = createContextMenu(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0);
-        menuTrash     = createContextMenu(1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1);
-
         pane = new VBox();
-
-        setStyle("-fx-background: transparent; -fx-background-color: transparent;");
-        setFitToWidth(true);
         setContent(pane);
-
         update();
 
         Platform.runLater(() -> {
@@ -85,6 +74,13 @@ public class CenterPane extends ScrollPane {
                 selectThis();
             }
         });
+
+        menu          = createContextMenu(0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1);
+        menuFile      = createContextMenu(1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1);
+        menuDirectory = createContextMenu(1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1);
+        menuMultiple  = createContextMenu(1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1);
+        menuCreate    = createContextMenu(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+        menuTrash     = createContextMenu(1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1);
 
         // Acciones generales
         setOnMouseClicked(e -> {
@@ -121,8 +117,6 @@ public class CenterPane extends ScrollPane {
 
             e.consume();
         });
-
-        setId("CenterPane");
     }
 
     public void update() {
@@ -202,7 +196,7 @@ public class CenterPane extends ScrollPane {
             if (parent != null) {
                 CenterNode parentNode = new CenterNode(parent, true);
                 parentNode.name.setText("..");
-                parentNode.setIcon(iconsMyme.getProperty("parent"), Color.valueOf(colorsMyme.getProperty("parent")));
+                parentNode.setIcon(iconsMime.getProperty("parent"), Color.valueOf(colorsMime.getProperty("parent")));
                 directoriesList.addFirst(parentNode);
             }
         }
@@ -210,7 +204,7 @@ public class CenterPane extends ScrollPane {
         if (SHOW_THIS) {
             CenterNode thisNode = new CenterNode(directory, true);
             thisNode.name.setText(".");
-            thisNode.setIcon(iconsMyme.getProperty("this"), Color.valueOf(colorsMyme.getProperty("this")));
+            thisNode.setIcon(iconsMime.getProperty("this"), Color.valueOf(colorsMime.getProperty("this")));
             directoriesList.addFirst(thisNode);
         }
 
@@ -229,7 +223,7 @@ public class CenterPane extends ScrollPane {
         }
     }
 
-    public static void showMenu(Node anchor) {
+    public void showMenu(Node anchor) {
         hideAll();
         Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
 
@@ -245,12 +239,13 @@ public class CenterPane extends ScrollPane {
             menuMultiple.show(anchor, mouseLocation.x, mouseLocation.y);
         }
     }
-    public static void showMenuCreate() {
+    public void showMenuCreate() {
         hideAll();
         printInfo("Mostrando menu");
         menuCreate.show(Window.getWindows().getFirst());
     }
-    public static void hideAll() {
+
+    public void hideAll() {
         menu.hide();
         menuFile.hide();
         menuDirectory.hide();
@@ -258,7 +253,7 @@ public class CenterPane extends ScrollPane {
         menuCreate.hide();
         menuTrash.hide();
     }
-    public static boolean isAnyShow() {
+    public boolean isAnyShow() {
         return  menu.isShowing() || menuFile.isShowing() || menuDirectory.isShowing() ||
                 menuMultiple.isShowing() || menuCreate.isShowing() || menuTrash.isShowing();
     }
@@ -357,7 +352,7 @@ public class CenterPane extends ScrollPane {
                         double newV = targetVisibleTop / scrollRange;
                         setVvalue(newV);
                     }
-                } else if (step < 0) {
+                } else {
                     if (labelBounds.getMinY() < topThreshold) {
                         double targetVisibleTop = visibleTop - scrollByPixels;
                         double newV = targetVisibleTop / scrollRange;
@@ -367,7 +362,21 @@ public class CenterPane extends ScrollPane {
             }
         }
     }
-    public static void openSelected() {
+    public void setSelectedOnCenter() {
+        if (selectedItem != null) {
+            Platform.runLater(() -> {
+                double contentHeight = pane.getBoundsInLocal().getHeight();
+                double viewportHeight = getViewportBounds().getHeight();
+                double scrollRange = contentHeight - viewportHeight;
+
+                if (scrollRange > 0) {
+                    setVvalue(
+                            (selectedItem.getBoundsInParent().getCenterY() - (viewportHeight / 2.0)) / scrollRange);
+                }
+            });
+        }
+    }
+    public void openSelected() {
         if (selectedItem != null && !selectedItem.name.getText().equals(".")) {
             File file = selectedItem.getFile();
             String absolutePath = file.getAbsolutePath();
@@ -389,7 +398,7 @@ public class CenterPane extends ScrollPane {
                     updateRight();
                 });
 
-            // Si es archivo
+                // Si es archivo
             } else {
                 try {
                     printExecute("Abriendo '"+Lib.YELLOW+absolutePath+Lib.RESET+"'");
@@ -401,22 +410,8 @@ public class CenterPane extends ScrollPane {
             }
         }
     }
-    public void setSelectedOnCenter() {
-        if (selectedItem != null) {
-            Platform.runLater(() -> {
-                double contentHeight = pane.getBoundsInLocal().getHeight();
-                double viewportHeight = getViewportBounds().getHeight();
-                double scrollRange = contentHeight - viewportHeight;
 
-                if (scrollRange > 0) {
-                    setVvalue(
-                            (selectedItem.getBoundsInParent().getCenterY() - (viewportHeight / 2.0)) / scrollRange);
-                }
-            });
-        }
-    }
-
-    public static void deselectAll() {
+    public void deselectAll() {
         if (!selectedItems.isEmpty() && selectedItem != null) {
             selectedItem = null;
             for (CenterNode centerNode : selectedItems) centerNode.setSelected(false);
@@ -425,19 +420,19 @@ public class CenterPane extends ScrollPane {
             printInfo("Se deselecciono todo");
         }
     }
-    public static void selectThis() {
+    public void selectThis() {
         if (SHOW_THIS) {
             lock.lock();
-            CenterPane.centerNodes.getFirst().setSelected(true);
+            centerNodes.getFirst().setSelected(true);
             centerPane.setVvalue(0);
             lock.unlock();
         } else {
             selectedItem = new CenterNode(new File(path), true);
-            selectedItem.setIcon(iconsMyme.getProperty("this"), Color.valueOf(colorsMyme.getProperty("this")));
+            selectedItem.setIcon(iconsMime.getProperty("this"), Color.valueOf(colorsMime.getProperty("this")));
             selectedItems.add(selectedItem);
         }
     }
-    public static void selectFirst() {
+    public void selectFirst() {
         if (!centerNodes.isEmpty()) {
             lock.lock();
             int length = centerNodes.size();
@@ -451,6 +446,19 @@ public class CenterPane extends ScrollPane {
             lock.unlock();
         } else {
             selectThis();
+        }
+    }
+
+    public static File[] parseCenterNodesToFiles(ArrayList<CenterNode> centerNodeList) {
+        if (!centerNodeList.isEmpty()) {
+            File[] listFiles = new File[centerNodeList.size()];
+            for (int i = 0; i < centerNodeList.size(); i++) {
+                CenterNode centerNode = centerNodeList.get(i);
+                listFiles[i] = centerNode.getFile();
+            }
+            return listFiles;
+        } else {
+            return null;
         }
     }
 }

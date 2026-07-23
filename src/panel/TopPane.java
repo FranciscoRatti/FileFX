@@ -2,10 +2,7 @@ package panel;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import main.Lib;
@@ -17,16 +14,15 @@ import java.util.Optional;
 
 import static main.FileFX.*;
 import static main.Lib.*;
-import static panel.CenterPane.centerNodes;
-import static panel.CenterPane.selectFirst;
+import static panel.MainPane.*;
 
 public class TopPane extends HBox {
-    private static Button back = null;
-    private static Button forward = null;
-    private static Button parent = null;
-    private static TextField search = null;
-    private static Button clean = null;
-    private static Button reload = null;
+    private static Button back;
+    private static Button forward;
+    private static Button parent;
+    private static TextField search;
+    private static Button clean;
+    private static Button reload;
 
     public TopPane() {
         setId("TopPane");
@@ -58,8 +54,8 @@ public class TopPane extends HBox {
 
                                 updateTop();
                                 updateCenter();
-                                if (!centerNodes.isEmpty()) {
-                                    CenterNode first = centerNodes.getFirst();
+                                if (!centerPane.centerNodes.isEmpty()) {
+                                    CenterNode first = centerPane.centerNodes.getFirst();
                                     first.setSelected(true);
                                     first.requestFocus();
                                 }
@@ -89,7 +85,7 @@ public class TopPane extends HBox {
 
                                 updateTop();
                                 updateCenter();
-                                selectFirst();
+                                centerPane.selectFirst();
                                 updateRight();
                             }
                         }

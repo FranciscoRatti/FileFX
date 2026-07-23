@@ -5,14 +5,11 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import main.Lib;
-import node.Button;
-import node.LeftNode;
+import node.*;
 import stage.PartitionStage;
 
 import java.io.InputStream;
@@ -21,18 +18,13 @@ import static main.FileFX.*;
 import static main.Lib.*;
 
 public class LeftPane extends VBox {
+    private VBox devicesBox;
+
     public LeftPane() {
         setMaxWidth(LEFT_WIDTH);
-        update();
         setId("LeftPane");
-    }
 
-    public void update() {
-        printInfo("Actualizando panel izquierdo");
-        ObservableList<Node> children = getChildren();
-        children.clear();
-
-         if (SHOW_PLACES) {
+        if (SHOW_PLACES) {
             VBox placesBox = new VBox();
             ObservableList<Node> placesChildren = placesBox.getChildren();
 
@@ -44,16 +36,25 @@ public class LeftPane extends VBox {
                 placesChildren.add(new LeftNode(
                         place[0], place[1],
                         place[2].charAt(0) == '~' ? Lib.HOME+place[2].substring(1) : place[2]
-                        ));
+                ));
             }
 
             placesBox.getChildren().add(new node.Separator(20, Orientation.HORIZONTAL));
-            children.add(placesBox);
+            getChildren().add(placesBox);
         }
 
         if (SHOW_DEVICES) {
-            VBox devicesBox = new VBox();
+            devicesBox = new VBox();
+            update();
+            getChildren().add(devicesBox);
+        }
+    }
+
+    public void update() {
+        if (SHOW_DEVICES) {
+            printInfo("Actualizando panel izquierdo");
             ObservableList<Node> devicesChildren = devicesBox.getChildren();
+            devicesChildren.clear();
 
             Label title = new Label("Dispositivos");
             title.setId("Left_title");
@@ -76,7 +77,7 @@ public class LeftPane extends VBox {
                                 part.icon,
                                 part.type == PartitionProperties.TYPE.PART ? !part.mountpoint.isEmpty() ? part.mountpoint : null : null
                         );
-                        node.setColor(Color.valueOf(colorsMyme.getProperty(part.type.toString().toLowerCase())));
+                        node.setColor(Color.valueOf(colorsMime.getProperty(part.type.toString().toLowerCase())));
                         node.setOnMouseReleased(e -> {
                             if (e.getButton() == MouseButton.SECONDARY) stage.showAndWait();
                         });
@@ -130,7 +131,6 @@ public class LeftPane extends VBox {
             }
 
             devicesChildren.add(new node.Separator(20, Orientation.HORIZONTAL));
-            children.add(devicesBox);
         }
     }
 }

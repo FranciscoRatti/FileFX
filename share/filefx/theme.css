@@ -11,7 +11,7 @@
 {-fx-text-fill: white; -fx-font-family: "Noto Sans Mono";}
 
 #TopNode_icon,
-#RightNode_title, #Right_miniatura_void,
+#RightNode_title,
 #Left_title, #LeftNode_unmount_icon,
 #CenterNode_name, #CenterNode_name-focus,
 #CenterNode_column, #CenterNode_column-focus,
@@ -35,7 +35,6 @@
 {-fx-font-size: 13;}
 
 #Top_search,
-#Right_miniatura_void,
 #Bottom_textfield, #BottomNode_icon, #BottomNode_icon-selected,
 #Left_title,
 #PartitionNode_value

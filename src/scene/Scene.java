@@ -1,21 +1,15 @@
 package scene;
 
 import javafx.application.Platform;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import main.FileFX;
-import panel.BottomPane;
-import panel.CenterPane;
-import panel.RightPane;
-import panel.TopPane;
+import panel.*;
 
 import static main.FileFX.*;
 import static main.Lib.*;
 import static panel.CenterPane.*;
 import static panel.MainPane.*;
-import static panel.RightPane.changeShow;
+import static panel.RightPane.*;
 
 public class Scene extends javafx.scene.Scene {
     public Scene() {
@@ -40,42 +34,42 @@ public class Scene extends javafx.scene.Scene {
             if (!isAnyFocus()) {
                 e.consume();
                 try {
-                    if (setKeyBindAction(CUT, () -> copyFilesToClipBoard(parseFileLabelsToFiles(selectedItems), true))) return;
-                    if (setKeyBindAction(COPY, () -> copyFilesToClipBoard(parseFileLabelsToFiles(selectedItems), false))) return;
+                    if (setKeyBindAction(CUT, () -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), true))) return;
+                    if (setKeyBindAction(COPY, () -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), false))) return;
                     if (setKeyBindAction(PASTE, () -> pasteFiles(getClipboardFiles()))) return;
-                    if (setKeyBindAction(REMOVE, () -> removeFiles(parseFileLabelsToFiles(selectedItems)))) return;
-                    if (setKeyBindAction(FileFX.TRASH, () -> trashFiles(parseFileLabelsToFiles(selectedItems)))) return;
+                    if (setKeyBindAction(REMOVE, () -> removeFiles(parseCenterNodesToFiles(centerPane.selectedItems)))) return;
+                    if (setKeyBindAction(FileFX.TRASH, () -> trashFiles(parseCenterNodesToFiles(centerPane.selectedItems)))) return;
                     if (setKeyBindAction(RENAME, () -> RightPane.focusName())) return;
 
                     if (setKeyBindAction(UP, () -> centerPane.moveCursor(false, -1))) return;
-                    if (setKeyBindAction(OPEN, () -> CenterPane.openSelected())) return;
+                    if (setKeyBindAction(OPEN, () -> centerPane.openSelected())) return;
                     if (setKeyBindAction(DOWN, () -> centerPane.moveCursor(false, 1))) return;
                     if (setKeyBindAction(PARENT, () -> parent())) return;
                     if (setKeyBindAction(UP_STEP, () -> centerPane.moveCursor(false, -3))) return;
                     if (setKeyBindAction(DOWN_STEP, () -> centerPane.moveCursor(false, 3))) return;
-                    if (setKeyBindAction(FIRST, () -> centerPane.moveCursor(false, -selectedItem.getIndex()))) return;
-                    if (setKeyBindAction(LAST, () -> centerPane.moveCursor(false, centerNodes.size()-1 - selectedItem.getIndex()))) return;
+                    if (setKeyBindAction(FIRST, () -> centerPane.moveCursor(false, -centerPane.selectedItem.getIndex()))) return;
+                    if (setKeyBindAction(LAST, () -> centerPane.moveCursor(false, centerPane.centerNodes.size()-1 - centerPane.selectedItem.getIndex()))) return;
 
                     if (setKeyBindAction(SELECT_UP, () -> centerPane.moveCursor(true, -1))) return;
                     if (setKeyBindAction(SELECT_DOWN, () -> centerPane.moveCursor(true, 1))) return;
                     if (setKeyBindAction(SELECT_UP_STEP, () -> centerPane.moveCursor(true, -5))) return;
                     if (setKeyBindAction(SELECT_DOWN_STEP, () -> centerPane.moveCursor(true, 5))) return;
-                    if (setKeyBindAction(SELECT_FIRST, () -> centerPane.moveCursor(true, -selectedItem.getIndex()))) return;
-                    if (setKeyBindAction(SELECT_LAST, () -> centerPane.moveCursor(true, centerNodes.size()-1 - selectedItem.getIndex()))) return;
+                    if (setKeyBindAction(SELECT_FIRST, () -> centerPane.moveCursor(true, -centerPane.selectedItem.getIndex()))) return;
+                    if (setKeyBindAction(SELECT_LAST, () -> centerPane.moveCursor(true, centerPane.centerNodes.size()-1 - centerPane.selectedItem.getIndex()))) return;
 
                     if (setKeyBindAction(BACK, () -> back())) return;
                     if (setKeyBindAction(FORWARD, () -> forward())) return;
 
                     if (setKeyBindAction(OPEN_SHELL, () -> openShell())) return;
-                    if (setKeyBindAction(SHOW_MENU, () -> CenterPane.showMenu(mainPane))) return;
-                    if (setKeyBindAction(SHOW_MENU_CREATE, () -> CenterPane.showMenuCreate())) return;
+                    if (setKeyBindAction(SHOW_MENU, () -> centerPane.showMenu(mainPane))) return;
+                    if (setKeyBindAction(SHOW_MENU_CREATE, () -> centerPane.showMenuCreate())) return;
                     if (setKeyBindAction(FOCUS_PATH, () -> Platform.runLater(() -> TopPane.focusSearch()))) return;
                     if (setKeyBindAction(FOCUS_FILTER, () -> Platform.runLater(() -> BottomPane.focusFilter()))) return;
                     if (setKeyBindAction(FOCUS_INSIDE, () -> Platform.runLater(() -> RightPane.focusInside()))) return;
                     if (setKeyBindAction(SAVE_INSIDE, () -> RightPane.saveInside())) return;
                     if (setKeyBindAction(DESELECT_ALL, () ->{
-                        deselectAll();
-                        selectThis();
+                        centerPane.deselectAll();
+                        centerPane.selectThis();
                         updateRight();
                     })) return;
                     if (setKeyBindAction(UPDATE_ALL, () -> updateAll())) return;
@@ -83,13 +77,13 @@ public class Scene extends javafx.scene.Scene {
                     setKeyBindAction(CHANGE_SHOW_HIDDEN, () -> {
                         SHOW_HIDDEN = !SHOW_HIDDEN;
                         updateCenter();
-                        selectFirst();
+                        centerPane.selectFirst();
                     });
 
                 } catch (IllegalArgumentException ignored) {}
             } else {
                 try {
-                    setKeyBindAction(DESELECT_ALL, () -> selectedItem.requestFocus());
+                    setKeyBindAction(DESELECT_ALL, () -> centerPane.selectedItem.requestFocus());
                 } catch (IllegalArgumentException ignored) {}
             }
         });

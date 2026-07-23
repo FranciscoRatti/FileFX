@@ -3,18 +3,15 @@ package node;
 import entity.FileProperties;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import main.Lib;
-import panel.MainPane;
 
 import java.io.File;
 import java.util.ArrayList;
 
 import static main.FileFX.*;
 import static main.Lib.*;
-import static panel.CenterPane.*;
 import static panel.MainPane.*;
 
 public class CenterNode extends HBox {
@@ -23,7 +20,7 @@ public class CenterNode extends HBox {
     private File file;
     private final boolean isDirectory;
     private final String fileName;
-    private String extension = "";
+    private String extension;
     private String iconText;
     private Color color;
     private double[] colorRGB;
@@ -47,15 +44,15 @@ public class CenterNode extends HBox {
         String colorText;
         if (file.canRead()) {
             iconText = iconsExtension.getProperty("."+extension);
-            if (iconText == null) iconText = iconsMyme.getProperty(properties.getMimeType());
-            if (iconText == null) iconText = iconsMyme.getProperty("unknow");
+            if (iconText == null) iconText = iconsMime.getProperty(properties.getMimeType());
+            if (iconText == null) iconText = iconsMime.getProperty("unknow");
 
             colorText = colorsExtension.getProperty("."+extension);
-            if (colorText == null) colorText = colorsMyme.getProperty(properties.getMimeType());
-            if (colorText == null) colorText = colorsMyme.getProperty("unknow");
+            if (colorText == null) colorText = colorsMime.getProperty(properties.getMimeType());
+            if (colorText == null) colorText = colorsMime.getProperty("unknow");
         } else {
-            iconText = iconsMyme.getProperty("lock");
-            colorText = colorsMyme.getProperty("lock");
+            iconText = iconsMime.getProperty("lock");
+            colorText = colorsMime.getProperty("lock");
         }
 
         // Nodo
@@ -80,14 +77,14 @@ public class CenterNode extends HBox {
                 // Seleccionar
                 if (clickCount == 1) {
                     if (!e.isControlDown() && !e.isShiftDown()) {
-                        deselectAll();
+                        centerPane.deselectAll();
 
                     } else if (e.isShiftDown()) {
-                        if (selectedItem != null) {
+                        if (centerPane.selectedItem != null) {
                             boolean beSelected = false;
-                            CenterNode lastSelectedItem = selectedItem;
+                            CenterNode lastSelectedItem = centerPane.selectedItem;
 
-                            for (CenterNode centerNode : centerNodes) {
+                            for (CenterNode centerNode : centerPane.centerNodes) {
                                 if (beSelected) {
                                     if (centerNode.equals(this) || centerNode.equals(lastSelectedItem)) {
                                         break;
@@ -105,16 +102,16 @@ public class CenterNode extends HBox {
                         setSelected(true);
                     } else {
                         setSelected(false);
-                        selectedItems.remove(this);
-                        if (selectedItem == this) {
-                            if (selectedItems.isEmpty()) selectedItem = null;
-                            else selectedItem = selectedItems.getFirst();
+                        centerPane.selectedItems.remove(this);
+                        if (centerPane.selectedItem == this) {
+                            if (centerPane.selectedItems.isEmpty()) centerPane.selectedItem = null;
+                            else centerPane.selectedItem = centerPane.selectedItems.getFirst();
                         }
-                        if (selectedItems.isEmpty()) selectThis();
+                        if (centerPane.selectedItems.isEmpty()) centerPane.selectThis();
                     }
                     updateRight();
                 } else if (clickCount == 2) {
-                    openSelected();
+                    centerPane.openSelected();
                 }
             }
         });
@@ -126,7 +123,7 @@ public class CenterNode extends HBox {
         fileName = text;
 
         // Color
-        color = Color.valueOf(colorsMyme.getProperty("unknow"));
+        color = Color.valueOf(colorsMime.getProperty("unknow"));
         colorRGB = new double[]{color.getRed()*255, color.getGreen()*255, color.getBlue()*255};
 
         // Nodo
@@ -165,8 +162,8 @@ public class CenterNode extends HBox {
                 if (!columns.isEmpty()) for (Label column : columns)
                         column.setStyle("-fx-text-fill: rgb("+FOCUS_COLOR.getRed()*255+","+FOCUS_COLOR.getGreen()*255+","+FOCUS_COLOR.getBlue()*255+");");
 
-                selectedItem = this;
-                selectedItems.add(this);
+                centerPane.selectedItem = this;
+                centerPane.selectedItems.add(this);
             } else {
                 setId((id.charAt(15) == '1') ? "CenterNode_boxB1" : "CenterNode_boxB2");
                 name.setId("CenterNode_name");

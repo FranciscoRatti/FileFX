@@ -4,28 +4,19 @@ import entity.DesktopApplication;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.*;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import main.FileFX;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Objects;
+import java.util.*;
 
-import static main.FileFX.desktopApplications;
-import static main.Lib.CONFIG_PATH;
-import static main.Lib.lock;
-import static main.Lib.printOk;
-import static panel.MainPane.selectedItem;
-import static panel.MainPane.selectedItems;
+import static main.FileFX.*;
+import static main.Lib.*;
+import static panel.MainPane.*;
 
 public class OthersApplicationsStage extends Stage {
     public OthersApplicationsStage() {
@@ -99,9 +90,9 @@ public class OthersApplicationsStage extends Stage {
                     button.setMaxWidth(Double.MAX_VALUE);
                     button.setId("OtherNode");
                     button.setOnAction(e -> {
-                        if (selectedItems != null && !selectedItems.isEmpty()) {
+                        if (centerPane.selectedItems != null && !centerPane.selectedItems.isEmpty()) {
                             FileFX.othersApplicationsStage.close();
-                            app.openWith(selectedItem);
+                            app.openWith(centerPane.selectedItem);
                         }
                     });
                     children.add(button);

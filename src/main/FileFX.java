@@ -3,8 +3,7 @@ package main;
 import entity.DesktopApplication;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
+import javafx.scene.input.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -15,19 +14,19 @@ import stage.OthersApplicationsStage;
 import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.util.*;
 
 import static main.Lib.*;
-import static panel.RightPane.changeShow;
+import static panel.MainPane.*;
+import static panel.RightPane.*;
 
 public class FileFX extends javafx.application.Application {
     public static Properties config;
     public static Properties keyBinding;
     public static Properties dynamicValues;
-    public static Properties iconsMyme;
+    public static Properties iconsMime;
     public static Properties iconsExtension;
-    public static Properties colorsMyme;
+    public static Properties colorsMime;
     public static Properties colorsExtension;
 
     public static Font nerdFont;
@@ -143,7 +142,7 @@ public class FileFX extends javafx.application.Application {
             Properties iconsBinding = new Properties();
             iconsBinding.load(reader);
 
-            iconsMyme = new Properties();
+            iconsMime = new Properties();
             iconsExtension = new Properties();
 
             iconsBinding.forEach((arg0, arg1) -> {
@@ -151,7 +150,7 @@ public class FileFX extends javafx.application.Application {
                 String v = (String) arg1;
 
                 if (k.startsWith(".")) iconsExtension.put(k, v);
-                else iconsMyme.put(k, v);
+                else iconsMime.put(k, v);
             });
         } catch (IOException e) {
             printError("No se pudo leer el archivo de iconos", e);
@@ -163,7 +162,7 @@ public class FileFX extends javafx.application.Application {
             Properties colorsBinding = new Properties();
             colorsBinding.load(input);
 
-            colorsMyme = new Properties();
+            colorsMime = new Properties();
             colorsExtension = new Properties();
 
             colorsBinding.forEach((arg0, arg1) -> {
@@ -172,7 +171,7 @@ public class FileFX extends javafx.application.Application {
 
                 if (k.startsWith(".")) colorsExtension.put(k, v);
                 else {
-                    colorsMyme.put(k, v);
+                    colorsMime.put(k, v);
                     if (k.equals("focus")) {
                         FOCUS_COLOR = Color.valueOf(v);
                         FOCUS_COLOR_RGB = new double[]{FOCUS_COLOR.getRed() * 255, FOCUS_COLOR.getGreen() * 255, FOCUS_COLOR.getBlue() * 255};
@@ -208,7 +207,7 @@ public class FileFX extends javafx.application.Application {
                 try (FileOutputStream output = new FileOutputStream(CONFIG_PATH+"init_values.properties")) {
                     String width = String.valueOf(stage.getWidth());
                     String height = String.valueOf(stage.getHeight());
-                    String selection = MainPane.selectedItem == null ? "" : MainPane.selectedItem.getName();
+                    String selection = centerPane.selectedItem == null ? "" : centerPane.selectedItem.getName();
 
                     printInfo("   height="+height);
                     printInfo("   width="+width);
