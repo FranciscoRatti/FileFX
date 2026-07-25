@@ -112,7 +112,7 @@ public class CenterPane extends ScrollPane {
                     if (isAnyShow()) hideAll();
                 }
             } else if (button.equals(MouseButton.SECONDARY)) {
-                showMenu(this);
+                showMenu(mainPane, e.getScreenX(), e.getScreenY());
             }
 
             e.consume();
@@ -223,20 +223,34 @@ public class CenterPane extends ScrollPane {
         }
     }
 
-    public void showMenu(Node anchor) {
+    public void showMenu(Node anchor, double x, double y) {
         hideAll();
-        Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
-
         printInfo("Mostrando menu");
+
         if (selectedItems.isEmpty()) {
-            menu.show(anchor, mouseLocation.x, mouseLocation.y);
+            menu.show(anchor, x, y);
         } else if (path.startsWith(Lib.TRASH+"files")) {
-            menuTrash.show(anchor, mouseLocation.x, mouseLocation.y);
+            menuTrash.show(anchor, x, y);
         } else if (selectedItems.size() == 1) {
-            if (selectedItems.getFirst().getFile().isDirectory()) menuDirectory.show(anchor, mouseLocation.x, mouseLocation.y);
-            else menuFile.show(anchor, mouseLocation.x, mouseLocation.y);
+            if (selectedItems.getFirst().getFile().isDirectory()) menuDirectory.show(anchor, x, y);
+            else menuFile.show(anchor, x, y);
         } else {
-            menuMultiple.show(anchor, mouseLocation.x, mouseLocation.y);
+            menuMultiple.show(anchor, x, y);
+        }
+    }
+    public void showMenu() {
+        hideAll();
+        printInfo("Mostrando menu");
+
+        if (selectedItems.isEmpty()) {
+            menu.show(Window.getWindows().getFirst());
+        } else if (path.startsWith(Lib.TRASH+"files")) {
+            menuTrash.show(Window.getWindows().getFirst());
+        } else if (selectedItems.size() == 1) {
+            if (selectedItems.getFirst().getFile().isDirectory()) menuDirectory.show(Window.getWindows().getFirst());
+            else menuFile.show(Window.getWindows().getFirst());
+        } else {
+            menuMultiple.show(Window.getWindows().getFirst());
         }
     }
     public void showMenuCreate() {

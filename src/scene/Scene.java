@@ -61,7 +61,7 @@ public class Scene extends javafx.scene.Scene {
                     if (setKeyBindAction(FORWARD, () -> forward())) return;
 
                     if (setKeyBindAction(OPEN_SHELL, () -> openShell())) return;
-                    if (setKeyBindAction(SHOW_MENU, () -> centerPane.showMenu(mainPane))) return;
+                    if (setKeyBindAction(SHOW_MENU, () -> centerPane.showMenu())) return;
                     if (setKeyBindAction(SHOW_MENU_CREATE, () -> centerPane.showMenuCreate())) return;
                     if (setKeyBindAction(FOCUS_PATH, () -> Platform.runLater(() -> TopPane.focusSearch()))) return;
                     if (setKeyBindAction(FOCUS_FILTER, () -> Platform.runLater(() -> BottomPane.focusFilter()))) return;

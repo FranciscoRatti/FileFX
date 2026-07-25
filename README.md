@@ -1,10 +1,11 @@
 # File FX
 
 Explorador de archivo desarrollado en Java 21 utilizando el framework
-**JavaFX** disponible solo en Linux. Pensado para utilizarse con atajos de
+**JavaFX** y compilado con **Liberica NIK** (Basado en GraalVM),
+disponible solo en Linux. Pensado para utilizarse con atajos de
 teclado y ser altamente configurable. Para los iconos utiliza una
 **Nerd fonts**, estos se pueden encontrar en la [cheat sheet](https://www.nerdfonts.com/cheat-sheet).
-Tiene previsualization de imágenes.
+Tiene previsualization de imágenes, soporta png, jpg, jpeg, bmp, gif y svg.
 
 ![vista-previa.png](images/vista-previa.png)
 
@@ -19,15 +20,39 @@ Tiene previsualization de imágenes.
 
 ### JDK 21
 
-Ubuntu = `sudo apt install openjdk-21-jdk` <br>
+##### Para ejecutar la aplicacion es necesario la JDK 21.
+
+Debian = `sudo apt install openjdk-21-jdk` <br>
 Fedora = `sudo dnf install java-21-openjdk-devel` <br>
-Arch Linux = `sudo pacman -Syu jdk21-openjdk`
+Arch = `sudo pacman -Syu jdk21-openjdk` <br>
+openSUSE = `sudo zypper install java-21-openjdk` <br>
+Alpine = `sudo apk add openjdk21-jdk`
+
+Para verificar podes ejecutar `java --version`
 
 ### RSVG
 
-Ubuntu = `sudo apt install librsvg2-bin` <br>
+##### Para pasar imagenes de .svg a .png.
+
+Debian = `sudo apt install librsvg2-bin` <br>
 Fedora = `sudo dnf install librsvg2-tools` <br>
-Arch Linux = `sudo pacman -Syu librsvg`
+Arch = `sudo pacman -Syu librsvg` <br>
+openSUSE = `sudo zypper install librsvg-2-2` <br>
+Alpine = `sudo apk add librsvgr`
+
+Para verificar ejecuta `rsvg-convert --version`
+
+### XCLIP
+
+##### Para leer el portapapeles del sistema.
+
+Debian = `sudo apt install xclip` <br>
+Fedora = `sudo dnf install xclip` <br>
+Arch = `sudo pacman -S xclip` <br>
+openSUSE = `sudo zypper install xclip` <br>
+Alpine = `sudo apk add xclip`
+
+Para verificar instalacion ejecuta `xclip --version`
 
 ## Instalación
 
@@ -39,16 +64,9 @@ ejecutar:
 unzip FileFX.zip -d FileFX && rm FileFX.zip
 ```
 
-O también se puede clonar todo el repositorio, que seria mas lento, utilizando:
-
-```
-git clone https://github.com/FranciscoRatti/FileFX.git
-```
-
 Dentro de los archivos se encuentra un **install.sh** que copia los archivos
-binarios, archivos estáticos y archivos de configuración a sus ubicaciones
-correctas, te pedirá la contraseña porque debe copiar archivos a
-_/usr/share/filefx/_.
+binarios, librerias, archivos estáticos y archivos de configuración a sus ubicaciones
+correctas.
 
 ```
 ./FileFX/install.sh
@@ -64,7 +82,7 @@ Para ejecutar podés usar el menu de aplicaciones que es lo mismo que ejecutar
 el comando:
 
 ```
-java --module-path /usr/lib/filefx/lib --add-modules javafx.controls,javafx.graphics --enable-native-access=javafx.controls,javafx.graphics -cp /usr/lib/filefx/bin main.FileFX
+filefx
 ```
 
 ## Configuración
@@ -75,7 +93,7 @@ enumeran los tipos de datos que pueden ir en _valor_ seguido de los archivos y s
 configuraciones:
 
 |    Tipo    |                                   Valor                                    |
-|:----------:|:--------------------------------------------------------------------------:|
+| :--------: | :------------------------------------------------------------------------: |
 |  boolean   |                                true o false                                |
 |   double   |                              Numero con coma                               |
 |   String   |                                Texto Plano                                 |
@@ -85,7 +103,7 @@ configuraciones:
 |  COLUMNS   |          PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATED, TYPE          |
 
 - **_config.properties_**: Configuraciones principales.
-  - **General :** 
+  - **General :**
     - `terminal = String` : Comando a ejecutar al abrir una terminal.
     - `save_bounds = boolean` : Si es true se guarda el tamaño de la ventana al
       cerrarse.
@@ -113,7 +131,7 @@ configuraciones:
     - `order_icons = String[]` : Define los iconos de los botones para cambiar el orden.
       El orden es [NAME,DATE,SIZE,MIME]
   - **Left Pane :**
-    - `left_width = double` : Ancho fijo del LeftPane. 
+    - `left_width = double` : Ancho fijo del LeftPane.
     - `show_places = boolean` : Define si se muestran las ubicaciones en el LeftPane.
     - `places = String[][]` : Define ubicaciones personalizadas que aparecerán en Lugares
       en el LeftPane. Su sintaxis es _[{nombre;icono;direccion},{nombre;icono;direccion},...]_.

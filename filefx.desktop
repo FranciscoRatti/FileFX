@@ -1,12 +1,12 @@
 [Desktop Entry]
 Name=File FX
 Comment=Explorador de archivos creado por el mejor programador
-Exec=java --module-path /usr/lib/filefx/lib --add-modules javafx.controls,javafx.graphics --enable-native-access=javafx.controls,javafx.graphics -cp /usr/lib/filefx/bin main.FileFX
+Exec=filefx
 Icon=/usr/share/filefx/icons/icon.png
 Type=Application
 Categories=Office;Utility;Core;
 Terminal=false
-Keywords=explorador;
+Keywords=explorador;archivos;gestor;administrador;
 MimeType=inode/directory;
 StartupNotify=false
 StartupWMClass=main.FileFX

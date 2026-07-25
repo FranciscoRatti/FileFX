@@ -42,7 +42,6 @@ public class Lib {
 
     public static final LinkedList<String> backBuffer = new LinkedList<>();
     public static final LinkedList<String> forwardBuffer = new LinkedList<>();
-    public static Clipboard clipboard;
     private static File[] clipboardFiles;
     public static final Lock lock = new ReentrantLock();
 
@@ -92,11 +91,10 @@ public class Lib {
             contextMenu.setOnShowing(e -> {
                 if (pasteItem != null) {
                     clipboardFiles = getClipboardFiles();
-                    if (clipboard != null && clipboardFiles != null) {
+                    if (clipboardFiles != null) {
                         boolean setDisable = false;
                         for (File file : clipboardFiles) {
-                            if (!file.exists())
-                                setDisable = true;
+                            if (!file.exists()) setDisable = true;
                         }
                         pasteItem.setDisable(setDisable);
                     } else {
@@ -143,9 +141,7 @@ public class Lib {
                 imageIcon.setFitHeight(20);
 
                 MenuItem item = new MenuItem(app.getName(), imageIcon);
-                item.setOnAction(ev -> {
-                    app.openWith(centerPane.selectedItem);
-                });
+                item.setOnAction(ev -> app.openWith(centerPane.selectedItem));
                 childrens.add(item);
               }
             }
@@ -206,67 +202,48 @@ public class Lib {
     private static MenuItem createRenameItem(String icon) {
         MenuItem item = new MenuItem("Renombrar", createIconItem(icon));
         if (RENAME != null) item.setAccelerator(RENAME[0]);
-        item.setOnAction(e -> {
-            RightPane.focusName();
-        });
+        item.setOnAction(e -> RightPane.focusName());
         return item;
     }
     private static MenuItem createCopyItem(String icon) {
         MenuItem item = new MenuItem("Copiar", createIconItem(icon));
         if (COPY != null) item.setAccelerator(COPY[0]);
-        item.setOnAction(e -> {
-            copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), false);
-        });
+        item.setOnAction(e -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), false));
         return item;
     }
     private static MenuItem createCutItem(String icon) {
         MenuItem item = new MenuItem("Cortar", createIconItem(icon));
         if (CUT != null) item.setAccelerator(CUT[0]);
-        item.setOnAction(e -> {
-            copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), true);
-        });
+        item.setOnAction(e -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), true));
         return item;
     }
     private static MenuItem createPasteItem(String icon) {
-        clipboardFiles = CHECK_CLIPBOARD_PASTE ? getClipboardFiles() : clipboardFiles;
-
         MenuItem item = new MenuItem("Pegar", createIconItem(icon));
         if (PASTE != null) item.setAccelerator(PASTE[0]);
-        item.setOnAction(e -> {
-            if (clipboardFiles == null) clipboardFiles = getClipboardFiles();
-            pasteFiles(clipboardFiles);
-        });
+        item.setOnAction(e -> pasteFiles(getClipboardFiles()));
         return item;
     }
     private static MenuItem createRestoreItem(String icon) {
         MenuItem item = new MenuItem("Restaurar", createIconItem(icon));
-        item.setOnAction(e -> {
-            restoreSelected();
-        });
+        item.setOnAction(e -> restoreSelected());
         return item;
     }
     private static MenuItem createTrashItem(String icon) {
         MenuItem item = new MenuItem("Enviar a papelera", createIconItem(icon));
         if (FileFX.TRASH != null) item.setAccelerator(FileFX.TRASH[0]);
-        item.setOnAction(e -> {
-            trashFiles(parseCenterNodesToFiles(centerPane.selectedItems));
-        });
+        item.setOnAction(e -> trashFiles(parseCenterNodesToFiles(centerPane.selectedItems)));
         return item;
     }
     private static MenuItem createRemoveItem(String icon) {
         MenuItem item = new MenuItem("Eliminar", createIconItem(icon));
         if (REMOVE != null) item.setAccelerator(REMOVE[0]);
-        item.setOnAction(e -> {
-            removeFiles(parseCenterNodesToFiles(centerPane.selectedItems));
-        });
+        item.setOnAction(e -> removeFiles(parseCenterNodesToFiles(centerPane.selectedItems)));
         return item;
     }
     private static MenuItem createOpenShellItem(String icon) {
       MenuItem item = new MenuItem("Abrir una terminal ", createIconItem(icon));
       if (OPEN_SHELL != null) item.setAccelerator(OPEN_SHELL[0]);
-      item.setOnAction(e -> {
-          openShell();
-      });
+      item.setOnAction(e -> openShell());
       return item;
     }
     private static Label createIconItem(String text) {
@@ -433,11 +410,17 @@ public class Lib {
 
     public static void copyToClipBoard(String text, boolean isCut) {
         if (text != null) {
-            Lib.isCut = isCut;
+            printExecute("Copiando al portapapeles '" + BLUE + text + RESET + "'");
 
-            printInfo("Copiando al portapapeles '" + BLUE + text + RESET + "'");
-            StringSelection selection = new StringSelection(text);
-            clipboard.setContents(selection, null);
+            Lib.isCut = isCut;
+            try {
+                Process process = new ProcessBuilder("xclip", "-selection", "c").start();
+                try (OutputStreamWriter writer = new OutputStreamWriter(process.getOutputStream())) {
+                    writer.write(text);
+                }
+            } catch (Exception e) {
+                printError("Error al pegar en el portapeles", e);
+            }
         }
     }
     public static void copyFilesToClipBoard(File[] files, boolean isCut) {
@@ -458,9 +441,9 @@ public class Lib {
                 if (file.exists()) {
                     String absolutePath = file.getAbsolutePath();
                     String name = file.getName();
-                    String destination = path + "/" + name;
+                    String destination = path + name;
 
-                    if (absolutePath.equals(destination)) destination = path + "/(copia) " + name;
+                    if (absolutePath.equals(destination)) destination = path + "(copia) " + name;
 
                     String operation;
                     ProcessBuilder pb;
@@ -489,22 +472,33 @@ public class Lib {
         }
     }
     public static File[] getClipboardFiles() {
-        File[] files = null;
+        try {
+            printExecute("Leyendo porpapeles");
 
-        if (clipboard != null && clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor)) {
-            try {
-                printExecute("Leyendo porpapeles");
-                String clipboardData = (String) clipboard.getData(DataFlavor.stringFlavor);
-                String[] filesPath = clipboardData.split(",");
+            String clipboardData = getClipboard();
+            if (clipboardData == null) return null;
 
-                files = new File[filesPath.length];
-                for (int i = 0; i < filesPath.length; i++) files[i] = new File(filesPath[i]);
-            } catch (Exception e) {
-                printError("Error al leer porpapeles", e);
-            }
+            String[] filesPath = clipboardData.split(",");
+
+            File[] files = new File[filesPath.length];
+
+            for (int i = 0; i < filesPath.length; i++) files[i] = new File(filesPath[i]);
+            return files;
+        } catch (Exception e) {
+            printError("Error al leer porpapeles", e);
+            return null;
         }
-
-        return files;
+    }
+    public static String getClipboard() {
+        try {
+            Process process = new ProcessBuilder("xclip", "-o", "-selection", "c").start();
+            try (BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                return input.readLine();
+            }
+        } catch (Exception e) {
+            printError("Error al leer portapeles", e);
+            return null;
+        }
     }
 
     public static void restoreFiles(File[] files) {

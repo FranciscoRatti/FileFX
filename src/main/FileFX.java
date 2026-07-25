@@ -186,9 +186,6 @@ public class FileFX extends javafx.application.Application {
             System.exit(0);
         }
 
-        printInfo("Cargando portapapeles");
-        clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-
         printInfo("Cargando panel principal");
         mainPane = new MainPane();
         changeShow(SHOW_RIGHT_PANE);

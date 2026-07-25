@@ -1,0 +1,1 @@
+zip -r ../FileFX.zip ../filefx.desktop ../openWith_filefx.desktop ../out ../share install.sh
