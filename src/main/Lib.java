@@ -10,6 +10,7 @@ import panel.RightPane;
 
 import java.awt.datatransfer.*;
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -42,7 +43,6 @@ public class Lib {
 
     public static final LinkedList<String> backBuffer = new LinkedList<>();
     public static final LinkedList<String> forwardBuffer = new LinkedList<>();
-    private static File[] clipboardFiles;
     public static final Lock lock = new ReentrantLock();
 
     // METODOS -------------------------------------------------------------------------------------------------------------
@@ -56,15 +56,14 @@ public class Lib {
     }
 
     public static ContextMenu createContextMenu(
-              int open, int openWith,
-              int createFile, int createDirectory,
-              int rename, int copy, int cut, int paste,
+              int open, int openWith, int createFile, int createDirectory, int link, int rename,
+              int copy, int cut, int paste,
               int restore, int trash, int remove,
-              int shell)
+              int extract, int compress, int shell)
     {
         ContextMenu contextMenu = new ContextMenu();
         ObservableList<MenuItem> contextMenuItems = contextMenu.getItems();
-        MenuItem pasteItem;
+        MenuItem pasteItem, extractHereItem;
 
         String[] icons = new String[CONTEXT_MENU_ICONS.length];
         System.arraycopy(CONTEXT_MENU_ICONS, 0, icons, 0, CONTEXT_MENU_ICONS.length);
@@ -74,23 +73,33 @@ public class Lib {
 
         if (createFile == 1) contextMenuItems.add(createNewFileItem(icons[2]));
         if (createDirectory == 1) contextMenuItems.add(createNewDirectoryItem(icons[3]));
-        if (rename == 1) contextMenuItems.add(createRenameItem(icons[4]));
+        if (link == 1) contextMenuItems.add(createNewLinkItem(icons[4]));
+        if (rename == 1) contextMenuItems.add(createRenameItem(icons[5]));
 
-        if (copy == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createCopyItem(icons[5]));
-        if (cut == 1) contextMenuItems.add(createCutItem(icons[6]));
-        if (paste == 1) contextMenuItems.add(pasteItem = createPasteItem(icons[7]));
+        contextMenuItems.add(new SeparatorMenuItem());
+
+        if (copy == 1) contextMenuItems.add(createCopyItem(icons[6]));
+        if (cut == 1) contextMenuItems.add(createCutItem(icons[7]));
+        if (paste == 1) contextMenuItems.add(pasteItem = createPasteItem(icons[8]));
         else pasteItem = null;
 
-        if (restore == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createRestoreItem(icons[8]));
-        if (trash == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createTrashItem(icons[9]));
-        if (remove == 1) contextMenuItems.add(createRemoveItem(icons[10]));
+        contextMenuItems.add(new SeparatorMenuItem());
 
-        if (shell == 1) contextMenuItems.addAll(new SeparatorMenuItem(), createOpenShellItem(icons[11]));
+        if (restore == 1) contextMenuItems.add(createRestoreItem(icons[9]));
+        if (trash == 1) contextMenuItems.add(createTrashItem(icons[10]));
+        if (remove == 1) contextMenuItems.add(createRemoveItem(icons[11]));
 
-        if (CHECK_CLIPBOARD_PASTE) {
-            contextMenu.setOnShowing(e -> {
+        contextMenuItems.add(new SeparatorMenuItem());
+
+        if (extract == 1) contextMenuItems.add(extractHereItem = createExtracHereItem(icons[12]));
+        else extractHereItem = null;
+        if (compress == 1) contextMenuItems.add(createCompressItem(icons[13]));
+        if (shell == 1) contextMenuItems.add(createOpenShellItem(icons[14]));
+
+        contextMenu.setOnShown(e -> {
+            if (CHECK_CLIPBOARD_PASTE) {
                 if (pasteItem != null) {
-                    clipboardFiles = getClipboardFiles();
+                    File[] clipboardFiles = getClipboardFiles();
                     if (clipboardFiles != null) {
                         boolean setDisable = false;
                         for (File file : clipboardFiles) {
@@ -101,19 +110,39 @@ public class Lib {
                         pasteItem.setDisable(true);
                     }
                 }
-            });
-        }
+            }
+
+            if (extractHereItem != null) {
+                String extension = centerPane.selectedItem.getExtension();
+                String mimeType = centerPane.selectedItem.getFileProperties().getMimeType();
+                extractHereItem.setDisable((extension == null || (!extension.equals("zip") &&
+                        !extension.equals("tar") &&
+                        !extension.equals("gz") &&
+                        !extension.equals("bz2") &&
+                        !extension.equals("xz") &&
+                        !extension.equals("zstp") &&
+                        !extension.equals("7z") &&
+                        !extension.equals("rar"))
+                ) && (
+                        !mimeType.equals("application/zip") &&
+                                !mimeType.equals("application/gzip") &&
+                                !mimeType.equals("application/x-tar") &&
+                                !mimeType.equals("application/x-bzip2") &&
+                                !mimeType.equals("application/x-xz") &&
+                                !mimeType.equals("application/x-zstd") &&
+                                !mimeType.equals("application/x-7z-compressed") &&
+                                !mimeType.equals("application/x-rar-compressed")
+                ));
+            }
+        });
 
         return contextMenu;
     }
 
     private static MenuItem createNewOpenItem(String icon) {
         MenuItem item = new MenuItem("Abrir", createIconItem(icon));
-        item.setOnAction(e -> {
-            if (centerPane.selectedItem != null) {
-                centerPane.openSelected();
-            }
-        });
+        item.setAccelerator(OPEN[0]);
+        item.setOnAction(e -> centerPane.openSelected());
         return item;
     }
     private static Menu createNewOpenWithItem(String icon) {
@@ -121,7 +150,6 @@ public class Lib {
         ObservableList<MenuItem> childrens = menu.getItems();
 
         Platform.runLater(() -> menu.getParentPopup().setOnShowing(e -> {
-            lock.lock();
             childrens.clear();
 
             String mimeType = centerPane.selectedItem.getFileProperties().getMimeType();
@@ -147,11 +175,12 @@ public class Lib {
             }
 
             MenuItem others = new MenuItem("Otra...");
-            others.setOnAction(ev ->
-                    othersApplicationsStage.showAndWait()
-            );
+            others.setOnAction(ev -> {
+                lock.lock();
+                othersApplicationsStage.showAndWait();
+                lock.unlock();
+            });
             childrens.add(others);
-            lock.unlock();
         }));
 
         return menu;
@@ -161,65 +190,71 @@ public class Lib {
         item.setOnAction(e -> {
             Optional<String> result = showAlert(new TextInputDialog(), "Ingrese nombre del archivo", null);
             if (result.isPresent()) {
-            File newFile;
-            String fileName = "sin_nombre";
-            String input = result.get();
+                File newFile;
+                String fileName = "sin_nombre";
+                String input = result.get();
 
-            if (!input.isEmpty()) fileName = input;
+                if (!input.isEmpty()) fileName = input;
 
-            newFile = new File(path + "/" + fileName);
-            if (centerPane.selectedItems.size() == 1) {
-                File selectedFile = centerPane.selectedItems.getFirst().getFile();
-                if (selectedFile.isDirectory()) newFile = new File(selectedFile.getAbsolutePath() + "/" + fileName);
-            }
-            createNewFile(newFile);
-          }
+                newFile = new File(path + "/" + fileName);
+                if (centerPane.selectedItems.size() == 1) {
+                    File selectedFile = centerPane.selectedItems.getFirst().getFile();
+                    if (selectedFile.isDirectory()) newFile = new File(selectedFile.getAbsolutePath() + "/" + fileName);
+                }
+                createNewFile(newFile);
+                }
         });
 
         return new Menu("Crear archivo", createIconItem(icon), item);
     }
     private static MenuItem createNewDirectoryItem(String icon) {
-      MenuItem item = new MenuItem("Crear carpeta", createIconItem(icon));
-      item.setOnAction(e -> {
-          Optional<String> result = showAlert(new TextInputDialog(), "Ingrese nombre de la carpeta", null);
-          if (result.isPresent()) {
-          File newDirectory;
-          String directoryName = "sin_nombre";
-          String input = result.get();
+        MenuItem item = new MenuItem("Crear carpeta", createIconItem(icon));
+        item.setOnAction(e -> {
+            Optional<String> result = showAlert(new TextInputDialog(), "Ingrese nombre de la carpeta", null);
+                if (result.isPresent()) {
+                File newDirectory;
+                String directoryName = "sin_nombre";
+                String input = result.get();
 
-          if (!input.isEmpty()) directoryName = input;
+                if (!input.isEmpty()) directoryName = input;
 
-          newDirectory = new File(path + "/" + directoryName);
-          if (centerPane.selectedItems.size() == 1) {
-              File selectedFile = centerPane.selectedItems.getFirst().getFile();
-              if (selectedFile.isDirectory()) newDirectory = new File(selectedFile.getAbsolutePath() + "/" + directoryName);
-          }
-          createNewDirectory(newDirectory);
-        }
+                newDirectory = new File(path + "/" + directoryName);
+                if (centerPane.selectedItems.size() == 1) {
+                    File selectedFile = centerPane.selectedItems.getFirst().getFile();
+                    if (selectedFile.isDirectory()) newDirectory = new File(selectedFile.getAbsolutePath() + "/" + directoryName);
+                }
+                createNewDirectory(newDirectory);
+            }
       });
       return item;
     }
+    private static MenuItem createNewLinkItem(String icon) {
+        MenuItem item = new MenuItem("Crear enlace", createIconItem(icon));
+        item.setAccelerator(CREATE_LINK[0]);
+        item.setOnAction(e -> createLink(centerPane.selectedItem.getFile()));
+        return item;
+    }
     private static MenuItem createRenameItem(String icon) {
         MenuItem item = new MenuItem("Renombrar", createIconItem(icon));
-        if (RENAME != null) item.setAccelerator(RENAME[0]);
+        item.setAccelerator(RENAME[0]);
         item.setOnAction(e -> RightPane.focusName());
         return item;
     }
     private static MenuItem createCopyItem(String icon) {
         MenuItem item = new MenuItem("Copiar", createIconItem(icon));
-        if (COPY != null) item.setAccelerator(COPY[0]);
+        item.setAccelerator(COPY[0]);
         item.setOnAction(e -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), false));
         return item;
     }
     private static MenuItem createCutItem(String icon) {
         MenuItem item = new MenuItem("Cortar", createIconItem(icon));
-        if (CUT != null) item.setAccelerator(CUT[0]);
+        item.setAccelerator(CUT[0]);
         item.setOnAction(e -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), true));
         return item;
     }
     private static MenuItem createPasteItem(String icon) {
         MenuItem item = new MenuItem("Pegar", createIconItem(icon));
-        if (PASTE != null) item.setAccelerator(PASTE[0]);
+        item.setAccelerator(PASTE[0]);
         item.setOnAction(e -> pasteFiles(getClipboardFiles()));
         return item;
     }
@@ -230,19 +265,33 @@ public class Lib {
     }
     private static MenuItem createTrashItem(String icon) {
         MenuItem item = new MenuItem("Enviar a papelera", createIconItem(icon));
-        if (FileFX.TRASH != null) item.setAccelerator(FileFX.TRASH[0]);
+        item.setAccelerator(FileFX.TRASH[0]);
         item.setOnAction(e -> trashFiles(parseCenterNodesToFiles(centerPane.selectedItems)));
         return item;
     }
     private static MenuItem createRemoveItem(String icon) {
         MenuItem item = new MenuItem("Eliminar", createIconItem(icon));
-        if (REMOVE != null) item.setAccelerator(REMOVE[0]);
+        item.setAccelerator(REMOVE[0]);
         item.setOnAction(e -> removeFiles(parseCenterNodesToFiles(centerPane.selectedItems)));
+        return item;
+    }
+    private static MenuItem createExtracHereItem(String icon) {
+        MenuItem item = new MenuItem("Extraer aqui", createIconItem(icon));
+        item.setOnAction(e -> extractHere(centerPane.selectedItem.getFile()));
+        return item;
+    }
+    private static MenuItem createCompressItem(String icon) {
+        MenuItem item = new MenuItem("Comprimir", createIconItem(icon));
+        item.setOnAction(e -> {
+            if (!centerPane.selectedItems.isEmpty()) {
+                compress(parseCenterNodesToFiles(centerPane.selectedItems));
+            }
+        });
         return item;
     }
     private static MenuItem createOpenShellItem(String icon) {
       MenuItem item = new MenuItem("Abrir una terminal ", createIconItem(icon));
-      if (OPEN_SHELL != null) item.setAccelerator(OPEN_SHELL[0]);
+      item.setAccelerator(OPEN_SHELL[0]);
       item.setOnAction(e -> openShell());
       return item;
     }
@@ -379,6 +428,22 @@ public class Lib {
             updateCenter();
         }
     }
+    public static void createLink(File file) {
+         try {
+             Optional<String> option = showAlert(new TextInputDialog(), "Nombre del enlace", "Crear enlace");
+             if (option.isPresent()) {
+                 printExecute("Creando enlace simbolico de '"+YELLOW+file.getName()+"'");
+                 Files.createSymbolicLink(Path.of(path+option.get()), file.toPath());
+
+                 updateCenter();
+                 centerPane.deselectAll();
+                 if (!centerPane.select(option.get())) centerPane.selectFirst();
+                 updateRight();
+             }
+         } catch (Exception e) {
+             printError("Error al crear enlace simbolico de '"+file.getName()+"'", e);
+         }
+    }
     public static void renameFile(File file, String newName) {
         if (file != null && newName != null) {
             try {
@@ -408,11 +473,10 @@ public class Lib {
         }
     }
 
-    public static void copyToClipBoard(String text, boolean isCut) {
+    public static void copyToClipBoard(String text) {
         if (text != null) {
             printExecute("Copiando al portapapeles '" + BLUE + text + RESET + "'");
 
-            Lib.isCut = isCut;
             try {
                 Process process = new ProcessBuilder("xclip", "-selection", "c").start();
                 try (OutputStreamWriter writer = new OutputStreamWriter(process.getOutputStream())) {
@@ -425,12 +489,13 @@ public class Lib {
     }
     public static void copyFilesToClipBoard(File[] files, boolean isCut) {
         if (files != null) {
+            Lib.isCut = isCut;
             StringBuilder selection = new StringBuilder();
             for (File f : files) {
                 selection.append(f.getAbsolutePath()).append(",");
             }
             selection.deleteCharAt(selection.length() - 1);
-            copyToClipBoard(selection.toString(), isCut);
+            copyToClipBoard(selection.toString());
         }
     }
     public static void pasteFiles(File[] files) {
@@ -653,13 +718,60 @@ public class Lib {
         }
     }
 
+    public static void extractHere(File file) {
+        try {
+            printExecute("Descomprimiendo '"+YELLOW+file.getName()+RESET+"'");
+            String absolutePath = file.getAbsolutePath();
+            File output = new File(absolutePath.substring(0, file.getName().lastIndexOf(".")+absolutePath.length()));
+            output.mkdir();
+
+            new ProcessBuilder("tar", "-xzf", file.getName(), "-C", output.getName()).directory(new File(path)).start().waitFor();
+
+            updateCenter();
+            centerPane.selectFirst();
+            updateRight();
+        } catch (Exception e) {
+            printError("Error al descomprimir archivo '"+file.getName()+"'", e);
+        }
+    }
+    public static void compress(File[] files) {
+        String[] paths = new String[files.length];
+        for (int i = 0; i < files.length; i++) {
+            paths[i] = files[i].getName();
+        }
+
+        try {
+            List<String> command = new ArrayList<>();
+            command.add("tar");
+            command.add("-czf");
+
+            Optional<String> option = showAlert(new TextInputDialog(), "Nombre del archivo comprimido:", "Comprimir archivos");
+            String name;
+            if (option.isPresent()) name = option.get();
+            else {
+                System.out.println("manteca");
+                return;
+            }
+            command.add(path+name);
+
+            command.addAll(Arrays.asList(paths));
+
+            printExecute("Creando archivo comprimido '"+YELLOW+name+RESET+"'");
+            new ProcessBuilder(command).directory(new File(path)).start().waitFor();
+
+            updateCenter();
+            if (!centerPane.select(name)) centerPane.selectFirst();
+            updateRight();
+        } catch (Exception e) {
+            printError("Error al compirmir archivos '"+ Arrays.toString(paths) +"'", e);
+        }
+    }
+
     public static void openShell() {
         try {
             String shellPath = path;
-            if (centerPane.selectedItem != null) {
-                File dir = centerPane.selectedItem.getFile();
-                if (dir.isDirectory()) shellPath = dir.getAbsolutePath();
-            }
+            File dir = centerPane.selectedItem.getFile();
+            if (dir.isDirectory()) shellPath = dir.getAbsolutePath();
 
             ProcessBuilder pb = new ProcessBuilder(TERMINAL).directory(new File(shellPath));
             pb.start();

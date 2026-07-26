@@ -40,7 +40,10 @@ public class FileFX extends javafx.application.Application {
     public static Stage stage;
 
     public static void main(String[] args) {
-        if (args.length > 0) path = args[0];
+        if (args.length > 0) {
+            path = args[0];
+            if (path.charAt(path.length()-1) != '/') path += "/";
+        }
         launch(args);
     }
 
@@ -52,48 +55,46 @@ public class FileFX extends javafx.application.Application {
             config = new Properties();
             config.load(reader);
 
-            TERMINAL = config.getProperty("terminal");
-            SAVE_BOUNDS = Boolean.parseBoolean(config.getProperty("save_bounds"));
-            SAVE_PATH = Boolean.parseBoolean(config.getProperty("save_path"));
-            SAVE_SELECTION = Boolean.parseBoolean(config.getProperty("save_selection"));
+            TERMINAL = (String) config.getOrDefault("terminal", "xterm");
+            SAVE_BOUNDS = Boolean.parseBoolean((String) config.getOrDefault("save_bounds", "false"));
+            SAVE_PATH = Boolean.parseBoolean((String) config.getOrDefault("save_path", "false"));
+            SAVE_SELECTION = Boolean.parseBoolean((String) config.getOrDefault("save_selection", "false"));
 
-            TOP_BUTTONS = splitTwoTimes(config.getProperty("top_buttons"));
+            TOP_BUTTONS = splitTwoTimes((String) config.getOrDefault("top_buttons", "[{back;\uF177},{forward;\uF178},{parent;\uDB81\uDE45},{search},{clean;\uDB80\uDCE2},{reload;\uF2F1}]"));
 
-            RIGHT_WIDTH = Double.parseDouble(config.getProperty("right_width"));
-            SHOW_RIGHT_PANE = Boolean.parseBoolean(config.getProperty("show_right_pane"));
-            SHOW_MINIATURA = Boolean.parseBoolean(config.getProperty("show_miniatura"));
-            FILL_MINIATURA_LIKE_ICON = Boolean.parseBoolean(config.getProperty("fill_miniatura_like_icon"));
-            SHOW_INSIDE_DIRECTORIES = Boolean.parseBoolean(config.getProperty("show_inside_directories"));
-            SHOW_INSIDE_FILES = Boolean.parseBoolean(config.getProperty("show_inside_files"));
+            RIGHT_WIDTH = Double.parseDouble((String) config.getOrDefault("right_width", "200.0"));
+            SHOW_RIGHT_PANE = Boolean.parseBoolean((String) config.getOrDefault("show_right_pane", "true"));
+            SHOW_MINIATURA = Boolean.parseBoolean((String) config.getOrDefault("show_miniatura", "false"));
+            FILL_MINIATURA_LIKE_ICON = Boolean.parseBoolean((String) config.getOrDefault("fill_miniatura_like_icon", "true"));
+            SHOW_INSIDE_DIRECTORIES = Boolean.parseBoolean((String) config.getOrDefault("show_inside_directories", "false"));
+            SHOW_INSIDE_FILES = Boolean.parseBoolean((String) config.getOrDefault("show_inside_files", "false"));
 
-            BOTTOM_BUTTONS = split(config.getProperty("bottom_buttons"));
-            ORDER_ICONS = split(config.getProperty("order_icons"));
+            BOTTOM_BUTTONS = split((String) config.getOrDefault("bottom_buttons", "[order,filter]"));
+            ORDER_ICONS = split((String) config.getOrDefault("order_icons", "[\uEB69,\uF073,\uDB83\uDC8E,\uEBB9]"));
 
-            LEFT_WIDTH = Double.parseDouble(config.getProperty("left_width"));
-            SHOW_PLACES = Boolean.parseBoolean(config.getProperty("show_places"));
-            PLACES = splitTwoTimes(config.getProperty("places"));
-            SHOW_DEVICES = Boolean.parseBoolean(config.getProperty("show_devices"));
-            PARTITION_ICONS = splitTwoTimes(config.getProperty("partition_icons"));
-            SHOW_UNMOUNTED = Boolean.parseBoolean(config.getProperty("show_unmounted"));
-            UNMOUNT_ICON = config.getProperty("unmount_icon");
+            LEFT_WIDTH = Double.parseDouble((String) config.getOrDefault("left_width", "135.0"));
+            SHOW_PLACES = Boolean.parseBoolean((String) config.getOrDefault("show_places", "true"));
+            PLACES = splitTwoTimes((String) config.getOrDefault("places", "[{Home;\uF46D;~/},{Descargas;\uF019;~/Downloads/},{Documentos;\uDB85\uDD17;~/Documents/},{Imagenes;\uF03E;~/Images/},{Papelera;\uF014;~/.local/share/Trash/files/},{Config;\uF013;~/.config/filefx/}]"));
+            SHOW_DEVICES = Boolean.parseBoolean((String) config.getOrDefault("show_devices", "true"));
+            PARTITION_ICONS = splitTwoTimes((String) config.getOrDefault("partition_icons", "[{/;Raiz},{/boot/efi;Boot}]"));
+            SHOW_UNMOUNTED = Boolean.parseBoolean((String) config.getOrDefault("show_unmounted", "false"));
+            UNMOUNT_ICON = (String) config.getOrDefault("unmount_icon", "\uDB81\uDEA6");
 
-            IS_DIRECTORY_FIRST = Boolean.parseBoolean(config.getProperty("is_directory_first"));
-            SHOW_HIDDEN = Boolean.parseBoolean(config.getProperty("show_hidden"));
-            SHOW_THIS = Boolean.parseBoolean(config.getProperty("show_this"));
-            SHOW_PARENT = Boolean.parseBoolean(config.getProperty("show_parent"));
-            FILL_TEXT_FILE_LIKE_ICON = Boolean.parseBoolean(config.getProperty("fill_text_file_like_icon"));
-            FILL_TEXT_DIR_LIKE_ICON = Boolean.parseBoolean(config.getProperty("fill_text_dir_like_icon"));
-            DEFAULT_ORDER = ORDER.valueOf(config.getProperty("default_order"));
-            CUSTOM_ORDER = splitTwoTimes(config.getProperty("custom_order"));
+            IS_DIRECTORY_FIRST = Boolean.parseBoolean((String) config.getOrDefault("is_directory_first", "true"));
+            SHOW_HIDDEN = Boolean.parseBoolean((String) config.getOrDefault("show_hidden", "true"));
+            SHOW_THIS = Boolean.parseBoolean((String) config.getOrDefault("show_this", "true"));
+            SHOW_PARENT = Boolean.parseBoolean((String) config.getOrDefault("show_parent", "true"));
+            FILL_TEXT_FILE_LIKE_ICON = Boolean.parseBoolean((String) config.getOrDefault("fill_text_file_like_icon", "false"));
+            FILL_TEXT_DIR_LIKE_ICON = Boolean.parseBoolean((String) config.getOrDefault("fill_text_dir_like_icon", "true"));
+            DEFAULT_ORDER = ORDER.valueOf((String) config.getOrDefault("default_order", "NAME"));
+            CUSTOM_ORDER = splitTwoTimes((String) config.getOrDefault("custom_order", "[{~/Downloads/;DATE},{~/Images/;DATE},{~/Videos/;DATE},{trash/;DATE}]"));
 
-            String[] columnsText = split(config.getProperty("columns"));
-            if (columnsText != null) {
-                COLUMNS = new COLUMNS[columnsText.length];
-                for (int i = 0; i < columnsText.length; i++) COLUMNS[i] = Lib.COLUMNS.valueOf(columnsText[i].toUpperCase());
-            }
+            String[] columnsText = split((String) config.getOrDefault("columns", "[size]"));
+            COLUMNS = new COLUMNS[columnsText.length];
+            for (int i = 0; i < columnsText.length; i++) COLUMNS[i] = Lib.COLUMNS.valueOf(columnsText[i].toUpperCase());
 
-            CONTEXT_MENU_ICONS = split(config.getProperty("context_menu_icons"));
-            CHECK_CLIPBOARD_PASTE = Boolean.parseBoolean(config.getProperty("check_clipboard_paste"));
+            CONTEXT_MENU_ICONS = split((String) config.getOrDefault("context_menu_icons", "[\uDB83\uDDCF,\uDB83\uDDCF,\uEA7F,\uEA80,\uF0C1,\uDB81\uDE0E,\uF0C5,\uDB80\uDD90,\uDB80\uDD92,\uF1B8,\uF48E,\uF52F,\uDB80\uDFD6,\uDB80\uDFD7,\uF489]"));
+            CHECK_CLIPBOARD_PASTE = Boolean.parseBoolean((String) config.getOrDefault("check_clipboard_paste", "true"));
 
         } catch (IOException e) {
             printError("No se pudo leer el archivo de configuracion", e);
@@ -104,6 +105,47 @@ public class FileFX extends javafx.application.Application {
         try (FileInputStream fileInputStream = new FileInputStream(CONFIG_PATH+"key_binding.properties")) {
             keyBinding = new Properties();
             keyBinding.load(fileInputStream);
+
+            CUT = getKeyCombination("cut");
+            COPY = getKeyCombination("copy");
+            PASTE = getKeyCombination("paste");
+            REMOVE = getKeyCombination("remove");
+            TRASH = getKeyCombination("trash");
+            RENAME = getKeyCombination("rename");
+
+            UP = getKeyCombination("up");
+            OPEN = getKeyCombination("open");
+            DOWN = getKeyCombination("down");
+            PARENT = getKeyCombination("parent");
+            UP_STEP = getKeyCombination("up_step");
+            DOWN_STEP = getKeyCombination("down_step");
+            FIRST = getKeyCombination("first");
+            LAST = getKeyCombination("last");
+
+            SELECT_UP = getKeyCombination("select_up");
+            SELECT_DOWN = getKeyCombination("select_down");
+            SELECT_UP_STEP = getKeyCombination("select_up_step");
+            SELECT_DOWN_STEP = getKeyCombination("select_down_step");
+            SELECT_FIRST = getKeyCombination("select_first");
+            SELECT_LAST = getKeyCombination("select_last");
+            DESELECT_ALL = getKeyCombination("deselect_all");
+
+            BACK = getKeyCombination("back");
+            FORWARD = getKeyCombination("forward");
+
+            SHOW_MENU = getKeyCombination("show_menu");
+            SHOW_MENU_CREATE = getKeyCombination("show_menu_create");
+            CHANGE_SHOW_RIGHT_PANE = getKeyCombination("change_show_right_pane");
+            CHANGE_SHOW_HIDDEN = getKeyCombination("change_show_hidden");
+            UPDATE_ALL = getKeyCombination("update_all");
+
+            FOCUS_PATH = getKeyCombination("focus_path");
+            FOCUS_FILTER = getKeyCombination("focus_filter");
+            FOCUS_INSIDE = getKeyCombination("focus_inside");
+            SAVE_INSIDE = getKeyCombination("save_inside");
+
+            CREATE_LINK = getKeyCombination("create_link");
+            OPEN_SHELL = getKeyCombination("open_shell");
         } catch (IOException e) {
             printError("No se pudo leer el archivo de combinaciones de teclado", e);
             System.exit(0);
@@ -125,7 +167,7 @@ public class FileFX extends javafx.application.Application {
         dynamicValues.putIfAbsent("init_selection", "");
 
         String initPath = dynamicValues.getProperty("init_path");
-        if (path.isEmpty() && initPath != null) {
+        if (path.isEmpty()) {
             if (initPath.charAt(0) == '~') {
                 path = HOME+initPath.substring(1);
             } else {
@@ -254,43 +296,7 @@ public class FileFX extends javafx.application.Application {
     }
 
     public static void updateKeyBinding() {
-        CUT = getKeyCombination("cut");
-        COPY = getKeyCombination("copy");
-        PASTE = getKeyCombination("paste");
-        REMOVE = getKeyCombination("remove");
-        TRASH = getKeyCombination("trash");
-        RENAME = getKeyCombination("rename");
 
-        UP = getKeyCombination("up");
-        OPEN = getKeyCombination("open");
-        DOWN = getKeyCombination("down");
-        PARENT = getKeyCombination("parent");
-        UP_STEP = getKeyCombination("up_step");
-        DOWN_STEP = getKeyCombination("down_step");
-        FIRST = getKeyCombination("first");
-        LAST = getKeyCombination("last");
-
-        SELECT_UP = getKeyCombination("select_up");
-        SELECT_DOWN = getKeyCombination("select_down");
-        SELECT_UP_STEP = getKeyCombination("select_up_step");
-        SELECT_DOWN_STEP = getKeyCombination("select_down_step");
-        SELECT_FIRST = getKeyCombination("select_first");
-        SELECT_LAST = getKeyCombination("select_last");
-
-        BACK = getKeyCombination("back");
-        FORWARD = getKeyCombination("forward");
-
-        OPEN_SHELL = getKeyCombination("open_shell");
-        SHOW_MENU = getKeyCombination("show_menu");
-        SHOW_MENU_CREATE = getKeyCombination("show_menu_create");
-        FOCUS_PATH = getKeyCombination("focus_path");
-        FOCUS_FILTER = getKeyCombination("focus_filter");
-        FOCUS_INSIDE = getKeyCombination("focus_inside");
-        SAVE_INSIDE = getKeyCombination("save_inside");
-        DESELECT_ALL = getKeyCombination("deselect_all");
-        UPDATE_ALL = getKeyCombination("update_all");
-        CHANGE_SHOW_RIGHT_PANE = getKeyCombination("change_show_right_pane");
-        CHANGE_SHOW_HIDDEN = getKeyCombination("change_show_hidden");
     }
     public static KeyCombination[] getKeyCombination(String keyName) {
         String property = keyBinding.getProperty(keyName);
@@ -329,21 +335,25 @@ public class FileFX extends javafx.application.Application {
     public static KeyCombination[] SELECT_DOWN_STEP;
     public static KeyCombination[] SELECT_FIRST;
     public static KeyCombination[] SELECT_LAST;
+    public static KeyCombination[] DESELECT_ALL;
 
     public static KeyCombination[] BACK;
     public static KeyCombination[] FORWARD;
 
-    public static KeyCombination[] OPEN_SHELL;
     public static KeyCombination[] SHOW_MENU;
     public static KeyCombination[] SHOW_MENU_CREATE;
+    public static KeyCombination[] CHANGE_SHOW_RIGHT_PANE;
+    public static KeyCombination[] CHANGE_SHOW_HIDDEN;
+    public static KeyCombination[] UPDATE_ALL;
+
     public static KeyCombination[] FOCUS_PATH;
     public static KeyCombination[] FOCUS_FILTER;
     public static KeyCombination[] FOCUS_INSIDE;
     public static KeyCombination[] SAVE_INSIDE;
-    public static KeyCombination[] DESELECT_ALL;
-    public static KeyCombination[] UPDATE_ALL;
-    public static KeyCombination[] CHANGE_SHOW_RIGHT_PANE;
-    public static KeyCombination[] CHANGE_SHOW_HIDDEN;
+
+    public static KeyCombination[] CREATE_LINK;
+    public static KeyCombination[] OPEN_SHELL;
+
 
     // Configuracion
     public static String TERMINAL;

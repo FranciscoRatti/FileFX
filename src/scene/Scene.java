@@ -56,29 +56,32 @@ public class Scene extends javafx.scene.Scene {
                     if (setKeyBindAction(SELECT_DOWN_STEP, () -> centerPane.moveCursor(true, 5))) return;
                     if (setKeyBindAction(SELECT_FIRST, () -> centerPane.moveCursor(true, -centerPane.selectedItem.getIndex()))) return;
                     if (setKeyBindAction(SELECT_LAST, () -> centerPane.moveCursor(true, centerPane.centerNodes.size()-1 - centerPane.selectedItem.getIndex()))) return;
-
-                    if (setKeyBindAction(BACK, () -> back())) return;
-                    if (setKeyBindAction(FORWARD, () -> forward())) return;
-
-                    if (setKeyBindAction(OPEN_SHELL, () -> openShell())) return;
-                    if (setKeyBindAction(SHOW_MENU, () -> centerPane.showMenu())) return;
-                    if (setKeyBindAction(SHOW_MENU_CREATE, () -> centerPane.showMenuCreate())) return;
-                    if (setKeyBindAction(FOCUS_PATH, () -> Platform.runLater(() -> TopPane.focusSearch()))) return;
-                    if (setKeyBindAction(FOCUS_FILTER, () -> Platform.runLater(() -> BottomPane.focusFilter()))) return;
-                    if (setKeyBindAction(FOCUS_INSIDE, () -> Platform.runLater(() -> RightPane.focusInside()))) return;
-                    if (setKeyBindAction(SAVE_INSIDE, () -> RightPane.saveInside())) return;
                     if (setKeyBindAction(DESELECT_ALL, () ->{
                         centerPane.deselectAll();
                         centerPane.selectThis();
                         updateRight();
                     })) return;
-                    if (setKeyBindAction(UPDATE_ALL, () -> updateAll())) return;
+
+                    if (setKeyBindAction(BACK, () -> back())) return;
+                    if (setKeyBindAction(FORWARD, () -> forward())) return;
+
+                    if (setKeyBindAction(SHOW_MENU, () -> centerPane.showMenu())) return;
+                    if (setKeyBindAction(SHOW_MENU_CREATE, () -> centerPane.showMenuCreate())) return;
                     if (setKeyBindAction(CHANGE_SHOW_RIGHT_PANE, () -> changeShow())) return;
-                    setKeyBindAction(CHANGE_SHOW_HIDDEN, () -> {
+                    if (setKeyBindAction(CHANGE_SHOW_HIDDEN, () -> {
                         SHOW_HIDDEN = !SHOW_HIDDEN;
                         updateCenter();
                         centerPane.selectFirst();
-                    });
+                    })) return;
+                    if (setKeyBindAction(UPDATE_ALL, () -> updateAll())) return;
+
+                    if (setKeyBindAction(FOCUS_PATH, () -> Platform.runLater(() -> TopPane.focusSearch()))) return;
+                    if (setKeyBindAction(FOCUS_FILTER, () -> Platform.runLater(() -> BottomPane.focusFilter()))) return;
+                    if (setKeyBindAction(FOCUS_INSIDE, () -> Platform.runLater(() -> RightPane.focusInside()))) return;
+                    if (setKeyBindAction(SAVE_INSIDE, () -> RightPane.saveInside())) return;
+
+                    if (setKeyBindAction(CREATE_LINK, () -> createLink(centerPane.selectedItem.getFile()))) return;
+                    setKeyBindAction(OPEN_SHELL, () -> openShell());
 
                 } catch (IllegalArgumentException ignored) {}
             } else {

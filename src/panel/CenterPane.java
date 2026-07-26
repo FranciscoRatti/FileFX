@@ -6,6 +6,7 @@ import javafx.event.EventTarget;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
@@ -30,7 +31,6 @@ public class CenterPane extends ScrollPane {
     public String filter = null;
     private final VBox pane;
 
-    private final ContextMenu menu;
     private final ContextMenu menuFile;
     private final ContextMenu menuDirectory;
     private final ContextMenu menuMultiple;
@@ -75,12 +75,11 @@ public class CenterPane extends ScrollPane {
             }
         });
 
-        menu          = createContextMenu(0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1);
-        menuFile      = createContextMenu(1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1);
-        menuDirectory = createContextMenu(1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1);
-        menuMultiple  = createContextMenu(1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1);
-        menuCreate    = createContextMenu(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0);
-        menuTrash     = createContextMenu(1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1);
+        menuFile      = createContextMenu(1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1);
+        menuDirectory = createContextMenu(1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1);
+        menuMultiple  = createContextMenu(1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1);
+        menuCreate    = createContextMenu(0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        menuTrash     = createContextMenu(1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1);
 
         // Acciones generales
         setOnMouseClicked(e -> {
@@ -227,9 +226,7 @@ public class CenterPane extends ScrollPane {
         hideAll();
         printInfo("Mostrando menu");
 
-        if (selectedItems.isEmpty()) {
-            menu.show(anchor, x, y);
-        } else if (path.startsWith(Lib.TRASH+"files")) {
+        if (path.startsWith(Lib.TRASH+"files")) {
             menuTrash.show(anchor, x, y);
         } else if (selectedItems.size() == 1) {
             if (selectedItems.getFirst().getFile().isDirectory()) menuDirectory.show(anchor, x, y);
@@ -241,10 +238,7 @@ public class CenterPane extends ScrollPane {
     public void showMenu() {
         hideAll();
         printInfo("Mostrando menu");
-
-        if (selectedItems.isEmpty()) {
-            menu.show(Window.getWindows().getFirst());
-        } else if (path.startsWith(Lib.TRASH+"files")) {
+        if (path.startsWith(Lib.TRASH+"files")) {
             menuTrash.show(Window.getWindows().getFirst());
         } else if (selectedItems.size() == 1) {
             if (selectedItems.getFirst().getFile().isDirectory()) menuDirectory.show(Window.getWindows().getFirst());
@@ -260,7 +254,6 @@ public class CenterPane extends ScrollPane {
     }
 
     public void hideAll() {
-        menu.hide();
         menuFile.hide();
         menuDirectory.hide();
         menuMultiple.hide();
@@ -268,7 +261,7 @@ public class CenterPane extends ScrollPane {
         menuTrash.hide();
     }
     public boolean isAnyShow() {
-        return  menu.isShowing() || menuFile.isShowing() || menuDirectory.isShowing() ||
+        return  menuFile.isShowing() || menuDirectory.isShowing() ||
                 menuMultiple.isShowing() || menuCreate.isShowing() || menuTrash.isShowing();
     }
 
@@ -412,7 +405,7 @@ public class CenterPane extends ScrollPane {
                     updateRight();
                 });
 
-                // Si es archivo
+            // Si es archivo
             } else {
                 try {
                     printExecute("Abriendo '"+Lib.YELLOW+absolutePath+Lib.RESET+"'");
@@ -434,6 +427,7 @@ public class CenterPane extends ScrollPane {
             printInfo("Se deselecciono todo");
         }
     }
+
     public void selectThis() {
         if (SHOW_THIS) {
             lock.lock();
@@ -461,6 +455,15 @@ public class CenterPane extends ScrollPane {
         } else {
             selectThis();
         }
+    }
+    public boolean select(String name) {
+        for (CenterNode node : centerNodes) {
+            if (node.getName().equals(name)) {
+                node.setSelected(true);
+                return true;
+            }
+        }
+        return false;
     }
 
     public static File[] parseCenterNodesToFiles(ArrayList<CenterNode> centerNodeList) {

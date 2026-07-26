@@ -113,7 +113,7 @@ public class TopPane extends HBox {
                     children.add(search);
                     search.setText(
                             path.startsWith(Lib.TRASH+"files") ? "trash"+path.substring(HOME.length()+25) :
-                            path.startsWith(HOME) ? "~"+path.substring(HOME.length()) :
+                            path.startsWith(HOME) ? "~"+ (path.length() <= HOME.length() ? "/" : path.substring(HOME.length())) :
                             path);
                 }
                 case "clean" -> {if (path.startsWith(Lib.TRASH+"files")) children.add(clean);}
