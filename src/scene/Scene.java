@@ -47,17 +47,17 @@ public class Scene extends javafx.scene.Scene {
                     if (setKeyBindAction(PARENT, () -> parent())) return;
                     if (setKeyBindAction(UP_STEP, () -> centerPane.moveCursor(false, -3))) return;
                     if (setKeyBindAction(DOWN_STEP, () -> centerPane.moveCursor(false, 3))) return;
-                    if (setKeyBindAction(FIRST, () -> centerPane.moveCursor(false, -centerPane.selectedItem.getIndex()))) return;
-                    if (setKeyBindAction(LAST, () -> centerPane.moveCursor(false, centerPane.centerNodes.size()-1 - centerPane.selectedItem.getIndex()))) return;
+                    if (setKeyBindAction(FIRST, () -> centerPane.moveCursor(false, -centerPane.selectionModel.getSelectedIndex()))) return;
+                    if (setKeyBindAction(LAST, () -> centerPane.moveCursor(false, centerPane.items.size()-1 - centerPane.selectionModel.getSelectedIndex()))) return;
 
                     if (setKeyBindAction(SELECT_UP, () -> centerPane.moveCursor(true, -1))) return;
                     if (setKeyBindAction(SELECT_DOWN, () -> centerPane.moveCursor(true, 1))) return;
                     if (setKeyBindAction(SELECT_UP_STEP, () -> centerPane.moveCursor(true, -5))) return;
                     if (setKeyBindAction(SELECT_DOWN_STEP, () -> centerPane.moveCursor(true, 5))) return;
-                    if (setKeyBindAction(SELECT_FIRST, () -> centerPane.moveCursor(true, -centerPane.selectedItem.getIndex()))) return;
-                    if (setKeyBindAction(SELECT_LAST, () -> centerPane.moveCursor(true, centerPane.centerNodes.size()-1 - centerPane.selectedItem.getIndex()))) return;
+                    if (setKeyBindAction(SELECT_FIRST, () -> centerPane.moveCursor(true, -centerPane.selectionModel.getSelectedIndex()))) return;
+                    if (setKeyBindAction(SELECT_LAST, () -> centerPane.moveCursor(true, centerPane.items.size()-1 - centerPane.selectionModel.getSelectedIndex()))) return;
                     if (setKeyBindAction(DESELECT_ALL, () ->{
-                        centerPane.deselectAll();
+                        centerPane.getSelectionModel().clearSelection();
                         centerPane.selectThis();
                         updateRight();
                     })) return;
@@ -80,13 +80,13 @@ public class Scene extends javafx.scene.Scene {
                     if (setKeyBindAction(FOCUS_INSIDE, () -> Platform.runLater(() -> RightPane.focusInside()))) return;
                     if (setKeyBindAction(SAVE_INSIDE, () -> RightPane.saveInside())) return;
 
-                    if (setKeyBindAction(CREATE_LINK, () -> createLink(centerPane.selectedItem.getFile()))) return;
+                    if (setKeyBindAction(CREATE_LINK, () -> createLink(centerPane.selectionModel.getSelectedItem().getFileProperties()))) return;
                     setKeyBindAction(OPEN_SHELL, () -> openShell());
 
                 } catch (IllegalArgumentException ignored) {}
             } else {
                 try {
-                    setKeyBindAction(DESELECT_ALL, () -> centerPane.selectedItem.requestFocus());
+                    setKeyBindAction(DESELECT_ALL, () -> centerPane.selectionModel.getSelectedItem().requestFocus());
                 } catch (IllegalArgumentException ignored) {}
             }
         });

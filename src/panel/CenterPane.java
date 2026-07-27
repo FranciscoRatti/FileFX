@@ -3,33 +3,25 @@ package panel;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventTarget;
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import main.Lib;
 import node.CenterNode;
 
-import java.awt.*;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.locks.*;
 
 import static main.FileFX.*;
 import static main.Lib.*;
-import static panel.MainPane.*;
 
-public class CenterPane extends ScrollPane {
-    public ArrayList<CenterNode> centerNodes;
-    public ArrayList<CenterNode> selectedItems;
-    public CenterNode selectedItem;
+public class CenterPane extends ListView<CenterNode> {
     public String filter = null;
-    private final VBox pane;
 
     private final ContextMenu menuFile;
     private final ContextMenu menuDirectory;
@@ -42,27 +34,35 @@ public class CenterPane extends ScrollPane {
     private final Comparator<CenterNode> compareBySize = Comparator.comparing(n -> n.getFileProperties().getSize());
     private final Comparator<CenterNode> compareByMime = Comparator.comparing(n -> n.getFileProperties().getMimeType(), String.CASE_INSENSITIVE_ORDER);
 
-    private final Lock lock = new ReentrantLock();
+    public final MultipleSelectionModel<CenterNode> selectionModel;
+    public final ObservableList<CenterNode> items, selectedItems;
 
     public CenterPane() {
         setId("CenterPane");
-        setStyle("-fx-background: transparent; -fx-background-color: transparent;");
-        setFitToWidth(true);
+        items = getItems();
+
+        selectionModel = getSelectionModel();
+        selectionModel.setSelectionMode(SelectionMode.MULTIPLE);
+
+        selectedItems = selectionModel.getSelectedItems();
+        selectedItems.addListener((javafx.collections.ListChangeListener<CenterNode>) change -> {
+            while (change.next()) {
+                for (CenterNode item : change.getAddedSubList()) item.setSelected(true);
+                for (CenterNode item : change.getRemoved()) item.setSelected(false);
+            }
+        });
 
         if (!new File(path).exists()) {
             printError("El directorio inicial '"+path+"' no existe", null);
             path = HOME+"/";
         }
-        centerNodes = new ArrayList<>();
-        selectedItems = new ArrayList<>();
-        pane = new VBox();
-        setContent(pane);
+
         update();
 
         Platform.runLater(() -> {
             String initSelect = dynamicValues.getProperty("init_selection");
             if (initSelect != null) {
-                for (CenterNode label : centerNodes) {
+                for (CenterNode label : getItems()) {
                     if (initSelect.equals(label.getName())) {
                         label.setSelected(true);
                         setSelectedOnCenter();
@@ -70,7 +70,7 @@ public class CenterPane extends ScrollPane {
                     }
                 }
             }
-            if (selectedItem == null) {
+            if (getSelectionModel().getSelectedItem() == null) {
                 selectThis();
             }
         });
@@ -86,33 +86,10 @@ public class CenterPane extends ScrollPane {
             MouseButton button = e.getButton();
             EventTarget target = e.getTarget();
 
-            if (button.equals(MouseButton.MIDDLE)) {
-                parent();
-            } else if (button.equals(MouseButton.BACK)) {
-                back();
-            } else if (button.equals(MouseButton.FORWARD)) {
-                forward();
-            } else if (button.equals(MouseButton.PRIMARY)) {
-                boolean isChildren = false;
-                Node n = (Node) target;
-                while (n != null) {
-                    if (n == pane) isChildren = true;
-                    n = n.getParent();
-                }
-
-                if (!isChildren) {
-                    if (isAnyShow()) hideAll();
-                    else {
-                        deselectAll();
-                        selectThis();
-                        updateRight();
-                    }
-                } else {
-                    if (isAnyShow()) hideAll();
-                }
-            } else if (button.equals(MouseButton.SECONDARY)) {
-                showMenu(mainPane, e.getScreenX(), e.getScreenY());
-            }
+            if (button.equals(MouseButton.MIDDLE)) parent();
+            else if (button.equals(MouseButton.BACK)) back();
+            else if (button.equals(MouseButton.FORWARD)) forward();
+            else if (button.equals(MouseButton.SECONDARY)) showMenu(mainPane, e.getScreenX(), e.getScreenY());
 
             e.consume();
         });
@@ -122,9 +99,7 @@ public class CenterPane extends ScrollPane {
         printInfo("Actualizando panel central");
 
         // Reiniciando
-        centerNodes.clear();
-        ObservableList<Node> children = pane.getChildren();
-        children.clear();
+        items.clear();
 
         // Tomar contenido
         File directory = new File(path);
@@ -141,6 +116,7 @@ public class CenterPane extends ScrollPane {
 
         // Crear nodos
         if (content != null) {
+
             for (File file : content) {
                 boolean isHidden = file.getName().startsWith(".");
                 if (!SHOW_HIDDEN && isHidden) continue;
@@ -194,7 +170,7 @@ public class CenterPane extends ScrollPane {
             File parent = directory.getParentFile();
             if (parent != null) {
                 CenterNode parentNode = new CenterNode(parent, true);
-                parentNode.name.setText("..");
+                parentNode.nameLabel.setText("..");
                 parentNode.setIcon(iconsMime.getProperty("parent"), Color.valueOf(colorsMime.getProperty("parent")));
                 directoriesList.addFirst(parentNode);
             }
@@ -202,46 +178,84 @@ public class CenterPane extends ScrollPane {
 
         if (SHOW_THIS) {
             CenterNode thisNode = new CenterNode(directory, true);
-            thisNode.name.setText(".");
+            thisNode.nameLabel.setText(".");
             thisNode.setIcon(iconsMime.getProperty("this"), Color.valueOf(colorsMime.getProperty("this")));
             directoriesList.addFirst(thisNode);
         }
 
-        if (IS_DIRECTORY_FIRST) centerNodes.addAll(directoriesList);
-        centerNodes.addAll(filesList);
-        if (!IS_DIRECTORY_FIRST) centerNodes.addAll(directoriesList);
+        if (IS_DIRECTORY_FIRST) items.addAll(directoriesList);
+        items.addAll(filesList);
+        if (!IS_DIRECTORY_FIRST) items.addAll(directoriesList);
 
         // Añadir nodos
-        if (!centerNodes.isEmpty()) {
-            for (int i = 0; i < centerNodes.size(); i++) {
-                CenterNode node = centerNodes.get(i);
+        if (!items.isEmpty()) {
+            for (int i = 0; i < items.size(); i++) {
+                CenterNode node = items.get(i);
                 node.setIndex(i);
                 node.addColumns();
-                children.add(node);
             }
         }
+
+        refresh();
+    }
+
+    public void moveCursor(boolean isShiftPressed, int step) {
+
+        // Seleccionar
+
+        int size = items.size();
+        if (size == 0) return;
+
+        int currentIndex = selectionModel.getSelectedIndex();
+
+        int targetIndex = currentIndex + step;
+        if (targetIndex > size-1) targetIndex = size-1;
+        else if (targetIndex < 0) targetIndex = 0;
+
+        if (isShiftPressed) {
+            selectionModel.selectRange(targetIndex, currentIndex);
+        } else {
+            selectionModel.clearSelection();
+            selectionModel.select(targetIndex);
+        }
+
+        updateRight();
+
+        // Hacer scroll
+
+        setSelectedOnCenter();
+    }
+
+    public void setSelectedOnCenter() {
+        if (items.isEmpty()) return;
+
+        double cellHeight = items.getFirst().prefHeight(-1);
+        int visibleCount = (int) Math.floor(getHeight() / cellHeight);
+        scrollTo(selectionModel.getSelectedIndex() - (visibleCount / 2));
     }
 
     public void showMenu(Node anchor, double x, double y) {
-        hideAll();
         printInfo("Mostrando menu");
+
+        hideAll();
 
         if (path.startsWith(Lib.TRASH+"files")) {
             menuTrash.show(anchor, x, y);
         } else if (selectedItems.size() == 1) {
-            if (selectedItems.getFirst().getFile().isDirectory()) menuDirectory.show(anchor, x, y);
+            if (selectedItems.getFirst().getFileProperties().isDirectory()) menuDirectory.show(anchor, x, y);
             else menuFile.show(anchor, x, y);
         } else {
             menuMultiple.show(anchor, x, y);
         }
     }
     public void showMenu() {
-        hideAll();
         printInfo("Mostrando menu");
+
+        hideAll();
         if (path.startsWith(Lib.TRASH+"files")) {
             menuTrash.show(Window.getWindows().getFirst());
         } else if (selectedItems.size() == 1) {
-            if (selectedItems.getFirst().getFile().isDirectory()) menuDirectory.show(Window.getWindows().getFirst());
+            if (selectedItems.getFirst().getFileProperties().isDirectory()) menuDirectory.show(Window.getWindows().getFirst());
             else menuFile.show(Window.getWindows().getFirst());
         } else {
             menuMultiple.show(Window.getWindows().getFirst());
@@ -265,127 +279,9 @@ public class CenterPane extends ScrollPane {
                 menuMultiple.isShowing() || menuCreate.isShowing() || menuTrash.isShowing();
     }
 
-    public void moveCursor(boolean isShiftDown, int step) {
-        if (step == 0) return;
-
-        if (!selectedItems.isEmpty()) {
-
-            // Seleccion -----------------------------------------------------------------------------------------------
-
-            int selectedItemIndex = selectedItem.getIndex();
-            CenterNode labelStepSelected = null;
-
-            // Si el seleccionado es el primero
-            if (selectedItemIndex == 0 && step < 0)
-                labelStepSelected = centerNodes.getLast();
-
-            // Si el seleccionado es el ultimo
-            else if (selectedItemIndex == centerNodes.size()-1 && step > 0)
-                labelStepSelected = centerNodes.getFirst();
-
-            // Si el seleccionado esta en un indice menor a los pasos
-            else if (selectedItemIndex < -step && step < 0)
-                labelStepSelected = centerNodes.getFirst();
-
-            // Si el seleccionado esta en un indice mayor a los pasos
-            else if (centerNodes.size()-1-selectedItemIndex < step && step > 0)
-                labelStepSelected = centerNodes.getLast();
-
-            else
-                for (CenterNode label : centerNodes)
-                    if (label.getIndex() == selectedItemIndex+step) {
-                        labelStepSelected = label; break;
-                    }
-
-            if (labelStepSelected != null) {
-
-                // Si no se presiono shift
-                if (!isShiftDown) {
-                    deselectAll();
-
-                // Si se presiono shift
-                } else {
-                    boolean beSelected = false;
-                    CenterNode lastSelectedItem = selectedItem;
-
-                    for (CenterNode centerNode : centerNodes) {
-                        boolean flag = centerNode.equals(labelStepSelected) || centerNode.equals(lastSelectedItem);
-                        if (beSelected) {
-                            if (flag) {
-                                break;
-                            } else {
-                                centerNode.setSelected(true);
-                            }
-                        } else if (flag) {
-                            beSelected = true;
-                        }
-                    }
-                }
-
-                labelStepSelected.setSelected(true);
-            }
-        } else if (!centerNodes.isEmpty()) {
-            if ((step < 0)) centerNodes.getLast().setSelected(true);
-            else centerNodes.getFirst().setSelected(true);
-        }
-        updateRight();
-
-        // Scroll ------------------------------------------------------------------------------------------------------
-
-        double contentHeight = pane.getBoundsInLocal().getHeight();
-        double viewportHeight = getViewportBounds().getHeight();
-        Bounds labelBounds = selectedItem.getBoundsInParent();
-        double scrollRange = contentHeight - viewportHeight;
-
-        if (scrollRange > 0) {
-            if (selectedItem == centerNodes.getFirst()) {
-                setVvalue(0);
-            } else if (selectedItem == centerNodes.getLast()) {
-                setVvalue(1);
-
-            } else {
-                double visibleTop = getVvalue() * scrollRange;
-                double visibleBottom = visibleTop + viewportHeight;
-
-                double topThreshold = visibleTop + (viewportHeight / 6.0);
-                double bottomThreshold = visibleBottom - (viewportHeight / 6.0);
-
-                double labelsToScroll = Math.abs(step);
-                double scrollByPixels = labelBounds.getHeight() * labelsToScroll;
-
-                if (step > 0) {
-                    if (labelBounds.getMaxY() > bottomThreshold) {
-                        double targetVisibleTop = visibleTop + scrollByPixels;
-                        double newV = targetVisibleTop / scrollRange;
-                        setVvalue(newV);
-                    }
-                } else {
-                    if (labelBounds.getMinY() < topThreshold) {
-                        double targetVisibleTop = visibleTop - scrollByPixels;
-                        double newV = targetVisibleTop / scrollRange;
-                        setVvalue(newV);
-                    }
-                }
-            }
-        }
-    }
-    public void setSelectedOnCenter() {
-        if (selectedItem != null) {
-            Platform.runLater(() -> {
-                double contentHeight = pane.getBoundsInLocal().getHeight();
-                double viewportHeight = getViewportBounds().getHeight();
-                double scrollRange = contentHeight - viewportHeight;
-
-                if (scrollRange > 0) {
-                    setVvalue(
-                            (selectedItem.getBoundsInParent().getCenterY() - (viewportHeight / 2.0)) / scrollRange);
-                }
-            });
-        }
-    }
     public void openSelected() {
-        if (selectedItem != null && !selectedItem.name.getText().equals(".")) {
-            File file = selectedItem.getFile();
+        if (selectionModel.getSelectedItem() != null && !selectionModel.getSelectedItem().nameLabel.getText().equals(".")) {
+            File file = selectionModel.getSelectedItem().getFileProperties();
             String absolutePath = file.getAbsolutePath();
 
             // Si es directorio
@@ -400,10 +296,8 @@ public class CenterPane extends ScrollPane {
 
                 updateTop();
                 updateCenter();
-                Platform.runLater(() -> {
-                    selectFirst();
-                    updateRight();
-                });
+                selectFirst();
+                updateRight();
 
             // Si es archivo
             } else {
@@ -418,46 +312,33 @@ public class CenterPane extends ScrollPane {
         }
     }
 
-    public void deselectAll() {
-        if (!selectedItems.isEmpty() && selectedItem != null) {
-            selectedItem = null;
-            for (CenterNode centerNode : selectedItems) centerNode.setSelected(false);
-            selectedItems.clear();
-
-            printInfo("Se deselecciono todo");
-        }
-    }
-
     public void selectThis() {
         if (SHOW_THIS) {
-            lock.lock();
-            centerNodes.getFirst().setSelected(true);
-            centerPane.setVvalue(0);
-            lock.unlock();
+            items.getFirst().setSelected(true);
+            scrollTo(0);
         } else {
-            selectedItem = new CenterNode(new File(path), true);
-            selectedItem.setIcon(iconsMime.getProperty("this"), Color.valueOf(colorsMime.getProperty("this")));
-            selectedItems.add(selectedItem);
+            CenterNode thisNode = new CenterNode(new File(path), true);
+            thisNode.setIcon(iconsMime.getProperty("this"), Color.valueOf(colorsMime.getProperty("this")));
+            getSelectionModel().select(thisNode);
         }
     }
     public void selectFirst() {
-        if (!centerNodes.isEmpty()) {
-            lock.lock();
-            int length = centerNodes.size();
-            if (SHOW_THIS && SHOW_PARENT && length > 2)
-                centerNodes.get(2).setSelected(true);
-            else if ((SHOW_THIS || SHOW_PARENT) && length > 1)
-                centerNodes.get(1).setSelected(true);
+        if (!items.isEmpty()) {
+            int size = items.size();
+            if (SHOW_THIS && SHOW_PARENT && size > 2)
+                selectionModel.select(2);
+            else if ((SHOW_THIS || SHOW_PARENT) && size > 1)
+                selectionModel.select(2);
             else
-                centerNodes.getFirst().setSelected(true);
-            centerPane.setVvalue(0);
-            lock.unlock();
+                selectionModel.selectFirst();
+
+            scrollTo(0);
         } else {
             selectThis();
         }
     }
     public boolean select(String name) {
-        for (CenterNode node : centerNodes) {
+        for (CenterNode node : items) {
             if (node.getName().equals(name)) {
                 node.setSelected(true);
                 return true;
@@ -466,12 +347,12 @@ public class CenterPane extends ScrollPane {
         return false;
     }
 
-    public static File[] parseCenterNodesToFiles(ArrayList<CenterNode> centerNodeList) {
+    public static File[] parseCenterNodesToFiles(ObservableList<CenterNode> centerNodeList) {
         if (!centerNodeList.isEmpty()) {
             File[] listFiles = new File[centerNodeList.size()];
             for (int i = 0; i < centerNodeList.size(); i++) {
                 CenterNode centerNode = centerNodeList.get(i);
-                listFiles[i] = centerNode.getFile();
+                listFiles[i] = centerNode.getFileProperties();
             }
             return listFiles;
         } else {

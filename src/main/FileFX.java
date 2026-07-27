@@ -246,7 +246,7 @@ public class FileFX extends javafx.application.Application {
                 try (FileOutputStream output = new FileOutputStream(CONFIG_PATH+"init_values.properties")) {
                     String width = String.valueOf(stage.getWidth());
                     String height = String.valueOf(stage.getHeight());
-                    String selection = centerPane.selectedItem == null ? "" : centerPane.selectedItem.getName();
+                    String selection = centerPane.selectionModel.getSelectedItem() == null ? "" : centerPane.selectionModel.getSelectedItem().getName();
 
                     printInfo("   height="+height);
                     printInfo("   width="+width);

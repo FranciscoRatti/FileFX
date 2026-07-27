@@ -18,18 +18,6 @@ Tiene previsualization de imágenes, soporta png, jpg, jpeg, bmp, gif y svg.
 
 ## Dependencias
 
-### JDK 21
-
-##### Para ejecutar la aplicacion es necesario la JDK 21.
-
-Debian = `sudo apt install openjdk-21-jdk` <br>
-Fedora = `sudo dnf install java-21-openjdk-devel` <br>
-Arch = `sudo pacman -Syu jdk21-openjdk` <br>
-openSUSE = `sudo zypper install java-21-openjdk` <br>
-Alpine = `sudo apk add openjdk21-jdk`
-
-Para verificar podes ejecutar `java --version`
-
 ### RSVG
 
 ##### Para pasar imagenes de .svg a .png.

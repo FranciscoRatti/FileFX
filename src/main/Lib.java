@@ -113,8 +113,9 @@ public class Lib {
             }
 
             if (extractHereItem != null) {
-                String extension = centerPane.selectedItem.getExtension();
-                String mimeType = centerPane.selectedItem.getFileProperties().getMimeType();
+                CenterNode selectedItem = centerPane.selectionModel.getSelectedItem();
+                String extension = selectedItem.getExtension();
+                String mimeType = selectedItem.getFileProperties().getMimeType();
                 extractHereItem.setDisable((extension == null || (!extension.equals("zip") &&
                         !extension.equals("tar") &&
                         !extension.equals("gz") &&
@@ -152,7 +153,7 @@ public class Lib {
         Platform.runLater(() -> menu.getParentPopup().setOnShowing(e -> {
             childrens.clear();
 
-            String mimeType = centerPane.selectedItem.getFileProperties().getMimeType();
+            String mimeType = centerPane.selectionModel.getSelectedItem().getFileProperties().getMimeType();
             for (DesktopApplication app : desktopApplications) {
                 boolean isMimeTypeEqual = false;
 
@@ -169,7 +170,7 @@ public class Lib {
                 imageIcon.setFitHeight(20);
 
                 MenuItem item = new MenuItem(app.getName(), imageIcon);
-                item.setOnAction(ev -> app.openWith(centerPane.selectedItem));
+                item.setOnAction(ev -> app.openWith(centerPane.selectionModel.getSelectedItem()));
                 childrens.add(item);
               }
             }
@@ -198,7 +199,7 @@ public class Lib {
 
                 newFile = new File(path + "/" + fileName);
                 if (centerPane.selectedItems.size() == 1) {
-                    File selectedFile = centerPane.selectedItems.getFirst().getFile();
+                    File selectedFile = centerPane.selectedItems.getFirst().getFileProperties();
                     if (selectedFile.isDirectory()) newFile = new File(selectedFile.getAbsolutePath() + "/" + fileName);
                 }
                 createNewFile(newFile);
@@ -220,7 +221,7 @@ public class Lib {
 
                 newDirectory = new File(path + "/" + directoryName);
                 if (centerPane.selectedItems.size() == 1) {
-                    File selectedFile = centerPane.selectedItems.getFirst().getFile();
+                    File selectedFile = centerPane.selectedItems.getFirst().getFileProperties();
                     if (selectedFile.isDirectory()) newDirectory = new File(selectedFile.getAbsolutePath() + "/" + directoryName);
                 }
                 createNewDirectory(newDirectory);
@@ -231,7 +232,7 @@ public class Lib {
     private static MenuItem createNewLinkItem(String icon) {
         MenuItem item = new MenuItem("Crear enlace", createIconItem(icon));
         item.setAccelerator(CREATE_LINK[0]);
-        item.setOnAction(e -> createLink(centerPane.selectedItem.getFile()));
+        item.setOnAction(e -> createLink(centerPane.selectionModel.getSelectedItem().getFileProperties()));
         return item;
     }
     private static MenuItem createRenameItem(String icon) {
@@ -277,7 +278,7 @@ public class Lib {
     }
     private static MenuItem createExtracHereItem(String icon) {
         MenuItem item = new MenuItem("Extraer aqui", createIconItem(icon));
-        item.setOnAction(e -> extractHere(centerPane.selectedItem.getFile()));
+        item.setOnAction(e -> extractHere(centerPane.selectionModel.getSelectedItem().getFileProperties()));
         return item;
     }
     private static MenuItem createCompressItem(String icon) {
@@ -387,10 +388,9 @@ public class Lib {
             updateTop();
 
             boolean flag = false;
-            for (CenterNode label : centerPane.centerNodes) {
-                if (label.getFile().getAbsolutePath().equals(oldPath)) {
-                    label.setSelected(true);
-                    centerPane.setSelectedOnCenter();
+            for (CenterNode label : centerPane.items) {
+                if (label.getFileProperties().getAbsolutePath().equals(oldPath)) {
+                    centerPane.selectionModel.select(label.getIndex());
                     flag = true;
                     break;
                 }
@@ -412,9 +412,8 @@ public class Lib {
             }
 
             updateCenter();
-            for (CenterNode node : centerPane.centerNodes)
-                if (node.getName().equals(file.getName()))
-                    node.setSelected(true);
+            centerPane.select(file.getName());
+            updateRight();
         }
     }
     public static void createNewDirectory(File directory) {
@@ -425,7 +424,10 @@ public class Lib {
             } catch (Exception ex) {
                 printError("No se pudo crear el directorio " + directory, ex);
             }
+
             updateCenter();
+            centerPane.select(directory.getName());
+            updateRight();
         }
     }
     public static void createLink(File file) {
@@ -436,7 +438,7 @@ public class Lib {
                  Files.createSymbolicLink(Path.of(path+option.get()), file.toPath());
 
                  updateCenter();
-                 centerPane.deselectAll();
+                 centerPane.selectionModel.clearSelection();
                  if (!centerPane.select(option.get())) centerPane.selectFirst();
                  updateRight();
              }
@@ -455,18 +457,16 @@ public class Lib {
                 ProcessBuilder pb = new ProcessBuilder("mv", file.getAbsolutePath(), newAbsolutePath);
                 pb.start().waitFor();
 
-                centerPane.selectedItems.clear();
-                centerPane.selectedItem = null;
-
-                updateRight();
+                centerPane.selectionModel.clearSelection();
                 updateCenter();
-                for (CenterNode centerNode : centerPane.centerNodes) {
+                for (CenterNode centerNode : centerPane.items) {
                     if (centerNode.getName().equals(newName)) {
                         centerNode.setSelected(true);
                         centerNode.requestFocus();
                         break;
                     }
                 }
+                updateRight();
             } catch (Exception e) {
                 printError("Error al renombrar '" + file.getAbsolutePath() + "'", e);
             }
@@ -612,7 +612,7 @@ public class Lib {
         if (centerPane.selectedItems != null && !centerPane.selectedItems.isEmpty()) {
             File[] files = new File[centerPane.selectedItems.size()];
             for (int i = 0; i < files.length; i++) {
-                files[i] = centerPane.selectedItems.get(i).getFile();
+                files[i] = centerPane.selectedItems.get(i).getFileProperties();
             }
 
             restoreFiles(files);
@@ -645,11 +645,10 @@ public class Lib {
                 }
             }
 
-            centerPane.selectedItems.clear();
-            centerPane.selectedItem = null;
-
-            updateRight();
+            centerPane.selectionModel.clearSelection();
             updateCenter();
+            centerPane.selectFirst();
+            updateRight();
         }
         else {removeFiles(files);}
     }
@@ -710,11 +709,10 @@ public class Lib {
                 }
             }
 
-            centerPane.selectedItems.clear();
-            centerPane.selectedItem = null;
-
-            updateRight();
+            centerPane.selectionModel.clearSelection();
             updateCenter();
+            centerPane.selectFirst();
+            updateRight();
         }
     }
 
@@ -722,7 +720,7 @@ public class Lib {
         try {
             printExecute("Descomprimiendo '"+YELLOW+file.getName()+RESET+"'");
             String absolutePath = file.getAbsolutePath();
-            File output = new File(absolutePath.substring(0, file.getName().lastIndexOf(".")+absolutePath.length()));
+            File output = new File(absolutePath.substring(0, absolutePath.length() - (file.getName().length() - file.getName().lastIndexOf(".")) ));
             output.mkdir();
 
             new ProcessBuilder("tar", "-xzf", file.getName(), "-C", output.getName()).directory(new File(path)).start().waitFor();
@@ -747,11 +745,10 @@ public class Lib {
 
             Optional<String> option = showAlert(new TextInputDialog(), "Nombre del archivo comprimido:", "Comprimir archivos");
             String name;
+
             if (option.isPresent()) name = option.get();
-            else {
-                System.out.println("manteca");
-                return;
-            }
+            else return;
+
             command.add(path+name);
 
             command.addAll(Arrays.asList(paths));
@@ -770,7 +767,7 @@ public class Lib {
     public static void openShell() {
         try {
             String shellPath = path;
-            File dir = centerPane.selectedItem.getFile();
+            File dir = centerPane.selectionModel.getSelectedItem().getFileProperties();
             if (dir.isDirectory()) shellPath = dir.getAbsolutePath();
 
             ProcessBuilder pb = new ProcessBuilder(TERMINAL).directory(new File(shellPath));

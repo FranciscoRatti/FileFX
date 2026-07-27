@@ -1,6 +1,5 @@
 package panel;
 
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
@@ -50,8 +49,8 @@ public class BottomPane extends HBox {
 
                         ArrayList<CenterNode> preSelectedList = new ArrayList<>(List.copyOf(centerPane.selectedItems));
                         updateCenter();
-                        if (!centerPane.centerNodes.isEmpty()) centerPane.centerNodes.getFirst().requestFocus();
-                        for (CenterNode centerNode : centerPane.centerNodes) {
+                        if (!centerPane.items.isEmpty()) centerPane.items.getFirst().requestFocus();
+                        for (CenterNode centerNode : centerPane.items) {
                             for (CenterNode preSelected : preSelectedList) {
                                 if (preSelected.getName().equals(centerNode.getName())) {
                                     preSelectedList.remove(preSelected);
@@ -61,8 +60,8 @@ public class BottomPane extends HBox {
                             }
                             if (preSelectedList.isEmpty()) break;
                         }
-                        if (centerPane.selectedItem == null && centerPane.selectedItems.isEmpty()) centerPane.selectFirst();
-                        Platform.runLater(() -> centerPane.setSelectedOnCenter());
+                        if (centerPane.getSelectionModel().getSelectedItem() == null && centerPane.selectedItems.isEmpty()) centerPane.selectFirst();
+                        //Platform.runLater(() -> centerPane.setSelectedOnCenter());
                         updateRight();
                     }
                 });

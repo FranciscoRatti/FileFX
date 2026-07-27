@@ -51,11 +51,13 @@
 #LeftNode_label:hover, #LeftNode_unmount_button:hover,
 #CenterNode_boxB1:hover, #CenterNode_boxB2:hover,
 .scroll-pane > .scroll-bar .thumb:hover,
+#CenterPane .scroll-bar .thumb:hover,
 #PartitionNode_value:hover, #PartitionNode_value:focused
 {-fx-background-color: gray;}
 
 .menu-item, #OtherPane, #OtherNode,
-.scroll-pane > .scroll-bar .thumb
+.scroll-pane > .scroll-bar .thumb,
+#CenterPane .scroll-bar .thumb
 {-fx-background-color: #404040FF;}
 
 #TopNode_button, #Top_search,
@@ -64,12 +66,18 @@
 #PartitionNode_value
 {-fx-background-color: #373737;}
 
-#MainPane, #TopPane, #RightPane_pane, #BottomPane, #LeftPane,
+#MainPane, #TopPane, #RightPane_pane, #BottomPane, #LeftPane, #CenterPane .list-cell,
 #Right_close, #RightNode_value, #Right_miniatura_text .content, #Right_miniatura_pane > .corner,
 #Left_title, #LeftNode_label, #LeftNode_unmount_button,
 #CenterNode_boxB1,
 .scroll-pane > .scroll-bar .track,
-#PartitionColumn, #PartitionPane
+#CenterPane .scroll-bar .track,
+#PartitionColumn, #PartitionPane,
+.scroll-pane > .scroll-bar .increment-button,
+.scroll-pane > .scroll-bar .decrement-button,
+#CenterPane .scroll-bar:vertical .increment-button,
+#CenterPane .scroll-bar:vertical .decrement-button,
+#CenterPane .scroll-bar:vertical
 {-fx-background-color: #232323FF;}
 
 
@@ -81,12 +89,17 @@
 #Bottom_textfield, #BottomNode_button, #BottomNode_button-selected,
 #CenterNode_boxB1, #CenterNode_boxB2,
 #CenterNode_boxB1-focus, #CenterNode_boxB2-focus,
-#OtherNode, .scroll-pane > .scroll-bar .thumb
+#OtherNode,
+.scroll-pane > .scroll-bar .thumb,
+#CenterPane .scroll-bar .thumb
 {-fx-border-style: solid;}
 
-.menu-item, #OtherNode, .scroll-pane > .scroll-bar .thumb,
 #Right_miniatura_pane,
-#BottomNode_button, #BottomNode_button-selected
+#BottomNode_button, #BottomNode_button-selected,
+#OtherNode,
+.menu-item,
+.scroll-pane > .scroll-bar .thumb,
+#CenterPane .scroll-bar .thumb
 {-fx-border-radius: 1;}
 
 #TopNode_button, #Top_search, #Bottom_textfield
@@ -106,10 +119,12 @@
 #BottomNode_button:hover, #BottomNode_button-selected:hover,
 #CenterNode_boxB1:hover, #CenterNode_boxB2:hover,
 #OtherNode:hover, #OtherNode:focused,
-.scroll-pane > .scroll-bar .thumb:hover
+.scroll-pane > .scroll-bar .thumb:hover,
+#CenterPane .scroll-bar .thumb:hover
 {-fx-border-color: white;}
 
 .menu-item, .scroll-pane > .scroll-bar .thumb,
+#CenterPane .scroll-bar .thumb,
 #Right_miniatura_pane,
 #BottomNode_button-selected, #OtherNode
 {-fx-border-color: gray;}
@@ -132,19 +147,33 @@
 .line {-fx-border-width: 0 0 4 0;}
 
 .scroll-pane > .scroll-bar .increment-button,
-.scroll-pane > .scroll-bar .decrement-button {
-    -fx-padding: 0;
+.scroll-pane > .scroll-bar .decrement-button,
+#CenterPane .scroll-bar .increment-button,
+#CenterPane .scroll-bar .decrement-button {
     -fx-background-insets: 0;
     -fx-background-radius: 0;
-    -fx-background-color: transparent;
+    -fx-border-width: 0;
 }
+
+.scroll-pane > .scroll-bar:vertical .increment-button,
+.scroll-pane > .scroll-bar:vertical .decrement-button,
+#CenterPane .scroll-bar:vertical .increment-button,
+#CenterPane .scroll-bar:vertical .decrement-button
+{-fx-padding: 5 1 5 2;}
+
+.scroll-pane > .scroll-bar:horizontal .increment-button,
+.scroll-pane > .scroll-bar:horizontal .decrement-button,
+#CenterPane .scroll-bar:horizontal .increment-button,
+#CenterPane .scroll-bar:horizontal .decrement-button
+{-fx-padding: 1 5 2 5;}
+
 .scroll-pane > .scroll-bar .increment-arrow,
-.scroll-pane > .scroll-bar .decrement-arrow {
-    -fx-shape: "";
-    -fx-padding: 0;
-    -fx-background-color: transparent;
+.scroll-pane > .scroll-bar .decrement-arrow,
+#CenterPane .scroll-bar .increment-arrow,
+#CenterPane .scroll-bar .decrement-arrow {
+    -fx-background-color: white;
 }
-.scroll-pane > .scroll-bar > .thumb {-fx-border-radius: 5;}
+.scroll-pane > .scroll-bar > .thumb, #CenterPane .scroll-bar .thumb {-fx-border-radius: 5;}
 .scroll-pane > .corner {
     -fx-background-color: #232323FF;
     -fx-background-insets: 0;
@@ -159,6 +188,7 @@
     -fx-fill: white;
     -fx-alignment: CENTER;
 }
+
 
 #TopNode_button, #Top_search {-fx-max-height: 35;}
 #TopNode_button {-fx-padding: 0 16 3 10;}
@@ -184,6 +214,7 @@
     -fx-faint-focus-color: transparent;
 }
 
+
 #BottomPane {
     -fx-spacing: 8;
     -fx-border-width: 2 0 0 0;
@@ -192,6 +223,7 @@
 #Bottom_textfield {-fx-padding: 2 8 2 8;}
 #BottomNode_button, #BottomNode_button-selected {-fx-padding: 1 10 1 5;}
 #BottomNode_icon-selected {-fx-font-weight: bold;}
+
 
 #LeftPane {-fx-border-width: 0 2 0 0;}
 #Left_title {
@@ -214,6 +246,8 @@
     -fx-border-width: 0;
 }
 
+
+#CenterPane {-fx-padding: 0;}
 #CenterNode_name, #CenterNode_name-focus {-fx-label-padding: 2;}
 #CenterNode_column, #CenterNode_column-focus {-fx-padding: 2 10 2 10;}
 #CenterNode_name-focus {-fx-font-weight: bold;}
@@ -226,8 +260,9 @@
     -fx-background-color: #0095c8;
     -fx-border-color: #0095c8;
 }
-
 #CenterNode_icon, #CenterNode_icon-focus, #TopNode_button {-fx-label-padding: 0 5 0 5;}
+#CenterPane .list-cell {-fx-padding: 0;}
+#CenterPane .scroll-bar:vertical {-fx-padding: 0 1 0 0;}
 
 #OtherNode {
     -fx-alignment: CENTER-LEFT;

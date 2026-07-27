@@ -63,7 +63,7 @@ public class DesktopApplication {
 
     public void openWith(CenterNode selectedItem) {
         if (hasParameter) {
-            File file = selectedItem.getFile();
+            File file = selectedItem.getFileProperties();
             String parameterPath = file.getAbsolutePath();
             String parameterUrl = "file://"+file.getAbsolutePath();
 

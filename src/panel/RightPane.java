@@ -36,7 +36,6 @@ public class RightPane extends ScrollPane {
     private static RightNode createDateTimeNode;
     private static RightNode typeNode;
 
-    public static double paneWidth;
     public static boolean isRightPaneShow;
 
     public RightPane() {
@@ -44,11 +43,10 @@ public class RightPane extends ScrollPane {
         setStyle("-fx-background: transparent; -fx-background-color: transparent;");
         setFitToWidth(true);
         setId("RightPane");
-        
-        paneWidth = RIGHT_WIDTH;
+
         VBox pane = new VBox();
         pane.setId("RightPane_pane");
-        pane.setPrefWidth(paneWidth);
+        pane.setPrefWidth(RIGHT_WIDTH);
         setContent(pane);
         ObservableList<Node> children = pane.getChildren();
 
@@ -58,8 +56,8 @@ public class RightPane extends ScrollPane {
 
         // Miniatura
         miniaturaPane = new StackPane();
-        miniaturaPane.setMinSize(paneWidth, paneWidth);
-        miniaturaPane.setMaxSize(paneWidth, paneWidth);
+        miniaturaPane.setMinSize(RIGHT_WIDTH, RIGHT_WIDTH);
+        miniaturaPane.setMaxSize(RIGHT_WIDTH, RIGHT_WIDTH);
 
         iconLabel = new Text();
         iconLabel.setFont(nerdFont);
@@ -71,16 +69,16 @@ public class RightPane extends ScrollPane {
         insidePane.setHbarPolicy(ScrollBarPolicy.NEVER);
         insidePane.setFitToWidth(true);
         insidePane.setFitToHeight(true);
-        insidePane.setMinSize(paneWidth, paneWidth);
-        insidePane.setMaxSize(paneWidth, paneWidth);
+        insidePane.setMinSize(RIGHT_WIDTH, RIGHT_WIDTH);
+        insidePane.setMaxSize(RIGHT_WIDTH, RIGHT_WIDTH);
 
         update();
 
         // Propiedades
         nameNode = new RightNode("Nombre :", !path.startsWith(Lib.TRASH+"files"));
         nameNode.value.setOnKeyPressed(e -> {
-            if (centerPane.selectedItem != null && e.getCode().equals(KeyCode.ENTER)) {
-                renameFile(centerPane.selectedItem.getFile(), nameNode.value.getText());
+            if (!centerPane.selectedItems.isEmpty() && e.getCode().equals(KeyCode.ENTER)) {
+                renameFile(centerPane.selectionModel.getSelectedItem().getFileProperties(), nameNode.value.getText());
             }
         });
         sizeNode = new RightNode("Tamaño :", false);
@@ -110,11 +108,11 @@ public class RightPane extends ScrollPane {
     public void update() {
         printInfo("Actualizando panel derecho");
 
-        if (centerPane.selectedItem != null) {
-            FileProperties properties = centerPane.selectedItem.getFileProperties();
+        if (centerPane.selectionModel.getSelectedItem() != null) {
+            FileProperties properties = centerPane.selectionModel.getSelectedItem().getFileProperties();
 
             // Miniatura
-            String extensionText = centerPane.selectedItem.getExtension();
+            String extensionText = centerPane.selectionModel.getSelectedItem().getExtension();
             miniaturaPane.getChildren().clear();
             insidePane.setContent(null);
             textNode = null;
@@ -134,8 +132,8 @@ public class RightPane extends ScrollPane {
 
                 int imageWidth = (int) image.getWidth();
                 int imageHeight = (int) image.getHeight();
-                if (imageWidth < imageHeight) miniatura.setFitHeight(paneWidth - 3);
-                else miniatura.setFitWidth(paneWidth - 3);
+                if (imageWidth < imageHeight) miniatura.setFitHeight(RIGHT_WIDTH - 3);
+                else miniatura.setFitWidth(RIGHT_WIDTH - 3);
 
                 miniaturaPane.getChildren().add(miniatura);
 
@@ -180,15 +178,15 @@ public class RightPane extends ScrollPane {
                     insidePane.setContent(insideBox);
                     miniaturaPane.getChildren().add(insidePane);
                 } else {
-                    iconLabel.setText(centerPane.selectedItem.getIcon());
-                    if (FILL_MINIATURA_LIKE_ICON) iconLabel.setFill(centerPane.selectedItem.getColor());
+                    iconLabel.setText(centerPane.selectionModel.getSelectedItem().getIcon());
+                    if (FILL_MINIATURA_LIKE_ICON) iconLabel.setFill(centerPane.selectionModel.getSelectedItem().getColor());
                     else iconLabel.setFill(UNKNOW_COLOR);
                     miniaturaPane.getChildren().add(iconLabel);
                 }
 
             // Si es archivo
             } else if (SHOW_INSIDE_FILES && properties.getMimeType().startsWith("text")) {
-                try (BufferedReader reader = new BufferedReader(new FileReader(centerPane.selectedItem.getFile()))) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(centerPane.selectionModel.getSelectedItem().getFileProperties()))) {
                     String lineText;
                     StringBuilder result = new StringBuilder();
                     while ((lineText = reader.readLine()) != null) {
@@ -212,19 +210,19 @@ public class RightPane extends ScrollPane {
                     insidePane.setContent(textNode);
                     miniaturaPane.getChildren().add(insidePane);
                 } catch (Exception e) {
-                    printError("Error al leer interior del archivo "+centerPane.selectedItem.getFile().getAbsolutePath(), e);
+                    printError("Error al leer interior del archivo "+centerPane.selectionModel.getSelectedItem().getFileProperties().getAbsolutePath(), e);
                 }
 
             // Si es especial
             } else {
-                iconLabel.setText(centerPane.selectedItem.getIcon());
-                if (FILL_MINIATURA_LIKE_ICON) iconLabel.setFill(centerPane.selectedItem.getColor());
+                iconLabel.setText(centerPane.selectionModel.getSelectedItem().getIcon());
+                if (FILL_MINIATURA_LIKE_ICON) iconLabel.setFill(centerPane.selectionModel.getSelectedItem().getColor());
                 else iconLabel.setFill(UNKNOW_COLOR);
                 miniaturaPane.getChildren().add(iconLabel);
             }
 
             // Propiedades
-            nameNode.value.setText(centerPane.selectedItem.getName());
+            nameNode.value.setText(centerPane.selectionModel.getSelectedItem().getName());
             sizeNode.value.setText(properties.getSizeString());
             createDateTimeNode.value.setText(properties.getCreationString());
             modifiedDateTimeNode.value.setText(properties.getModifiedString());
@@ -241,8 +239,8 @@ public class RightPane extends ScrollPane {
 
     public static void saveInside() {
         if (textNode != null) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(centerPane.selectedItem.getFile()))) {
-                printExecute("Guardando cambios en '"+YELLOW+centerPane.selectedItem.getName()+RESET+"'");
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(centerPane.selectionModel.getSelectedItem().getFileProperties()))) {
+                printExecute("Guardando cambios en '"+YELLOW+centerPane.selectionModel.getSelectedItem().getName()+RESET+"'");
                 String[] lines = textNode.getText().split("\n");
                 writer.write(lines[0]);
                 for (int i = 1; i < lines.length; i++) {
@@ -250,7 +248,7 @@ public class RightPane extends ScrollPane {
                     writer.write(lines[i]);
                 }
             } catch (Exception ex) {
-                printError("Error al guardar cambios en '"+centerPane.selectedItem.getName()+"'", ex);
+                printError("Error al guardar cambios en '"+centerPane.selectionModel.getSelectedItem().getName()+"'", ex);
             }
         }
     }
@@ -259,16 +257,17 @@ public class RightPane extends ScrollPane {
         if (textNode != null) textNode.requestFocus();
     }
     public static void focusName() {
+        CenterNode selectedItem = centerPane.getSelectionModel().getSelectedItem();
+
         nameNode.value.requestFocus();
-        String extension = centerPane.selectedItem.getExtension();
+        String extension = selectedItem.getExtension();
         if (extension == null) nameNode.value.selectAll();
-        else nameNode.value.selectRange(0, centerPane.selectedItem.getName().length()-centerPane.selectedItem.getExtension().length()-1);
+        else nameNode.value.selectRange(0, selectedItem.getName().length()-selectedItem.getExtension().length()-1);
     }
 
     public static void changeShow(boolean isRightPaneShow) {
         RightPane.isRightPaneShow=isRightPaneShow;
         if (isRightPaneShow) {
-            if (rightPane == null) rightPane = new RightPane();
             mainPane.setRight(rightPane);
         } else {
             mainPane.setRight(null);

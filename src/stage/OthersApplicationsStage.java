@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import main.FileFX;
+import node.CenterNode;
 
 import java.io.File;
 import java.util.*;
@@ -37,29 +38,30 @@ public class OthersApplicationsStage extends Stage {
         scene.getStylesheets().add("file://"+CONFIG_PATH+"theme.css");
         setScene(scene);
 
+
+        // Cargar applicaciones
+        ArrayList<File> desktopFiles = new ArrayList<>();
+
+        String env = System.getenv("XDG_DATA_HOME");
+        if (env != null) {
+            File[] files = new File(env+"/applications").listFiles();
+            if (files != null) desktopFiles.addAll(Arrays.asList(files));
+        }
+
+        env = System.getenv("XDG_DATA_DIRS");
+        if (env != null) {
+            for (String dir : env.split(":")) {
+                File[] files = new File(dir+"/applications").listFiles();
+                if (files != null) desktopFiles.addAll(Arrays.asList(files));
+            }
+        }
+
+        desktopApplications = new ArrayList<>();
+
         // Hilo
         Task<Void> task = new Task<>() {
             protected Void call() {
                 lock.lock();
-
-                // Cargar applicaciones
-                ArrayList<File> desktopFiles = new ArrayList<>();
-
-                String env = System.getenv("XDG_DATA_HOME");
-                if (env != null) {
-                    File[] files = new File(env+"/applications").listFiles();
-                    if (files != null) desktopFiles.addAll(Arrays.asList(files));
-                }
-
-                env = System.getenv("XDG_DATA_DIRS");
-                if (env != null) {
-                    for (String dir : env.split(":")) {
-                        File[] files = new File(dir+"/applications").listFiles();
-                        if (files != null) desktopFiles.addAll(Arrays.asList(files));
-                    }
-                }
-
-                desktopApplications = new ArrayList<>();
 
                 for (File file : desktopFiles) {
                     if (file.isDirectory()) {
@@ -90,9 +92,9 @@ public class OthersApplicationsStage extends Stage {
                     button.setMaxWidth(Double.MAX_VALUE);
                     button.setId("OtherNode");
                     button.setOnAction(e -> {
-                        if (centerPane.selectedItems != null && !centerPane.selectedItems.isEmpty()) {
+                        if (!centerPane.selectedItems.isEmpty()) {
                             FileFX.othersApplicationsStage.close();
-                            app.openWith(centerPane.selectedItem);
+                            app.openWith(centerPane.selectionModel.getSelectedItem());
                         }
                     });
                     children.add(button);

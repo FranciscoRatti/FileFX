@@ -54,8 +54,8 @@ public class TopPane extends HBox {
 
                                 updateTop();
                                 updateCenter();
-                                if (!centerPane.centerNodes.isEmpty()) {
-                                    CenterNode first = centerPane.centerNodes.getFirst();
+                                if (!centerPane.items.isEmpty()) {
+                                    CenterNode first = centerPane.items.getFirst();
                                     first.setSelected(true);
                                     first.requestFocus();
                                 }
