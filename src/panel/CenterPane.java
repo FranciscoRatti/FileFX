@@ -75,22 +75,22 @@ public class CenterPane extends ListView<CenterNode> {
             }
         });
 
-        menuFile      = createContextMenu(1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1);
-        menuDirectory = createContextMenu(1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1);
-        menuMultiple  = createContextMenu(1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1);
-        menuCreate    = createContextMenu(0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        menuTrash     = createContextMenu(1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1);
+        menuFile      = createContextMenu(1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1);
+        menuDirectory = createContextMenu(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1);
+        menuMultiple  = createContextMenu(1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1);
+        menuCreate    = createContextMenu(0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        menuTrash     = createContextMenu(1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1);
 
         // Acciones generales
         setOnMouseClicked(e -> {
             MouseButton button = e.getButton();
-            EventTarget target = e.getTarget();
 
             if (button.equals(MouseButton.MIDDLE)) parent();
-            else if (button.equals(MouseButton.BACK)) back();
+            else if (button.equals(MouseButton.BACK)) backward();
             else if (button.equals(MouseButton.FORWARD)) forward();
             else if (button.equals(MouseButton.SECONDARY)) showMenu(mainPane, e.getScreenX(), e.getScreenY());
 
+            updateRight();
             e.consume();
         });
     }
@@ -200,17 +200,33 @@ public class CenterPane extends ListView<CenterNode> {
     }
 
     public void moveCursor(boolean isShiftPressed, int step) {
+        boolean isLast = false;
+        boolean isFirst = false;
 
         // Seleccionar
 
         int size = items.size();
         if (size == 0) return;
-
         int currentIndex = selectionModel.getSelectedIndex();
-
         int targetIndex = currentIndex + step;
-        if (targetIndex > size-1) targetIndex = size-1;
-        else if (targetIndex < 0) targetIndex = 0;
+
+        if (targetIndex >= size-1) {
+            if (currentIndex == size-1) {
+                targetIndex = 0;
+                isFirst = true;
+            } else {
+                targetIndex = size-1;
+                isLast = true;
+            }
+        } else if (targetIndex <= 0) {
+            if (currentIndex == 0) {
+                targetIndex = size-1;
+                isLast = true;
+            } else {
+                targetIndex = 0;
+                isFirst = true;
+            }
+        }
 
         if (isShiftPressed) {
             selectionModel.selectRange(targetIndex, currentIndex);
@@ -223,7 +239,9 @@ public class CenterPane extends ListView<CenterNode> {
 
         // Hacer scroll
 
-        setSelectedOnCenter();
+        if (isLast) scrollTo(size-1);
+        else if (isFirst) scrollTo(0);
+        else setSelectedOnCenter();
     }
 
     public void setSelectedOnCenter() {

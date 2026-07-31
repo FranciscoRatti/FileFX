@@ -62,7 +62,7 @@ public class Scene extends javafx.scene.Scene {
                         updateRight();
                     })) return;
 
-                    if (setKeyBindAction(BACK, () -> back())) return;
+                    if (setKeyBindAction(BACKWARD, () -> backward())) return;
                     if (setKeyBindAction(FORWARD, () -> forward())) return;
 
                     if (setKeyBindAction(SHOW_MENU, () -> centerPane.showMenu())) return;

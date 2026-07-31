@@ -1,10 +1,11 @@
 # File FX
 
 Explorador de archivo desarrollado en Java 21 utilizando el framework
-**JavaFX** y compilado con **Liberica NIK** (Basado en GraalVM),
+**JavaFX** y compilado con a imagen nativa con **Liberica NIK** (Basado en GraalVM),
 disponible solo en Linux. Pensado para utilizarse con atajos de
-teclado y ser altamente configurable. Para los iconos utiliza una
-**Nerd fonts**, estos se pueden encontrar en la [cheat sheet](https://www.nerdfonts.com/cheat-sheet).
+teclado y ser altamente configurable. <br>
+Para los iconos utiliza una **Nerd fonts**, estos se pueden encontrar
+en la [cheat sheet](https://www.nerdfonts.com/cheat-sheet). <br>
 Tiene previsualization de imágenes, soporta png, jpg, jpeg, bmp, gif y svg.
 
 ![vista-previa.png](images/vista-previa.png)
@@ -63,7 +64,7 @@ correctas.
 Por último podes borrar los archivos utilizando:
 
 ```
-rm -rf FileFX
+rm -Rf FileFX
 ```
 
 Para ejecutar podés usar el menu de aplicaciones que es lo mismo que ejecutar
@@ -71,6 +72,12 @@ el comando:
 
 ```
 filefx
+```
+
+Para **DESINSTALAR** la aplicacion se deben borrar los directorios creados con _install.sh_,
+los archivos _.desktop_ y el binario.
+```
+sudo rm -R ~/.config/filefx /usr/share/filefx /usr/share/applications/openWith_filefx.desktop /usr/share/applications/filefx.desktop /usr/bin/filefx
 ```
 
 ## Configuración

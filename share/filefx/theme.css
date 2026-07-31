@@ -1,212 +1,98 @@
-/*-- FUENTE ----------------------------------------------------------------------------------------------------------*/
+/* ETIQUETAS -------------------------------------------------------------------------------------------------------- */
 
-.tooltip > .label,
-.menu-item, .menu-item > .label,
-#Top_search,
-#Right_close, #RightNode_value, #Right_miniatura_text,
-#Bottom_textfield, #BottomNode_icon, #BottomNode_icon-selected,
-#LeftNode_label,
-#OtherNode,
-#PartitionNode_value
-{-fx-text-fill: white; -fx-font-family: "Noto Sans Mono";}
+/* CENTER PANE */
 
-#TopNode_icon,
-#RightNode_title,
-#Left_title, #LeftNode_unmount_icon,
-#CenterNode_name, #CenterNode_name-focus,
-#CenterNode_column, #CenterNode_column-focus,
-#PartitionNode_title
-{-fx-font-family: "Noto Sans Mono";}
-
-#Right_miniatura_text
-{-fx-font-size: 10;}
-
-.menu-item
-{-fx-font-size: 11;}
-
-#Right_close, #RightNode_title
-{-fx-font-size: 12;}
-
-#RightNode_value,
-#LeftNode_label, #LeftNode_unmount_icon,
-#CenterNode_name, #CenterNode_name-focus,
-#CenterNode_column, #CenterNode_column-focus,
-#PartitionNode_title
-{-fx-font-size: 13;}
-
-#Top_search,
-#Bottom_textfield, #BottomNode_icon, #BottomNode_icon-selected,
-#Left_title,
-#PartitionNode_value
-{-fx-font-size: 14;}
-
-#TopNode_icon
-{-fx-font-size: 18;}
-
-
-/*-- COLOR DE FONDO --------------------------------------------------------------------------------------------------*/
-
-#Right_close:hover, #RightNode_value:hover, #RightNode_value:focused,
-#BottomNode_button-selected,
-#LeftNode_label:hover, #LeftNode_unmount_button:hover,
-#CenterNode_boxB1:hover, #CenterNode_boxB2:hover,
-.scroll-pane > .scroll-bar .thumb:hover,
-#CenterPane .scroll-bar .thumb:hover,
-#PartitionNode_value:hover, #PartitionNode_value:focused
-{-fx-background-color: gray;}
-
-.menu-item, #OtherPane, #OtherNode,
-.scroll-pane > .scroll-bar .thumb,
-#CenterPane .scroll-bar .thumb
-{-fx-background-color: #404040FF;}
-
-#TopNode_button, #Top_search,
-#Bottom_textfield, #BottomNode_button,
-#CenterNode_boxB2,
-#PartitionNode_value
-{-fx-background-color: #373737;}
-
-#MainPane, #TopPane, #RightPane_pane, #BottomPane, #LeftPane, #CenterPane .list-cell,
-#Right_close, #RightNode_value, #Right_miniatura_text .content, #Right_miniatura_pane > .corner,
-#Left_title, #LeftNode_label, #LeftNode_unmount_button,
-#CenterNode_boxB1,
-.scroll-pane > .scroll-bar .track,
-#CenterPane .scroll-bar .track,
-#PartitionColumn, #PartitionPane,
-.scroll-pane > .scroll-bar .increment-button,
-.scroll-pane > .scroll-bar .decrement-button,
-#CenterPane .scroll-bar:vertical .increment-button,
-#CenterPane .scroll-bar:vertical .decrement-button,
-#CenterPane .scroll-bar:vertical
-{-fx-background-color: #232323FF;}
-
-
-/*-- BORDE -----------------------------------------------------------------------------------------------------------*/
-
-.menu-item, #TopPane, #RightPane, #BottomPane, #LeftPane,
-#TopNode_button, #Top_search,
-#Right_miniatura_pane,
-#Bottom_textfield, #BottomNode_button, #BottomNode_button-selected,
-#CenterNode_boxB1, #CenterNode_boxB2,
-#CenterNode_boxB1-focus, #CenterNode_boxB2-focus,
-#OtherNode,
-.scroll-pane > .scroll-bar .thumb,
-#CenterPane .scroll-bar .thumb
-{-fx-border-style: solid;}
-
-#Right_miniatura_pane,
-#BottomNode_button, #BottomNode_button-selected,
-#OtherNode,
-.menu-item,
-.scroll-pane > .scroll-bar .thumb,
-#CenterPane .scroll-bar .thumb
-{-fx-border-radius: 1;}
-
-#TopNode_button, #Top_search, #Bottom_textfield
-{-fx-border-radius: 2;}
-
-.menu-item, #TopNode_button, #Top_search,
-#Right_miniatura_pane,
-#Bottom_textfield, #BottomNode_button, #BottomNode_button-selected,
-#CenterNode_boxB1, #CenterNode_boxB2,
-#CenterNode_boxB1-focus, #CenterNode_boxB2-focus,
-#OtherNode
-{-fx-border-width: 1;}
-
-.menu-item:hover, .menu-item:focused,
-#TopNode_button:hover, #Top_search:hover, #Top_search:focused,
-#Bottom_textfield:hover, #Bottom_textfield:focused,
-#BottomNode_button:hover, #BottomNode_button-selected:hover,
-#CenterNode_boxB1:hover, #CenterNode_boxB2:hover,
-#OtherNode:hover, #OtherNode:focused,
-.scroll-pane > .scroll-bar .thumb:hover,
-#CenterPane .scroll-bar .thumb:hover
-{-fx-border-color: white;}
-
-.menu-item, .scroll-pane > .scroll-bar .thumb,
-#CenterPane .scroll-bar .thumb,
-#Right_miniatura_pane,
-#BottomNode_button-selected, #OtherNode
-{-fx-border-color: gray;}
-
-#TopNode_button, #Top_search,
-#Bottom_textfield, #BottomNode_button,
-#CenterNode_boxB2
-{-fx-border-color: #333333;}
-
-#CenterNode_boxB1
-{-fx-border-color: #232323FF;}
-
-#TopPane, #RightPane, #BottomPane, #LeftPane
-{-fx-border-color: #131313;}
-
-
-/*-- OTROS -----------------------------------------------------------------------------------------------------------*/
-
-.context-menu {-fx-background-color: transparent;}
-.line {-fx-border-width: 0 0 4 0;}
-
-.scroll-pane > .scroll-bar .increment-button,
-.scroll-pane > .scroll-bar .decrement-button,
-#CenterPane .scroll-bar .increment-button,
-#CenterPane .scroll-bar .decrement-button {
-    -fx-background-insets: 0;
-    -fx-background-radius: 0;
-    -fx-border-width: 0;
-}
-
-.scroll-pane > .scroll-bar:vertical .increment-button,
-.scroll-pane > .scroll-bar:vertical .decrement-button,
-#CenterPane .scroll-bar:vertical .increment-button,
-#CenterPane .scroll-bar:vertical .decrement-button
-{-fx-padding: 5 1 5 2;}
-
-.scroll-pane > .scroll-bar:horizontal .increment-button,
-.scroll-pane > .scroll-bar:horizontal .decrement-button,
-#CenterPane .scroll-bar:horizontal .increment-button,
-#CenterPane .scroll-bar:horizontal .decrement-button
-{-fx-padding: 1 5 2 5;}
-
-.scroll-pane > .scroll-bar .increment-arrow,
-.scroll-pane > .scroll-bar .decrement-arrow,
-#CenterPane .scroll-bar .increment-arrow,
-#CenterPane .scroll-bar .decrement-arrow {
-    -fx-background-color: white;
-}
-.scroll-pane > .scroll-bar > .thumb, #CenterPane .scroll-bar .thumb {-fx-border-radius: 5;}
-.scroll-pane > .corner {
+#TopPane {
     -fx-background-color: #232323FF;
-    -fx-background-insets: 0;
+    -fx-border-style: solid;
+    -fx-border-width: 0 0 2 0;
+    -fx-border-color: #131313;
+    -fx-spacing: 10;
+    -fx-padding: 5;
 }
 
-.tooltip {
-    -fx-show-delay: 50ms;
-    -fx-hide-delay: 0ms;
+#Top_search {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-background-color: #373737;
+    -fx-border-style: solid;
+    -fx-border-radius: 2;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+    -fx-max-height: 35;
+}
+#Top_search:hover {
+    -fx-border-color: white;
+}
+#Top_search:focused {
+    -fx-border-color: white;
 }
 
-#TopNode_icon, #BottomNode_icon, #BottomNode_icon-selected {
+#TopNode_button {
+    -fx-background-color: #373737;
+    -fx-border-style: solid;
+    -fx-border-radius: 2;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+    -fx-max-height: 35;
+    -fx-padding: 0 16 3 10;
+    -fx-label-padding: 0 5 0 5;
+}
+#TopNode_button:hover {
+    -fx-border-color: white;
+}
+
+#TopNode_icon {
     -fx-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 18;
     -fx-alignment: CENTER;
 }
 
 
-#TopNode_button, #Top_search {-fx-max-height: 35;}
-#TopNode_button {-fx-padding: 0 16 3 10;}
-#TopPane {
-    -fx-spacing: 10;
-    -fx-padding: 5;
-    -fx-border-width: 0 0 2 0;
+/* RIGHT PANE */
+
+#RightPane {
+    -fx-border-style: solid;
+    -fx-border-width: 0 0 0 2;
+    -fx-border-color: #131313;
 }
 
-#RightPane {-fx-border-width: 0 0 0 2;}
-#Right_close {-fx-padding: 0 4 2 4;}
-#RightNode_value {-fx-padding: 1 2 1 2;}
-#Right_miniatura {-fx-font-size: 170;}
-#RightNode_title {
-    -fx-padding: 0 10 0 10;
-    -fx-text-fill: lightgray;
+#RightPane_pane {
+    -fx-background-color: #232323FF;
 }
+
+#Right_close {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 12;
+    -fx-background-color: #232323FF;
+    -fx-padding: 0 4 2 4;
+}
+#Right_close:hover {
+    -fx-background-color: gray;
+}
+
+#Right_miniatura {
+    -fx-font-size: 170;
+}
+
+#Right_miniatura_pane {
+    -fx-border-style: solid;
+    -fx-border-radius: 1;
+    -fx-border-width: 1;
+    -fx-border-color: gray;
+}
+
+#Right_miniatura_pane > .corner {
+    -fx-background-color: #232323FF;
+}
+
 #Right_miniatura_text {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 10;
     -fx-padding: 0;
     -fx-highlight-fill: #0095c8;
     -fx-highlight-text-fill: white;
@@ -214,78 +100,433 @@
     -fx-faint-focus-color: transparent;
 }
 
+#Right_miniatura_text .content {
+    -fx-background-color: #232323FF;
+}
+
+#RightNode_title {
+    -fx-text-fill: lightgray;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 12;
+    -fx-padding: 0 10 0 10;
+}
+
+#RightNode_value {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-background-color: #232323FF;
+    -fx-padding: 1 2 1 2;
+}
+#RightNode_value:hover {
+    -fx-background-color: gray;
+}
+#RightNode_value:focused {
+    -fx-background-color: gray;
+}
+
+
+/* BOTTOM PANE */
 
 #BottomPane {
-    -fx-spacing: 8;
+    -fx-background-color: #232323FF;
+    -fx-border-style: solid;
     -fx-border-width: 2 0 0 0;
+    -fx-border-color: #131313;
+    -fx-spacing: 8;
     -fx-padding: 5 8 5 8;
 }
-#Bottom_textfield {-fx-padding: 2 8 2 8;}
-#BottomNode_button, #BottomNode_button-selected {-fx-padding: 1 10 1 5;}
-#BottomNode_icon-selected {-fx-font-weight: bold;}
+
+#Bottom_textfield {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-background-color: #373737;
+    -fx-border-style: solid;
+    -fx-border-radius: 2;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+    -fx-padding: 2 8 2 8;
+}
+#Bottom_textfield:hover {
+    -fx-border-color: white;
+}
+#Bottom_textfield:focused {
+    -fx-border-color: white;
+}
+
+#BottomNode_button {
+    -fx-background-color: #373737;
+    -fx-border-style: solid;
+    -fx-border-radius: 1;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+    -fx-padding: 1 10 1 5;
+}
+#BottomNode_button:hover {
+    -fx-border-color: white;
+}
+
+#BottomNode_button-selected {
+    -fx-background-color: gray;
+    -fx-border-style: solid;
+    -fx-border-radius: 1;
+    -fx-border-width: 1;
+    -fx-border-color: gray;
+    -fx-padding: 1 10 1 5;
+}
+#BottomNode_button-selected:hover {
+    -fx-border-color: white;
+}
+
+#BottomNode_icon {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-alignment: CENTER;
+}
+
+#BottomNode_icon-selected {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-alignment: CENTER;
+    -fx-font-weight: bold;
+}
 
 
-#LeftPane {-fx-border-width: 0 2 0 0;}
+/* LEFT PANE */
+
+#LeftPane {
+    -fx-background-color: #232323FF;
+    -fx-border-style: solid;
+    -fx-border-width: 0 2 0 0;
+    -fx-border-color: #131313;
+}
+
 #Left_title {
     -fx-text-fill: lightgray;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-background-color: #232323FF;
     -fx-label-padding: 2 10 2 5;
     -fx-font-weight: bold;
 }
+
 #LeftNode_label {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-background-color: #232323FF;
     -fx-label-padding: 4 10 4 10;
     -fx-graphic-text-gap: 15;
 }
+#LeftNode_label:hover {
+    -fx-background-color: gray;
+}
+
 #LeftNode_icon {
+    -fx-text-fill: white;
     -fx-font-size: 15;
     -fx-alignment: CENTER-RIGHT;
-    -fx-text-fill: white;
 }
-#LeftNode_unmount_icon {-fx-fill: lightgray;}
+
+#LeftNode_unmount_icon {
+    -fx-fill: lightgray;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+}
+
 #LeftNode_unmount_button {
+    -fx-background-color: #232323FF;
+    -fx-border-width: 0;
     -fx-padding: 4 10 4 3;
+}
+#LeftNode_unmount_button:hover {
+    -fx-background-color: gray;
+}
+
+
+/* CENTER PANE */
+
+#CenterPane {
+    -fx-padding: 0;
+}
+
+#CenterPane .list-cell {
+    -fx-background-color: #232323FF;
+    -fx-padding: 0;
+}
+
+#CenterPane .scroll-bar .track {
+    -fx-background-color: #232323FF;
+}
+
+#CenterPane .scroll-bar .thumb {
+    -fx-background-color: #404040FF;
+    -fx-border-style: solid;
+    -fx-border-radius: 5;
+    -fx-border-color: gray;
+}
+#CenterPane .scroll-bar .thumb:hover {
+    -fx-background-color: gray;
+    -fx-border-color: white;
+}
+
+#CenterPane .scroll-bar .increment-arrow {-fx-background-color: white;}
+#CenterPane .scroll-bar .decrement-arrow {-fx-background-color: white;}
+
+#CenterPane .scroll-bar:vertical {
+    -fx-background-color: #232323FF;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
     -fx-border-width: 0;
 }
+#CenterPane .scroll-bar:vertical .increment-button {-fx-padding: 5 1 5 2;}
+#CenterPane .scroll-bar:vertical .decrement-button {-fx-padding: 5 1 5 2;}
+#CenterPane .scroll-bar:vertical {-fx-padding: 0 1 0 0;}
 
+#CenterPane .scroll-bar:horizontal {
+    -fx-background-color: #232323FF;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+}
+#CenterPane .scroll-bar:horizontal .increment-button {-fx-padding: 1 5 2 5;}
+#CenterPane .scroll-bar:horizontal .decrement-button {-fx-padding: 1 5 2 5;}
 
-#CenterPane {-fx-padding: 0;}
-#CenterNode_name, #CenterNode_name-focus {-fx-label-padding: 2;}
-#CenterNode_column, #CenterNode_column-focus {-fx-padding: 2 10 2 10;}
-#CenterNode_name-focus {-fx-font-weight: bold;}
-#CenterNode_boxB1, #CenterNode_boxB2, #CenterNode_boxB1-focus, #CenterNode_boxB2-focus {-fx-spacing: 10;}
-#CenterNode_boxB1-focus:hover, #CenterNode_boxB2-focus:hover {
+#CenterNode_boxB1 {
+    -fx-background-color: #232323FF;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-border-color: #232323FF;
+    -fx-spacing: 10;
+}
+#CenterNode_boxB1:hover {
+    -fx-background-color: gray;
+    -fx-border-color: white;
+}
+
+#CenterNode_boxB1-focus {
+    -fx-background-color: #0095c8;
+    -fx-border-color: #0095c8;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-spacing: 10;
+}
+#CenterNode_boxB1-focus:hover {
     -fx-background-color: #41aeff;
     -fx-border-color: #41aeff;
 }
-#CenterNode_boxB1-focus, #CenterNode_boxB2-focus {
+
+#CenterNode_boxB2 {
+    -fx-background-color: #373737;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+    -fx-spacing: 10;
+}
+#CenterNode_boxB2:hover {
+    -fx-background-color: gray;
+    -fx-border-color: white;
+}
+
+#CenterNode_boxB2-focus {
     -fx-background-color: #0095c8;
     -fx-border-color: #0095c8;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-spacing: 10;
 }
-#CenterNode_icon, #CenterNode_icon-focus, #TopNode_button {-fx-label-padding: 0 5 0 5;}
-#CenterPane .list-cell {-fx-padding: 0;}
-#CenterPane .scroll-bar:vertical {-fx-padding: 0 1 0 0;}
+#CenterNode_boxB2-focus:hover {
+    -fx-background-color: #41aeff;
+    -fx-border-color: #41aeff;
+}
+
+#CenterNode_icon {
+    -fx-label-padding: 0 5 0 5;
+}
+
+#CenterNode_icon-focus {
+    -fx-label-padding: 0 5 0 5;
+}
+
+#CenterNode_name {
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-label-padding: 2;
+}
+
+#CenterNode_name-focus {
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-label-padding: 2;
+    -fx-font-weight: bold;
+}
+
+#CenterNode_column {
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-padding: 2 10 2 10;
+}
+
+#CenterNode_column-focus {
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-padding: 2 10 2 10;
+    -fx-font-weight: bold;
+}
+
+
+/* OTROS ------------------------------------------------------------------------------------------------------------ */
+
+#MainPane {-fx-background-color: #232323FF;}
+
+#OtherPane {-fx-background-color: #404040FF;}
 
 #OtherNode {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-background-color: #404040FF;
+    -fx-border-style: solid;
+    -fx-border-radius: 1;
+    -fx-border-width: 1;
+    -fx-border-color: gray;
     -fx-alignment: CENTER-LEFT;
     -fx-content-display: LEFT;
 }
-
-#ContexMenu_icon {
-    -fx-font-size: 12;
-    -fx-alignment: CENTER;
-    -fx-text-fill: white;
-    -fx-label-padding: 0 10 0 0;
+#OtherNode:hover {
+    -fx-border-color: white;
+}
+#OtherNode:focused {
+    -fx-border-color: white;
 }
 
-#PartitionNode_title, #PartitionNode_value {
+
+#PartitionPane {
+    -fx-background-color: #232323FF;
+}
+
+#PartitionColumn {
+    -fx-background-color: #232323FF;
+    -fx-padding: 10;
+    -fx-spacing: 3;
+}
+
+#PartitionNode_title {
+    -fx-text-fill: lightgray;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
     -fx-pref-height: 26px;
     -fx-min-height: 26px;
     -fx-max-height: 26px;
     -fx-padding: 2 4 2 4;
 }
-#PartitionNode_title {
-    -fx-text-fill: lightgray;
+
+#PartitionNode_value {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-background-color: #373737;
+    -fx-pref-height: 26px;
+    -fx-min-height: 26px;
+    -fx-max-height: 26px;
+    -fx-padding: 2 4 2 4;
 }
-#PartitionColumn {
-    -fx-padding: 10;
-    -fx-spacing: 3;
+#PartitionNode_value:hover {
+    -fx-background-color: gray;
 }
+#PartitionNode_value:focused {
+    -fx-background-color: gray;
+}
+
+
+#ContextMenu_icon {
+    -fx-text-fill: white;
+    -fx-font-size: 12;
+    -fx-alignment: CENTER;
+    -fx-label-padding: 0 10 0 0;
+}
+
+
+/* CLASES ----------------------------------------------------------------------------------------------------------- */
+
+.tooltip {
+    -fx-show-delay: 50ms;
+    -fx-hide-delay: 0ms;
+}
+
+.tooltip > .label {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+}
+
+
+.context-menu {
+    -fx-background-color: transparent;
+}
+
+
+.menu-item {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 11;
+    -fx-background-color: #404040FF;
+    -fx-border-style: solid;
+    -fx-border-radius: 1;
+    -fx-border-width: 1;
+    -fx-border-color: gray;
+}
+.menu-item:hover {-fx-border-color: white;}
+.menu-item:focused {-fx-border-color: white;}
+
+.menu-item > .label {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+}
+
+.scroll-pane > .corner {
+    -fx-background-color: #232323FF;
+    -fx-background-insets: 0;
+}
+
+.scroll-pane > .scroll-bar .track {
+    -fx-background-color: #232323FF;
+}
+
+.scroll-pane > .scroll-bar .thumb {
+    -fx-background-color: #404040FF;
+    -fx-border-style: solid;
+    -fx-border-radius: 5;
+    -fx-border-color: gray;
+}
+.scroll-pane > .scroll-bar .thumb:hover {
+    -fx-background-color: gray;
+    -fx-border-color: white;
+}
+
+.scroll-pane > .scroll-bar .increment-button {
+    -fx-background-color: #232323FF;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-padding: 5 1 5 2;
+}
+.scroll-pane > .scroll-bar:vertical .increment-button {-fx-padding: 5 1 5 2;}
+.scroll-pane > .scroll-bar:horizontal .increment-button {-fx-padding: 1 5 2 5;}
+.scroll-pane > .scroll-bar .increment-arrow {-fx-background-color: white;}
+
+.scroll-pane > .scroll-bar .decrement-button {
+    -fx-background-color: #232323FF;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-padding: 5 1 5 2;
+}
+.scroll-pane > .scroll-bar:vertical .decrement-button {-fx-padding: 5 1 5 2;}
+.scroll-pane > .scroll-bar:horizontal .decrement-button {-fx-padding: 1 5 2 5;}
+.scroll-pane > .scroll-bar .decrement-arrow {-fx-background-color: white;}
+
+.line {-fx-border-width: 0 0 4 0;}

@@ -11,7 +11,6 @@ import panel.MainPane;
 import scene.Scene;
 import stage.OthersApplicationsStage;
 
-import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -106,46 +105,46 @@ public class FileFX extends javafx.application.Application {
             keyBinding = new Properties();
             keyBinding.load(fileInputStream);
 
-            CUT = getKeyCombination("cut");
-            COPY = getKeyCombination("copy");
-            PASTE = getKeyCombination("paste");
-            REMOVE = getKeyCombination("remove");
-            TRASH = getKeyCombination("trash");
-            RENAME = getKeyCombination("rename");
+            CUT = getKeyCombination("cut", "ctrl+x");
+            COPY = getKeyCombination("copy", "ctrl+c");
+            PASTE = getKeyCombination("paste", "ctrl+v");
+            REMOVE = getKeyCombination("remove", "ctrl+delete");
+            TRASH = getKeyCombination("trash", "delete");
+            RENAME = getKeyCombination("rename", "f4");
 
-            UP = getKeyCombination("up");
-            OPEN = getKeyCombination("open");
-            DOWN = getKeyCombination("down");
-            PARENT = getKeyCombination("parent");
-            UP_STEP = getKeyCombination("up_step");
-            DOWN_STEP = getKeyCombination("down_step");
-            FIRST = getKeyCombination("first");
-            LAST = getKeyCombination("last");
+            UP = getKeyCombination("up", "up");
+            OPEN = getKeyCombination("open", "enter,right");
+            DOWN = getKeyCombination("down", "down");
+            PARENT = getKeyCombination("parent", "backspace,left");
+            UP_STEP = getKeyCombination("up_step", "page up");
+            DOWN_STEP = getKeyCombination("down_step", "page down");
+            FIRST = getKeyCombination("first", "home");
+            LAST = getKeyCombination("last", "end");
 
-            SELECT_UP = getKeyCombination("select_up");
-            SELECT_DOWN = getKeyCombination("select_down");
-            SELECT_UP_STEP = getKeyCombination("select_up_step");
-            SELECT_DOWN_STEP = getKeyCombination("select_down_step");
-            SELECT_FIRST = getKeyCombination("select_first");
-            SELECT_LAST = getKeyCombination("select_last");
-            DESELECT_ALL = getKeyCombination("deselect_all");
+            SELECT_UP = getKeyCombination("select_up", "shift+up");
+            SELECT_DOWN = getKeyCombination("select_down", "shift+down");
+            SELECT_UP_STEP = getKeyCombination("select_up_step", "shift+page up");
+            SELECT_DOWN_STEP = getKeyCombination("select_down_step", "shift+page down");
+            SELECT_FIRST = getKeyCombination("select_first", "shift+home");
+            SELECT_LAST = getKeyCombination("select_last", "shift+end");
+            DESELECT_ALL = getKeyCombination("deselect_all", "esc");
 
-            BACK = getKeyCombination("back");
-            FORWARD = getKeyCombination("forward");
+            BACKWARD = getKeyCombination("back", "ctrl+z");
+            FORWARD = getKeyCombination("forward", "ctrl+y");
 
-            SHOW_MENU = getKeyCombination("show_menu");
-            SHOW_MENU_CREATE = getKeyCombination("show_menu_create");
-            CHANGE_SHOW_RIGHT_PANE = getKeyCombination("change_show_right_pane");
-            CHANGE_SHOW_HIDDEN = getKeyCombination("change_show_hidden");
-            UPDATE_ALL = getKeyCombination("update_all");
+            SHOW_MENU = getKeyCombination("show_menu", "context menu,ctrl+space");
+            SHOW_MENU_CREATE = getKeyCombination("show_menu_create", "n");
+            CHANGE_SHOW_RIGHT_PANE = getKeyCombination("change_show_right_pane", "space");
+            CHANGE_SHOW_HIDDEN = getKeyCombination("change_show_hidden", "h");
+            UPDATE_ALL = getKeyCombination("update_all", "f5");
 
-            FOCUS_PATH = getKeyCombination("focus_path");
-            FOCUS_FILTER = getKeyCombination("focus_filter");
-            FOCUS_INSIDE = getKeyCombination("focus_inside");
-            SAVE_INSIDE = getKeyCombination("save_inside");
+            FOCUS_PATH = getKeyCombination("focus_path", "s");
+            FOCUS_FILTER = getKeyCombination("focus_filter", "f");
+            FOCUS_INSIDE = getKeyCombination("focus_inside", "i");
+            SAVE_INSIDE = getKeyCombination("save_inside", "ctrl+s");
 
-            CREATE_LINK = getKeyCombination("create_link");
-            OPEN_SHELL = getKeyCombination("open_shell");
+            CREATE_LINK = getKeyCombination("create_link", "l");
+            OPEN_SHELL = getKeyCombination("open_shell", "ctrl+t");
         } catch (IOException e) {
             printError("No se pudo leer el archivo de combinaciones de teclado", e);
             System.exit(0);
@@ -175,9 +174,6 @@ public class FileFX extends javafx.application.Application {
             }
         }
         printInfo("Path inicial: '"+BLUE+path+RESET+"'");
-
-        printInfo("Cargando combinaciones de teclado");
-        updateKeyBinding();
 
         printInfo("Cargando archivo de iconos");
         try (Reader reader = new InputStreamReader(new FileInputStream(CONFIG_PATH+"icons_binding.properties"), StandardCharsets.UTF_8)) {
@@ -295,22 +291,19 @@ public class FileFX extends javafx.application.Application {
         return result;
     }
 
-    public static void updateKeyBinding() {
-
-    }
-    public static KeyCombination[] getKeyCombination(String keyName) {
+    public static KeyCombination[] getKeyCombination(String keyName, String fallBack) {
         String property = keyBinding.getProperty(keyName);
-        if (property != null) {
-            String[] texts = property.split(",");
-            KeyCombination[] keys = new KeyCombination[texts.length];
+        if (property == null) property = fallBack;
 
-            for (int i = 0; i < texts.length; i++) {
-                keys[i] = KeyCodeCombination.valueOf(texts[i]);
-            }
+        String[] texts = property.split(",");
+        KeyCombination[] keys = new KeyCombination[texts.length];
 
-            return keys;
-        } else return null;
-    }
+        for (int i = 0; i < texts.length; i++) {
+            keys[i] = KeyCodeCombination.valueOf(texts[i]);
+        }
+
+        return keys;
+}
 
     // Combinaciones de tecla
     public static KeyCombination[] CUT;
@@ -337,7 +330,7 @@ public class FileFX extends javafx.application.Application {
     public static KeyCombination[] SELECT_LAST;
     public static KeyCombination[] DESELECT_ALL;
 
-    public static KeyCombination[] BACK;
+    public static KeyCombination[] BACKWARD;
     public static KeyCombination[] FORWARD;
 
     public static KeyCombination[] SHOW_MENU;

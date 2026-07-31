@@ -29,7 +29,7 @@ public class TopPane extends HBox {
 
         for (String[] button : TOP_BUTTONS) {
             switch (button[0]) {
-                case "back" -> back = new Button(button[1], "Deshacer", "TopNode", e -> back());
+                case "back" -> back = new Button(button[1], "Deshacer", "TopNode", e -> backward());
                 case "forward" -> forward = new Button(button[1], "Rehacer", "TopNode", e -> forward());
                 case "parent" -> parent = new Button(button[1], "Ir arriba", "TopNode", e -> parent());
                 case "search" -> {
