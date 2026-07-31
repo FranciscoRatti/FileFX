@@ -27,9 +27,8 @@ public class Lib {
   public static boolean isCut = false;
   public static final String HOME = System.getenv("HOME");
   public static final String TRASH = HOME + "/.local/share/Trash/";
-  public static final String ABSOLUTE_PATH = "/usr/";
-  // public static final String ABSOLUTE_PATH =
-  // HOME+"/Documents/Programacion/Proyectos/FileFX/";
+  public static final String ABSOLUTE_PATH = "/usr/share/filefx/";
+  // public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/resources/";
   public static final String CONFIG_PATH = HOME + "/.config/filefx/";
   // public static final String CONFIG_PATH = ABSOLUTE_PATH+"share/filefx/";
 

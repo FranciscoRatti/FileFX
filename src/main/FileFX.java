@@ -47,7 +47,7 @@ public class FileFX extends javafx.application.Application {
     }
 
     public void start(Stage s) {
-        nerdFont = Font.loadFont("file://" + ABSOLUTE_PATH + "share/filefx/0xProtoNerdFontMono-Regular.ttf", 16);
+        nerdFont = Font.loadFont("file://" + ABSOLUTE_PATH + "0xProtoNerdFontMono-Regular.ttf", 16);
 
         printInfo("Cargando archivo de configuracion");
         try (Reader reader = new InputStreamReader(new FileInputStream(CONFIG_PATH+"config.properties"), StandardCharsets.UTF_8)) {
@@ -233,7 +233,7 @@ public class FileFX extends javafx.application.Application {
 
         printInfo("Cargando escenario principal");
         stage=s;
-        stage.getIcons().add(new Image("file://"+ABSOLUTE_PATH+"share/filefx/icon.png"));
+        stage.getIcons().add(new Image("file://"+ABSOLUTE_PATH+"icon.png"));
         stage.setTitle("Explorador de archivos");
         stage.setOnCloseRequest(e -> {
             printExecute("Cerrando ventana");

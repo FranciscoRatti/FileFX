@@ -118,12 +118,12 @@ public class DesktopApplication {
                             icon = new Image("file://"+png.getAbsolutePath());
                         } catch (Exception e) {
                             printError("Error al parsear " + RED + iconPath + RESET + " a .svg", e);
-                            icon = new Image("file://" + ABSOLUTE_PATH + "share/filefx/notFound.png");
+                            icon = new Image("file://" + ABSOLUTE_PATH + "notFound.png");
                         } finally {
                             png.delete();
                         }
                     } else if (!iconPath.isEmpty()) icon = new Image("file://" + iconPath);
-                    else icon = new Image("file://" + ABSOLUTE_PATH + "share/filefx/notFound.png");
+                    else icon = new Image("file://" + ABSOLUTE_PATH + "notFound.png");
                 } catch (IOException e) {
                     printError("Error al carga icono de " + name, e);
                 }

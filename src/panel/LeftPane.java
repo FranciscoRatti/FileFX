@@ -107,7 +107,7 @@ public class LeftPane extends VBox {
                                                             .start().waitFor();
                                                     updateLeft();
                                                 } catch (Exception ex) {
-                                                    printError("Error expulsando '"+part.name+"'", ex);
+                                                    printError("Error al expulsar '"+part.name+"'", ex);
                                                 }
                                             })
                                         )
