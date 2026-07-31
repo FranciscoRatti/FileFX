@@ -21,8 +21,7 @@ import static panel.MainPane.*;
 
 public class Lib {
 
-  // CONSTANTES
-  // ----------------------------------------------------------------------------------------------------------
+  // CONSTANTES ----------------------------------------------------------------------------------------------------------
 
   public static boolean isCut = false;
   public static final String HOME = System.getenv("HOME");
@@ -50,8 +49,7 @@ public class Lib {
   public static final LinkedList<String> forwardBuffer = new LinkedList<>();
   public static final Lock lock = new ReentrantLock();
 
-  // METODOS
-  // -------------------------------------------------------------------------------------------------------------
+  // METODOS -------------------------------------------------------------------------------------------------------------
 
   // Crear componentes
   public static <R> Optional<R> showAlert(Dialog<R> dialog, String message, String title) {
@@ -62,68 +60,51 @@ public class Lib {
   }
 
   public static ContextMenu createContextMenu(
-      int backward, int forward,
-      int open, int openWith, int createFile, int createDirectory, int link, int rename,
-      int copy, int cut, int paste,
-      int restore, int trash, int remove,
-      int extract, int compress, int shell) {
+        int backward, int forward,
+        int open, int openWith, int createFile, int createDirectory, int link, int rename,
+        int copy, int cut, int paste,
+        int restore, int trash, int remove,
+        int extract, int compress, int shell) {
     ContextMenu contextMenu = new ContextMenu();
+    contextMenu.setAutoHide(true);
     ObservableList<MenuItem> contextMenuItems = contextMenu.getItems();
     MenuItem pasteItem, extractHereItem;
 
     String[] icons = new String[CONTEXT_MENU_ICONS.length];
     System.arraycopy(CONTEXT_MENU_ICONS, 0, icons, 0, CONTEXT_MENU_ICONS.length);
 
-    if (backward == 1)
-      contextMenuItems.add(createNewBackwardItem(icons[0]));
-    if (forward == 1)
-      contextMenuItems.add(createNewForwardItem(icons[1]));
+    if (backward == 1) contextMenuItems.add(createNewBackwardItem(icons[0]));
+    if (forward == 1) contextMenuItems.add(createNewForwardItem(icons[1]));
 
     contextMenuItems.add(new SeparatorMenuItem());
 
-    if (open == 1)
-      contextMenuItems.add(createNewOpenItem(icons[2]));
-    if (openWith == 1)
-      contextMenuItems.add(createNewOpenWithItem(icons[3]));
-    if (createFile == 1)
-      contextMenuItems.add(createNewFileItem(icons[4]));
-    if (createDirectory == 1)
-      contextMenuItems.add(createNewDirectoryItem(icons[5]));
-    if (link == 1)
-      contextMenuItems.add(createNewLinkItem(icons[6]));
-    if (rename == 1)
-      contextMenuItems.add(createRenameItem(icons[7]));
+    if (open == 1) contextMenuItems.add(createNewOpenItem(icons[2]));
+    if (openWith == 1) contextMenuItems.add(createNewOpenWithItem(icons[3]));
+    if (createFile == 1) contextMenuItems.add(createNewFileItem(icons[4]));
+    if (createDirectory == 1) contextMenuItems.add(createNewDirectoryItem(icons[5]));
+    if (link == 1) contextMenuItems.add(createNewLinkItem(icons[6]));
+    if (rename == 1) contextMenuItems.add(createRenameItem(icons[7]));
 
     contextMenuItems.add(new SeparatorMenuItem());
 
-    if (copy == 1)
-      contextMenuItems.add(createCopyItem(icons[8]));
-    if (cut == 1)
-      contextMenuItems.add(createCutItem(icons[9]));
-    if (paste == 1)
-      contextMenuItems.add(pasteItem = createPasteItem(icons[10]));
+    if (copy == 1) contextMenuItems.add(createCopyItem(icons[8]));
+    if (cut == 1) contextMenuItems.add(createCutItem(icons[9]));
+    if (paste == 1) contextMenuItems.add(pasteItem = createPasteItem(icons[10]));
     else
       pasteItem = null;
 
     contextMenuItems.add(new SeparatorMenuItem());
 
-    if (restore == 1)
-      contextMenuItems.add(createRestoreItem(icons[11]));
-    if (trash == 1)
-      contextMenuItems.add(createTrashItem(icons[12]));
-    if (remove == 1)
-      contextMenuItems.add(createRemoveItem(icons[13]));
+    if (restore == 1) contextMenuItems.add(createRestoreItem(icons[11]));
+    if (trash == 1) contextMenuItems.add(createTrashItem(icons[12]));
+    if (remove == 1) contextMenuItems.add(createRemoveItem(icons[13]));
 
     contextMenuItems.add(new SeparatorMenuItem());
 
-    if (extract == 1)
-      contextMenuItems.add(extractHereItem = createExtracHereItem(icons[14]));
-    else
-      extractHereItem = null;
-    if (compress == 1)
-      contextMenuItems.add(createCompressItem(icons[15]));
-    if (shell == 1)
-      contextMenuItems.add(createOpenShellItem(icons[16]));
+    if (extract == 1) contextMenuItems.add(extractHereItem = createExtracHereItem(icons[14]));
+    else extractHereItem = null;
+    if (compress == 1) contextMenuItems.add(createCompressItem(icons[15]));
+    if (shell == 1) contextMenuItems.add(createOpenShellItem(icons[16]));
 
     contextMenu.setOnShown(e -> {
       if (CHECK_CLIPBOARD_PASTE) {
@@ -132,8 +113,7 @@ public class Lib {
           if (clipboardFiles != null) {
             boolean setDisable = false;
             for (File file : clipboardFiles) {
-              if (!file.exists())
-                setDisable = true;
+              if (!file.exists()) setDisable = true;
             }
             pasteItem.setDisable(setDisable);
           } else {
@@ -173,21 +153,18 @@ public class Lib {
     item.setOnAction(e -> backward());
     return item;
   }
-
   private static MenuItem createNewForwardItem(String icon) {
     MenuItem item = new MenuItem("Rehacer", createIconItem(icon));
     item.setAccelerator(FORWARD[0]);
     item.setOnAction(e -> forward());
     return item;
   }
-
   private static MenuItem createNewOpenItem(String icon) {
     MenuItem item = new MenuItem("Abrir", createIconItem(icon));
     item.setAccelerator(OPEN[0]);
     item.setOnAction(e -> centerPane.openSelected());
     return item;
   }
-
   private static Menu createNewOpenWithItem(String icon) {
     Menu menu = new Menu("Abrir con", createIconItem(icon));
     ObservableList<MenuItem> childrens = menu.getItems();
@@ -228,7 +205,6 @@ public class Lib {
 
     return menu;
   }
-
   private static Menu createNewFileItem(String icon) {
     MenuItem item = new MenuItem("Sin formato");
     item.setOnAction(e -> {
@@ -253,7 +229,6 @@ public class Lib {
 
     return new Menu("Crear archivo", createIconItem(icon), item);
   }
-
   private static MenuItem createNewDirectoryItem(String icon) {
     MenuItem item = new MenuItem("Crear carpeta", createIconItem(icon));
     item.setOnAction(e -> {
@@ -277,68 +252,58 @@ public class Lib {
     });
     return item;
   }
-
   private static MenuItem createNewLinkItem(String icon) {
     MenuItem item = new MenuItem("Crear enlace", createIconItem(icon));
     item.setAccelerator(CREATE_LINK[0]);
     item.setOnAction(e -> createLink(centerPane.selectionModel.getSelectedItem().getFileProperties()));
     return item;
   }
-
   private static MenuItem createRenameItem(String icon) {
     MenuItem item = new MenuItem("Renombrar", createIconItem(icon));
     item.setAccelerator(RENAME[0]);
     item.setOnAction(e -> RightPane.focusName());
     return item;
   }
-
   private static MenuItem createCopyItem(String icon) {
     MenuItem item = new MenuItem("Copiar", createIconItem(icon));
     item.setAccelerator(COPY[0]);
     item.setOnAction(e -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), false));
     return item;
   }
-
   private static MenuItem createCutItem(String icon) {
     MenuItem item = new MenuItem("Cortar", createIconItem(icon));
     item.setAccelerator(CUT[0]);
     item.setOnAction(e -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), true));
     return item;
   }
-
   private static MenuItem createPasteItem(String icon) {
     MenuItem item = new MenuItem("Pegar", createIconItem(icon));
     item.setAccelerator(PASTE[0]);
     item.setOnAction(e -> pasteFiles(getClipboardFiles()));
     return item;
   }
-
   private static MenuItem createRestoreItem(String icon) {
     MenuItem item = new MenuItem("Restaurar", createIconItem(icon));
     item.setOnAction(e -> restoreSelected());
     return item;
   }
-
   private static MenuItem createTrashItem(String icon) {
     MenuItem item = new MenuItem("Enviar a papelera", createIconItem(icon));
     item.setAccelerator(FileFX.TRASH[0]);
     item.setOnAction(e -> trashFiles(parseCenterNodesToFiles(centerPane.selectedItems)));
     return item;
   }
-
   private static MenuItem createRemoveItem(String icon) {
     MenuItem item = new MenuItem("Eliminar", createIconItem(icon));
     item.setAccelerator(REMOVE[0]);
     item.setOnAction(e -> removeFiles(parseCenterNodesToFiles(centerPane.selectedItems)));
     return item;
   }
-
   private static MenuItem createExtracHereItem(String icon) {
     MenuItem item = new MenuItem("Extraer aqui", createIconItem(icon));
     item.setOnAction(e -> extractHere(centerPane.selectionModel.getSelectedItem().getFileProperties()));
     return item;
   }
-
   private static MenuItem createCompressItem(String icon) {
     MenuItem item = new MenuItem("Comprimir", createIconItem(icon));
     item.setOnAction(e -> {
@@ -348,14 +313,12 @@ public class Lib {
     });
     return item;
   }
-
   private static MenuItem createOpenShellItem(String icon) {
     MenuItem item = new MenuItem("Abrir una terminal ", createIconItem(icon));
     item.setAccelerator(OPEN_SHELL[0]);
     item.setOnAction(e -> openShell());
     return item;
   }
-
   private static Label createIconItem(String text) {
     Label icon = new Label(text);
     icon.setFont(nerdFont);
@@ -366,19 +329,15 @@ public class Lib {
   public static void updateTop() {
     topPane.update();
   }
-
   public static void updateRight() {
     rightPane.update();
   }
-
   public static void updateLeft() {
     leftPane.update();
   }
-
   public static void updateCenter() {
     centerPane.update();
   }
-
   public static void updateAll() {
     updateTop();
     updateLeft();
@@ -391,7 +350,6 @@ public class Lib {
   public static void printInfo(String message) {
     System.out.println("[" + BLUE + "INFO" + RESET + "]     " + message);
   }
-
   public static void printError(String message, Exception e) {
     showAlert(new Alert(Alert.AlertType.ERROR), message, "ERROR");
 
@@ -411,11 +369,9 @@ public class Lib {
       }
     }
   }
-
   public static void printOk(String message) {
     System.out.println("[" + GREEN + " OK " + RESET + "]     " + GREEN + message + RESET);
   }
-
   public static void printExecute(String message) {
     System.out.println("[" + YELLOW + "EXEC" + RESET + "]     " + message);
   }
@@ -434,7 +390,6 @@ public class Lib {
       updateRight();
     }
   }
-
   public static void forward() {
     if (!forwardBuffer.isEmpty()) {
       printExecute("Volviendo");
@@ -448,7 +403,6 @@ public class Lib {
       updateRight();
     }
   }
-
   public static void parent() {
     if (!path.equals("/")) {
       printExecute("Yendo al parent");
@@ -495,7 +449,6 @@ public class Lib {
       updateRight();
     }
   }
-
   public static void createNewDirectory(File directory) {
     if (!path.startsWith(TRASH + "files")) {
       try {
@@ -511,7 +464,6 @@ public class Lib {
       updateRight();
     }
   }
-
   public static void createLink(File file) {
     try {
       Optional<String> option = showAlert(new TextInputDialog(), "Nombre del enlace", "Crear enlace");
@@ -572,7 +524,6 @@ public class Lib {
       }
     }
   }
-
   public static void copyFilesToClipBoard(File[] files, boolean isCut) {
     if (files != null) {
       Lib.isCut = isCut;
@@ -625,7 +576,6 @@ public class Lib {
       centerPane.selectFirst();
     }
   }
-
   public static File[] getClipboardFiles() {
     try {
       printExecute("Leyendo porpapeles");
@@ -646,7 +596,6 @@ public class Lib {
       return null;
     }
   }
-
   public static String getClipboard() {
     try {
       Process process = new ProcessBuilder("xclip", "-o", "-selection", "c").start();
@@ -705,7 +654,6 @@ public class Lib {
         file.delete();
     }
   }
-
   public static void restoreSelected() {
     if (centerPane.selectedItems != null && !centerPane.selectedItems.isEmpty()) {
       File[] files = new File[centerPane.selectedItems.size()];
@@ -752,7 +700,6 @@ public class Lib {
       removeFiles(files);
     }
   }
-
   private static void createTrashInfo(File[] files) {
     if (files != null) {
       for (File file : files) {
@@ -838,7 +785,6 @@ public class Lib {
       printError("Error al descomprimir archivo '" + file.getName() + "'", e);
     }
   }
-
   public static void compress(File[] files) {
     String[] paths = new String[files.length];
     for (int i = 0; i < files.length; i++) {

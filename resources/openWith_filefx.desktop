@@ -2,7 +2,7 @@
 Name=File FX
 Comment=Explorador de archivos creado por el mejor programador
 Exec=filefx %f
-Icon=/usr/share/filefx/icons/icon.png
+Icon=/usr/share/filefx/icon.png
 Type=Application
 Categories=Utility;Core;
 Terminal=false

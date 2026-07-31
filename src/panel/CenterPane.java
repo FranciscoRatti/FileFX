@@ -84,13 +84,17 @@ public class CenterPane extends ListView<CenterNode> {
         // Acciones generales
         setOnMouseClicked(e -> {
             MouseButton button = e.getButton();
+            EventTarget target = e.getTarget();
 
             if (button.equals(MouseButton.MIDDLE)) parent();
             else if (button.equals(MouseButton.BACK)) backward();
             else if (button.equals(MouseButton.FORWARD)) forward();
             else if (button.equals(MouseButton.SECONDARY)) showMenu(mainPane, e.getScreenX(), e.getScreenY());
+            else if (button.equals(MouseButton.PRIMARY)) {
+                if (isAnyShow()) hideAll();
+                updateRight();
+            }
 
-            updateRight();
             e.consume();
         });
     }
@@ -343,12 +347,11 @@ public class CenterPane extends ListView<CenterNode> {
     public void selectFirst() {
         if (!items.isEmpty()) {
             int size = items.size();
-            if (SHOW_THIS && SHOW_PARENT && size > 2)
-                selectionModel.select(2);
-            else if ((SHOW_THIS || SHOW_PARENT) && size > 1)
-                selectionModel.select(2);
-            else
-                selectionModel.selectFirst();
+
+            if ((SHOW_THIS && SHOW_PARENT) && size > 2) selectionModel.select(2);
+            else if ((SHOW_THIS ^ SHOW_PARENT) && size > 1) selectionModel.select(1);
+            else if (!SHOW_THIS && !SHOW_PARENT) selectionModel.selectFirst();
+            else selectThis();
 
             scrollTo(0);
         } else {
