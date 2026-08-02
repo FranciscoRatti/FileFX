@@ -13,7 +13,7 @@ import static panel.RightPane.*;
 
 public class Scene extends javafx.scene.Scene {
     public Scene() {
-        super(mainPane, Double.parseDouble(dynamicValues.getProperty("width")), Double.parseDouble(dynamicValues.getProperty("height")));
+        super(mainPane, Double.parseDouble(initValues.getProperty("width")), Double.parseDouble(initValues.getProperty("height")));
 
         printInfo("Cargando hoja de estilos");
         getStylesheets().add("file://"+CONFIG_PATH+"theme.css");

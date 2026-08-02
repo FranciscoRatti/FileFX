@@ -22,7 +22,7 @@ import static panel.RightPane.*;
 public class FileFX extends javafx.application.Application {
     public static Properties config;
     public static Properties keyBinding;
-    public static Properties dynamicValues;
+    public static Properties initValues;
     public static Properties iconsMime;
     public static Properties iconsExtension;
     public static Properties colorsMime;
@@ -49,6 +49,25 @@ public class FileFX extends javafx.application.Application {
     public void start(Stage s) {
         nerdFont = Font.loadFont("file://" + ABSOLUTE_PATH + "0xProtoNerdFontMono-Regular.ttf", 16);
 
+        printInfo("Cargando archivo de valores iniciales");
+        try (FileInputStream fileInputStream = new FileInputStream(CONFIG_PATH+"init_values.properties")) {
+            initValues = new Properties();
+            initValues.load(fileInputStream);
+
+            initValues.putIfAbsent("width", "950");
+            initValues.putIfAbsent("height", "525");
+            initValues.putIfAbsent("init_path", HOME);
+            initValues.putIfAbsent("init_selection", "");
+            initValues.putIfAbsent("right_width", "200.0");
+            initValues.putIfAbsent("left_width", "130.0");
+
+            RIGHT_WIDTH = Double.parseDouble( initValues.getProperty("right_width"));
+            LEFT_WIDTH = Double.parseDouble(initValues.getProperty("left_width"));
+        } catch (IOException e) {
+            printError("No se pudo leer el archivo de valores iniciales", e);
+            System.exit(0);
+        }
+
         printInfo("Cargando archivo de configuracion");
         try (Reader reader = new InputStreamReader(new FileInputStream(CONFIG_PATH+"config.properties"), StandardCharsets.UTF_8)) {
             config = new Properties();
@@ -61,7 +80,7 @@ public class FileFX extends javafx.application.Application {
 
             TOP_BUTTONS = splitTwoTimes((String) config.getOrDefault("top_buttons", "[{back;\uF177},{forward;\uF178},{parent;\uDB81\uDE45},{search},{clean;\uDB80\uDCE2},{reload;\uF2F1}]"));
 
-            RIGHT_WIDTH = Double.parseDouble((String) config.getOrDefault("right_width", "200.0"));
+            SAVE_RIGHT_WIDTH = Boolean.parseBoolean((String) config.getOrDefault("show_right_width", "false"));
             SHOW_RIGHT_PANE = Boolean.parseBoolean((String) config.getOrDefault("show_right_pane", "true"));
             SHOW_MINIATURA = Boolean.parseBoolean((String) config.getOrDefault("show_miniatura", "false"));
             FILL_MINIATURA_LIKE_ICON = Boolean.parseBoolean((String) config.getOrDefault("fill_miniatura_like_icon", "true"));
@@ -71,7 +90,7 @@ public class FileFX extends javafx.application.Application {
             BOTTOM_BUTTONS = split((String) config.getOrDefault("bottom_buttons", "[order,filter]"));
             ORDER_ICONS = split((String) config.getOrDefault("order_icons", "[\uEB69,\uF073,\uDB83\uDC8E,\uEBB9]"));
 
-            LEFT_WIDTH = Double.parseDouble((String) config.getOrDefault("left_width", "135.0"));
+            SAVE_LEFT_WIDTH = Boolean.parseBoolean((String) config.getOrDefault("show_left_width", "false"));
             SHOW_PLACES = Boolean.parseBoolean((String) config.getOrDefault("show_places", "true"));
             PLACES = splitTwoTimes((String) config.getOrDefault("places", "[{Home;\uF46D;~/},{Descargas;\uF019;~/Downloads/},{Documentos;\uDB85\uDD17;~/Documents/},{Imagenes;\uF03E;~/Images/},{Papelera;\uF014;~/.local/share/Trash/files/},{Config;\uF013;~/.config/filefx/}]"));
             SHOW_DEVICES = Boolean.parseBoolean((String) config.getOrDefault("show_devices", "true"));
@@ -150,22 +169,7 @@ public class FileFX extends javafx.application.Application {
             System.exit(0);
         }
 
-        printInfo("Cargando archivo de valores iniciales");
-        try (FileInputStream fileInputStream = new FileInputStream(CONFIG_PATH+"init_values.properties")) {
-            dynamicValues = new Properties();
-            dynamicValues.load(fileInputStream);
-        } catch (IOException e) {
-            printError("No se pudo leer el archivo de valores iniciales", e);
-            System.exit(0);
-        }
-
-        printInfo("Verificando que existan valores iniciales");
-        dynamicValues.putIfAbsent("width", "1200");
-        dynamicValues.putIfAbsent("height", "700");
-        dynamicValues.putIfAbsent("init_path", HOME);
-        dynamicValues.putIfAbsent("init_selection", "");
-
-        String initPath = dynamicValues.getProperty("init_path");
+        String initPath = initValues.getProperty("init_path");
         if (path.isEmpty()) {
             if (initPath.charAt(0) == '~') {
                 path = HOME+initPath.substring(1);
@@ -237,25 +241,37 @@ public class FileFX extends javafx.application.Application {
         stage.setTitle("Explorador de archivos");
         stage.setOnCloseRequest(e -> {
             printExecute("Cerrando ventana");
-            if (SAVE_BOUNDS || SAVE_PATH || SAVE_SELECTION) {
+            if (SAVE_BOUNDS || SAVE_PATH || SAVE_SELECTION || SAVE_RIGHT_WIDTH || SAVE_LEFT_WIDTH) {
                 printInfo("Actualizando valores dinamicos:");
                 try (FileOutputStream output = new FileOutputStream(CONFIG_PATH+"init_values.properties")) {
                     String width = String.valueOf(stage.getWidth());
                     String height = String.valueOf(stage.getHeight());
                     String selection = centerPane.selectionModel.getSelectedItem() == null ? "" : centerPane.selectionModel.getSelectedItem().getName();
-
-                    printInfo("   height="+height);
-                    printInfo("   width="+width);
-                    printInfo("   init_path="+path);
-                    printInfo("   init_selection="+selection);
                     
                     if (SAVE_BOUNDS) {
-                        dynamicValues.replace("width", width);
-                        dynamicValues.replace("height", height);
+                        printInfo("   height="+height);
+                        printInfo("   width="+width);
+                        initValues.replace("width", width);
+                        initValues.replace("height", height);
                     }
-                    if (SAVE_PATH) dynamicValues.replace("init_path", path);
-                    if (SAVE_SELECTION) dynamicValues.replace("init_selection", selection);
-                    dynamicValues.store(output, "");
+                    if (SAVE_PATH) {
+                        printInfo("   init_path="+path);
+                        initValues.replace("init_path", path);
+                    }
+                    if (SAVE_SELECTION) {
+                        printInfo("   init_selection="+selection);
+                        initValues.replace("init_selection", selection);
+                    }
+                    if (SAVE_RIGHT_WIDTH) {
+                        printInfo("   right_width="+RIGHT_WIDTH);
+                        initValues.replace("right_width", String.valueOf(RIGHT_WIDTH));
+                    }
+                    if (SAVE_LEFT_WIDTH) {
+                        printInfo("   left_width="+LEFT_WIDTH);
+                        initValues.replace("left_width", String.valueOf(LEFT_WIDTH));
+                    }
+
+                    initValues.store(output, "");
                 } catch (IOException ex) {
                     printError("Error al actualizar datos en init_values.properties", ex);
                 }
@@ -268,8 +284,8 @@ public class FileFX extends javafx.application.Application {
         printInfo("Mostrando escenario");
         stage.show();
         Platform.runLater(() -> {
-            stage.setWidth(Double.parseDouble(dynamicValues.getProperty("width")));
-            stage.setHeight(Double.parseDouble(dynamicValues.getProperty("height")));
+            stage.setWidth(Double.parseDouble(initValues.getProperty("width")));
+            stage.setHeight(Double.parseDouble(initValues.getProperty("height")));
             updateRight();
         });
         printOk("Aplicacion iniciada con exito");
@@ -303,7 +319,50 @@ public class FileFX extends javafx.application.Application {
         }
 
         return keys;
-}
+    }
+
+    // Valores iniciales
+    public static double RIGHT_WIDTH;
+    public static double LEFT_WIDTH;
+
+    // Configuracion
+    public static String TERMINAL;
+    public static boolean SAVE_BOUNDS;
+    public static boolean SAVE_PATH;
+    public static boolean SAVE_SELECTION;
+
+    public static String[][] TOP_BUTTONS;
+
+    public static boolean SAVE_RIGHT_WIDTH;
+    public static boolean SHOW_RIGHT_PANE;
+    public static boolean SHOW_MINIATURA;
+    public static boolean FILL_MINIATURA_LIKE_ICON;
+    public static boolean SHOW_INSIDE_DIRECTORIES;
+    public static boolean SHOW_INSIDE_FILES;
+
+    public static String[] BOTTOM_BUTTONS;
+    public static String[] ORDER_ICONS;
+
+    public static boolean SAVE_LEFT_WIDTH;
+    public static boolean SHOW_PLACES;
+    public static String[][] PLACES;
+    public static boolean SHOW_DEVICES;
+    public static String[][] PARTITION_ICONS;
+    public static boolean SHOW_UNMOUNTED;
+    public static String UNMOUNT_ICON;
+
+    public static boolean IS_DIRECTORY_FIRST;
+    public static boolean SHOW_HIDDEN;
+    public static boolean SHOW_THIS;
+    public static boolean SHOW_PARENT;
+    public static boolean FILL_TEXT_FILE_LIKE_ICON;
+    public static boolean FILL_TEXT_DIR_LIKE_ICON;
+    public static ORDER DEFAULT_ORDER;
+    public static String[][] CUSTOM_ORDER;
+    public static COLUMNS[] COLUMNS;
+
+    public static String[] CONTEXT_MENU_ICONS;
+    public static boolean CHECK_CLIPBOARD_PASTE;
 
     // Combinaciones de tecla
     public static KeyCombination[] CUT;
@@ -346,46 +405,6 @@ public class FileFX extends javafx.application.Application {
 
     public static KeyCombination[] CREATE_LINK;
     public static KeyCombination[] OPEN_SHELL;
-
-
-    // Configuracion
-    public static String TERMINAL;
-    public static boolean SAVE_BOUNDS;
-    public static boolean SAVE_PATH;
-    public static boolean SAVE_SELECTION;
-
-    public static String[][] TOP_BUTTONS;
-
-    public static double RIGHT_WIDTH;
-    public static boolean SHOW_RIGHT_PANE;
-    public static boolean SHOW_MINIATURA;
-    public static boolean FILL_MINIATURA_LIKE_ICON;
-    public static boolean SHOW_INSIDE_DIRECTORIES;
-    public static boolean SHOW_INSIDE_FILES;
-
-    public static String[] BOTTOM_BUTTONS;
-    public static String[] ORDER_ICONS;
-
-    public static double LEFT_WIDTH;
-    public static boolean SHOW_PLACES;
-    public static String[][] PLACES;
-    public static boolean SHOW_DEVICES;
-    public static String[][] PARTITION_ICONS;
-    public static boolean SHOW_UNMOUNTED;
-    public static String UNMOUNT_ICON;
-
-    public static boolean IS_DIRECTORY_FIRST;
-    public static boolean SHOW_HIDDEN;
-    public static boolean SHOW_THIS;
-    public static boolean SHOW_PARENT;
-    public static boolean FILL_TEXT_FILE_LIKE_ICON;
-    public static boolean FILL_TEXT_DIR_LIKE_ICON;
-    public static ORDER DEFAULT_ORDER;
-    public static String[][] CUSTOM_ORDER;
-    public static COLUMNS[] COLUMNS;
-
-    public static String[] CONTEXT_MENU_ICONS;
-    public static boolean CHECK_CLIPBOARD_PASTE;
 
     // Colores
     public static Color FOCUS_COLOR;

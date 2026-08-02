@@ -3,6 +3,7 @@ package panel;
 import entity.PartitionProperties;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;

@@ -60,7 +60,7 @@ public class CenterPane extends ListView<CenterNode> {
         update();
 
         Platform.runLater(() -> {
-            String initSelect = dynamicValues.getProperty("init_selection");
+            String initSelect = initValues.getProperty("init_selection");
             if (initSelect != null) {
                 for (CenterNode label : getItems()) {
                     if (initSelect.equals(label.getName())) {

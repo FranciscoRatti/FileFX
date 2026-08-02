@@ -53,10 +53,11 @@
 
 /* RIGHT PANE */
 
-#RightPane {
-    -fx-border-style: solid;
-    -fx-border-width: 0 0 0 2;
-    -fx-border-color: #131313;
+#RightPane {}
+
+#RightPane_border {
+    -fx-min-width: 2;
+    -fx-background-color: #131313;
 }
 
 #RightPane_pane {
@@ -201,9 +202,11 @@
 
 #LeftPane {
     -fx-background-color: #232323FF;
-    -fx-border-style: solid;
-    -fx-border-width: 0 2 0 0;
-    -fx-border-color: #131313;
+}
+
+#LeftPane_border {
+    -fx-min-width: 2;
+    -fx-background-color: #131313;
 }
 
 #Left_title {

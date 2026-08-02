@@ -3,12 +3,14 @@ package panel;
 import entity.FileProperties;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import main.FileFX;
 import main.Lib;
 import node.CenterNode;
 import node.RightNode;
@@ -23,8 +25,10 @@ import static panel.MainPane.*;
 
 public class RightPane extends ScrollPane {
     private static StackPane miniaturaPane;
-    private static Text iconLabel;
+    private static Image image;
+    private static ImageView miniatura;
     private static ScrollPane insidePane;
+    private static Text iconLabel;
     private static TextArea textNode;
 
     private static RightNode nameNode;
@@ -46,9 +50,10 @@ public class RightPane extends ScrollPane {
 
         VBox pane = new VBox();
         pane.setId("RightPane_pane");
-        pane.setPrefWidth(RIGHT_WIDTH);
-        setContent(pane);
+        pane.setMaxWidth(RIGHT_WIDTH);
         ObservableList<Node> children = pane.getChildren();
+
+        setContent(pane);
 
         Button close = new Button("x");
         close.setId("Right_close");
@@ -58,6 +63,9 @@ public class RightPane extends ScrollPane {
         miniaturaPane = new StackPane();
         miniaturaPane.setMinSize(RIGHT_WIDTH, RIGHT_WIDTH);
         miniaturaPane.setMaxSize(RIGHT_WIDTH, RIGHT_WIDTH);
+
+        miniatura = new ImageView();
+        miniatura.setPreserveRatio(true);
 
         iconLabel = new Text();
         iconLabel.setFont(nerdFont);
@@ -114,6 +122,7 @@ public class RightPane extends ScrollPane {
             // Miniatura
             String extensionText = centerPane.selectionModel.getSelectedItem().getExtension();
             miniaturaPane.getChildren().clear();
+            image = null;
             insidePane.setContent(null);
             textNode = null;
 
@@ -126,13 +135,10 @@ public class RightPane extends ScrollPane {
                     extensionText.equals("png")
                 )
             ) {
-                Image image = new Image("file://" + properties.getAbsolutePath());
-                ImageView miniatura = new ImageView(image);
-                miniatura.setPreserveRatio(true);
+                image = new Image("file://" + properties.getAbsolutePath());
+                miniatura.setImage(image);
 
-                int imageWidth = (int) image.getWidth();
-                int imageHeight = (int) image.getHeight();
-                if (imageWidth < imageHeight) miniatura.setFitHeight(RIGHT_WIDTH - 3);
+                if (image.getWidth() < image.getHeight()) miniatura.setFitHeight(RIGHT_WIDTH - 3);
                 else miniatura.setFitWidth(RIGHT_WIDTH - 3);
 
                 miniaturaPane.getChildren().add(miniatura);
@@ -234,6 +240,18 @@ public class RightPane extends ScrollPane {
             );
             ownerNode.value.setText(properties.getOwner());
             groupNode.value.setText(properties.getGroup());
+        }
+    }
+
+    public static void setSize() {
+        miniaturaPane.setMinSize(RIGHT_WIDTH, RIGHT_WIDTH);
+        miniaturaPane.setMaxSize(RIGHT_WIDTH, RIGHT_WIDTH);
+        insidePane.setMinSize(RIGHT_WIDTH, RIGHT_WIDTH);
+        insidePane.setMaxSize(RIGHT_WIDTH, RIGHT_WIDTH);
+
+        if (image != null) {
+            if (image.getWidth() < image.getHeight()) miniatura.setFitHeight(RIGHT_WIDTH - 3);
+            else miniatura.setFitWidth(RIGHT_WIDTH - 3);
         }
     }
 
