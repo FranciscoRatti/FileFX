@@ -37,13 +37,8 @@ public class Lib {
   public static final String YELLOW = "\u001B[33m";
   public static final String BLUE = "\u001B[34m";
 
-  public enum ORDER {
-    NAME, DATE, SIZE, MIME
-  }
-
-  public enum COLUMNS {
-    PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATED, TYPE
-  }
+  public enum ORDER {NAME, DATE, SIZE, MIME}
+  public enum COLUMNS {PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATED, TYPE}
 
   public static final LinkedList<String> backBuffer = new LinkedList<>();
   public static final LinkedList<String> forwardBuffer = new LinkedList<>();

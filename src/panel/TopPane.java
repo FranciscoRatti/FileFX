@@ -24,15 +24,18 @@ public class TopPane extends HBox {
     private static Button clean;
     private static Button reload;
 
+    public enum BUTTONS {BACKWARD,FORWARD,PARENT,SEARCH,CLEAN,RELOAD}
+
     public TopPane() {
         setId("TopPane");
 
         for (String[] button : TOP_BUTTONS) {
-            switch (button[0]) {
-                case "back" -> back = new Button(button[1], "Deshacer", "TopNode", e -> backward());
-                case "forward" -> forward = new Button(button[1], "Rehacer", "TopNode", e -> forward());
-                case "parent" -> parent = new Button(button[1], "Ir arriba", "TopNode", e -> parent());
-                case "search" -> {
+            BUTTONS top_button = BUTTONS.valueOf(button[0]);
+            switch (top_button) {
+                case BACKWARD -> back = new Button(button[1], "Deshacer", "TopNode", e -> backward());
+                case FORWARD -> forward = new Button(button[1], "Rehacer", "TopNode", e -> forward());
+                case PARENT -> parent = new Button(button[1], "Ir arriba", "TopNode", e -> parent());
+                case SEARCH -> {
                     search = new TextField();
                     search.setId("Top_search");
                     search.setPrefColumnCount(200);
@@ -64,7 +67,7 @@ public class TopPane extends HBox {
                         }
                     });
                 }
-                case "clean" -> {
+                case CLEAN -> {
                     clean = new Button(button[1], "Limpiar papelera", "TopNode", e -> restoreSelected());
                     clean.setOnAction(e -> {
                         Optional<ButtonType> result = showAlert(new Alert(Alert.AlertType.CONFIRMATION), "Todos los archivos de papelera\nseran eliminados permanentemente", "ADVERTENCIA");
@@ -91,7 +94,7 @@ public class TopPane extends HBox {
                         }
                     });
                 }
-                case "reload" -> reload = new Button(button[1], "Recargar", "TopNode", e -> updateAll());
+                case RELOAD -> reload = new Button(button[1], "Recargar", "TopNode", e -> updateAll());
             }
         }
 
@@ -105,19 +108,20 @@ public class TopPane extends HBox {
         children.clear();
 
         for (String[] button : TOP_BUTTONS) {
-            switch (button[0]) {
-                case "back"    -> children.add(back);
-                case "forward" -> children.add(forward);
-                case "parent"  -> children.add(parent);
-                case "search"  -> {
+            BUTTONS top_button = BUTTONS.valueOf(button[0]);
+            switch (top_button) {
+                case BACKWARD    -> children.add(back);
+                case FORWARD -> children.add(forward);
+                case PARENT  -> children.add(parent);
+                case SEARCH  -> {
                     children.add(search);
                     search.setText(
                             path.startsWith(Lib.TRASH+"files") ? "trash"+path.substring(HOME.length()+25) :
                             path.startsWith(HOME) ? "~"+ (path.length() <= HOME.length() ? "/" : path.substring(HOME.length())) :
                             path);
                 }
-                case "clean" -> {if (path.startsWith(Lib.TRASH+"files")) children.add(clean);}
-                case "reload"  -> children.add(reload);
+                case CLEAN -> {if (path.startsWith(Lib.TRASH+"files")) children.add(clean);}
+                case RELOAD  -> children.add(reload);
             }
         }
     }

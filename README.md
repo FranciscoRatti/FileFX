@@ -96,15 +96,16 @@ Todo se configura a traves de cinco archivos de configuracion en **~/.config/fil
 archivos comparten la sintaxis de "**nombre**=**valor**", a continuacion se enumeran los tipos de
 datos que pueden ir en _valor_ seguido de los archivos y sus configuraciones:
 
-|    Tipo    |                                         Valor                                          |
-|:----------:|:--------------------------------------------------------------------------------------:|
-|  boolean   |                                      true o false                                      |
-|   double   |                                    Numero con coma                                     |
-|   String   |                                      Texto plano                                       |
-|  String[]  |                  Lista de texto, su<br/>sintaxis es [valor,valor,...]                  |
-| String[][] | Lista de listas de texto, su<br/>sintaxis es [{valor;valor;...},{valor;valor;...},...] |
-|   ORDER    |                                NAME, DATE, SIZE o MIME                                 |
-|  COLUMNS   |                PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATED, TYPE                |
+|    Tipo     |                                         Valor                                          |
+|:-----------:|:--------------------------------------------------------------------------------------:|
+|   boolean   |                                      true o false                                      |
+|   double    |                                    Numero con coma                                     |
+|   String    |                                      Texto plano                                       |
+|  String[]   |                  Lista de texto, su<br/>sintaxis es [valor,valor,...]                  |
+| String[][]  | Lista de listas de texto, su<br/>sintaxis es [{valor;valor;...},{valor;valor;...},...] |
+|    ORDER    |                                NAME, DATE, SIZE o MIME                                 |
+|   COLUMNS   |                PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATED, TYPE                |
+| TOP_BUTTONS |                    BACKWARD, FORWARD, PARENT, SEARCH, CLEAN, RELOAD                    |
 
 - **_config.properties_**: Configuraciones principales.
   - **General :**
@@ -113,11 +114,10 @@ datos que pueden ir en _valor_ seguido de los archivos y sus configuraciones:
     - `save_path = boolean` : Si es true guarda la ultima ubicación.
     - `save_selection = boolean` : Si es true guarda el ultimo item seleccionado.
   - **Top Pane :**
-    - `top_buttons = String[][]` : Define los botones que aparecerán en el TopPane. Los posibles
-      botones son **back**, **forward**, **parent**, **search** (sin icono), **clean**, **reload**.
-      La sintaxis es _[{nombre;icono},{nombre;icono},...]_
+    - `top_buttons = String[][]` : Define los botones que aparecerán en el TopPane. La sintaxis es
+      _[{boton;icono},{boton;icono},...]_, el primer valor es TOP_BUTTON y el segundo String.
   - **Right Pane :**
-    - `right_width = double` : Ancho fijo del RightPane.
+    - `show_right_width = true` : Si es true se guarda el tamaño del panel derecho.
     - `show_right_pane = boolean` : Define si se muestra el RightPane al iniciar.
     - `show_miniatura = boolean` : Dentro del RightPane hay una miniatura, si es true en caso de
       seleccionar una imagen esta se mostrará, si es false se muestra siempre el icono.
@@ -133,7 +133,7 @@ datos que pueden ir en _valor_ seguido de los archivos y sus configuraciones:
     - `order_icons = String[]` : Define los iconos de los botones para cambiar el orden. El orden es
       [NAME,DATE,SIZE,MIME].
   - **Left Pane :**
-    - `left_width = double` : Ancho fijo del LeftPane.
+    - `show_left_width = true` : Si es true se guarda el tamaño del panel izquierda.
     - `show_places = boolean` : Define si se muestran las ubicaciones en el LeftPane.
     - `places = String[][]` : Define ubicaciones personalizadas que aparecerán en Lugares en el
       LeftPane. Su sintaxis es _[{nombre;icono;direccion},{nombre;icono;direccion},...]_.
@@ -171,6 +171,8 @@ datos que pueden ir en _valor_ seguido de los archivos y sus configuraciones:
   - `width = double` : Ancho inicial.
   - `init_path = String` : Ubicación inicial.
   - `init_selection = String` : Selección inicial, puede estar vacío.
+  - `right_width = double` : Ancho inicial del panel derecho.
+  - `left_width = double` : Ancho inicial del panel izquierdo.
 
 - **_key_binding.properties_**: Atajos de teclado. No distingue mayúsculas ni minúsculas y se pueden
   definir varias separadas por coma. Los nombres de cada tecla son los mismo que aparecen en la
