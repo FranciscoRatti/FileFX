@@ -1,19 +1,33 @@
+export DIR=$(pwd)/FileFX
+
+# Configuracion
 mkdir -p ~/.config/filefx
 
-cp -n resources/config.properties ~/.config/filefx/
-cp -n resources/key_binding.properties ~/.config/filefx/
-cp -n resources/init_values.properties ~/.config/filefx/
-cp -n resources/icons_binding.properties ~/.config/filefx/
-cp -n resources/colors_binding.properties ~/.config/filefx/
-cp -n resources/theme.css ~/.config/filefx/
+cp -n $DIR/resources/config.properties ~/.config/filefx/
+cp -n $DIR/resources/key_binding.properties ~/.config/filefx/
+cp -n $DIR/resources/init_values.properties ~/.config/filefx/
+cp -n $DIR/resources/icons_binding.properties ~/.config/filefx/
+cp -n $DIR/resources/colors_binding.properties ~/.config/filefx/
+cp -n $DIR/resources/theme.css ~/.config/filefx/
 
-sudo -p mkdir /usr/share/filefx/
+# Estaticos
+sudo mkdir -p /usr/share/filefx/
 
-sudo cp resources/*.ttf /usr/share/filefx/
-sudo cp resources/icon.png /usr/share/filefx/
-sudo cp resources/notFound.png /usr/share/filefx/
-sudo cp out/filefx /usr/bin/
+sudo cp $DIR/resources/*.ttf /usr/share/filefx/
+sudo cp $DIR/resources/icon.png /usr/share/filefx/
+sudo cp $DIR/resources/notFound.png /usr/share/filefx/
 
-sudo -n cp resources/filefx.desktop /usr/share/applications/
-sudo -n cp resources/openWith_filefx.desktop /usr/share/applications/
+# Dinamicos
+sudo mkdir -p /var/lib/filefx/
+cp -n $DIR/resources/metadata.properties /var/lib/filefx/
+sudo chmod 777
+
+# Binarios
+sudo mkdir -p /usr/lib/filefx/
+sudo cp $DIR/shell/update.sh /usr/lib/filefx/
+sudo cp $DIR/out/filefx /usr/bin/
+
+# Entradas
+sudo -n cp $DIR/resources/filefx.desktop /usr/share/applications/
+sudo -n cp $DIR/resources/openWith_filefx.desktop /usr/share/applications/
 sudo update-desktop-database

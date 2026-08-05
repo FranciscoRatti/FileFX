@@ -5,22 +5,24 @@ imagen nativa con **Liberica NIK** (Basado en GraalVM), disponible solo en Linux
 
 ![vista-previa.png](images/vista-previa.png)
 
-Para los iconos utiliza una **Nerd fonts**, estos se pueden encontrar en la [cheat sheet](https://www.nerdfonts.com/cheat-sheet). <br>
-Esta pensado para utilizarse con **atajos de teclado**, ser muy configurable y modificar contenido
-de archivos rapidamente. Todo esto inspirado en **Yazi**. <br>
-Tiene previsualization de imágenes, soporta png, jpg, jpeg, bmp, gif y svg. <br>
-Haciendo click derecho en las particiones o discos (Panel izquierdo) se pueden ver sus
-caracteristicas. <br>
-El estilo de la aplicacion esta definido en un archivo **css**, pensado para que la comunidad haga
-sus temas y pueda compartilos eficazmente.
-
-
 ### Indices
 
+- [Caracteristicas](#caracteristicas)
 - [Depedencias](#dependencias)
 - [Instalación](#instalacion)
 - [Configuración](#configuracion)
 - [Tema](#tema)
+
+## Caracteristicas
+
+Para los iconos utiliza una **Nerd fonts**, estos se pueden encontrar en la [cheat sheet](https://www.nerdfonts.com/cheat-sheet), esta
+pensado para utilizarse con **atajos de teclado**, ser muy configurable y modificar contenido de
+archivos rapidamente, todo esto inspirado en Yazi, tiene **previsualization de imágenes**, soporta png,
+jpg, jpeg, bmp, gif y svg, haciendo click derecho en las particiones o discos (Panel izquierdo) se
+pueden ver sus caracteristicas. <br> 
+El estilo de la aplicacion esta definido en **un archivo css**, pensado para que la comunidad haga
+sus temas y pueda compartilos eficazmente. <br>
+Se **actualiza automaticamente** cada tres dias o mas directamente desde github.
 
 ## Dependencias
 
@@ -54,7 +56,7 @@ Para obtener los archivos podés descargar el archivo llamado **[FileFX.zip](htt
 solo los archivos necesarios, desde _github_ o usando _curl_ o _wget_.
 
 ```
-curl -O https://raw.githubusercontent.com/FranciscoRatti/FileFX/main/FileFX.zip
+curl -L -O https://github.com/FranciscoRatti/FileFX/releases/download/latest/FileFX.zip
 ```
 
 Luego hay que descomprimir el archivo ejecutando:
@@ -67,13 +69,13 @@ Dentro de los archivos se encuentra un **install.sh** que copia los archivos bin
 estáticos y archivos de configuración a sus ubicaciones correctas.
 
 ```
-./FileFX/install.sh
+./FileFX/shell/install.sh
 ```
 
 Por último podes borrar los archivos de instalacion utilizando:
 
 ```
-rm -Rf FileFX
+rm -rf FileFX
 ```
 
 Para ejecutar podés usar el menu de aplicaciones que es lo mismo que ejecutar
@@ -87,8 +89,10 @@ Para **DESINSTALAR** la aplicacion se deben borrar los directorios creados con _
 archivos _.desktop_ y el binario.
 
 ```
-sudo rm -R ~/.config/filefx /usr/share/filefx /usr/share/applications/openWith_filefx.desktop /usr/share/applications/filefx.desktop /usr/bin/filefx
+sudo rm -R /usr/share/filefx /usr/lib/filefx /var/lib/filefx /usr/share/applications/openWith_filefx.desktop /usr/share/applications/filefx.desktop /usr/bin/filefx
 ```
+
+Si queres que quede todo limpio tambien podes borrar la configuracion ejecutando `rm -R ~/.config/filefx`
 
 ## Configuración
 

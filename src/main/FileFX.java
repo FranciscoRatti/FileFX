@@ -13,6 +13,7 @@ import stage.OthersApplicationsStage;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.*;
 
 import static main.Lib.*;
@@ -39,6 +40,8 @@ public class FileFX extends javafx.application.Application {
     public static Stage stage;
 
     public static void main(String[] args) {
+        new Thread(() -> checkUpdate()).start();
+
         if (args.length > 0) {
             path = args[0];
             if (path.charAt(path.length()-1) != '/') path += "/";
@@ -292,6 +295,40 @@ public class FileFX extends javafx.application.Application {
 
         printInfo("Cargando applicaciones para abrir con");
         othersApplicationsStage = new OthersApplicationsStage();
+    }
+
+    private static void checkUpdate() {
+        Properties metadata = new Properties();
+
+        try (FileInputStream input = new FileInputStream("/var/lib/filefx/metadata.properties")) {
+            metadata.load(input);
+            LocalDate lastCheck = LocalDate.parse(metadata.getProperty("last_check"));
+            LocalDate now = LocalDate.now();
+
+            // Si hace mas de dos dias que no se chequea
+            if (lastCheck.isBefore(now.minusDays(2))) {
+
+                // Actualizar
+                ProcessBuilder pb = new ProcessBuilder(LIB_PATH+"update.sh");
+                pb.redirectErrorStream(true);
+                Process process = pb.start();
+
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        System.out.println(line);
+                    }
+                }
+
+                // Guardar last_check
+                try (FileOutputStream output = new FileOutputStream("/var/lib/filefx/metadata.properties")) {
+                    metadata.put("last_check", now.toString());
+                    metadata.store(output, "");
+                }
+            }
+        } catch (Exception e) {
+            printError("Error al actualizar aplicacion", e);
+        }
     }
 
     private String[] split(String text) {
