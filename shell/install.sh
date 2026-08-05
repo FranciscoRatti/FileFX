@@ -19,8 +19,8 @@ sudo cp $DIR/resources/notFound.png /usr/share/filefx/
 
 # Dinamicos
 sudo mkdir -p /var/lib/filefx/
-cp -n $DIR/resources/metadata.properties /var/lib/filefx/
-sudo chmod 777
+sudo cp -n $DIR/resources/metadata.properties /var/lib/filefx/
+sudo chmod 777 /var/lib/filefx/metadata.properties
 
 # Binarios
 sudo mkdir -p /usr/lib/filefx/

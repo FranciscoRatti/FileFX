@@ -15,8 +15,8 @@ if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
   echo -e "[\e[32mUPDATE\e[0m]   Nueva actualizacion disponible: $LATEST_VERSION"
 
   curl -L -s -o FileFX.zip $(grep '"browser_download_url"' github.rest | cut -d'"' -f4)
-  unzip -q FileFX.zip
-  ./install.sh
+  unzip -q FileFX.zip -d FileFX
+  ./FileFX/shell/install.sh
   rm -rf /tmp/filefx-build
 
   echo -e "[ \e[32mOK\e[0m ]     \e[32mActualizando\e[0m"
