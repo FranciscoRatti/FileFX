@@ -80,6 +80,8 @@ public class FileFX extends javafx.application.Application {
             SAVE_BOUNDS = Boolean.parseBoolean((String) config.getOrDefault("save_bounds", "false"));
             SAVE_PATH = Boolean.parseBoolean((String) config.getOrDefault("save_path", "false"));
             SAVE_SELECTION = Boolean.parseBoolean((String) config.getOrDefault("save_selection", "false"));
+            TEMPLATES_DIR = (String) config.getOrDefault("templates_dir", HOME+"/Templates");
+            if (TEMPLATES_DIR.charAt(0) == '~') TEMPLATES_DIR = HOME + TEMPLATES_DIR.substring(1);
 
             TOP_BUTTONS = splitTwoTimes((String) config.getOrDefault("top_buttons", "[{back;\uF177},{forward;\uF178},{parent;\uDB81\uDE45},{search},{clean;\uDB80\uDCE2},{reload;\uF2F1}]"));
 
@@ -114,6 +116,9 @@ public class FileFX extends javafx.application.Application {
             COLUMNS = new COLUMNS[columnsText.length];
             for (int i = 0; i < columnsText.length; i++) COLUMNS[i] = Lib.COLUMNS.valueOf(columnsText[i].toUpperCase());
 
+            String[] contextMenuItemsText = split((String) config.getOrDefault("context_menu_items", "BACKWARD,FORWARD,OPEN,OPEN_WITH,CREATE_FILE,CREATE_DIR,CREATE_LINK,RENAME,COPY,CUT,PASTE,RESTORE,TRASH,REMOVE,EXTRACT,COMPRESS,SHELL"));
+            CONTEXT_MENU_ITEMS = new ITEMS[contextMenuItemsText.length];
+            for (int i = 0; i < contextMenuItemsText.length; i++) CONTEXT_MENU_ITEMS[i] = Lib.ITEMS.valueOf(contextMenuItemsText[i].toUpperCase());
             CONTEXT_MENU_ICONS = split((String) config.getOrDefault("context_menu_icons", "[\uDB83\uDDCF,\uDB83\uDDCF,\uEA7F,\uEA80,\uF0C1,\uDB81\uDE0E,\uF0C5,\uDB80\uDD90,\uDB80\uDD92,\uF1B8,\uF48E,\uF52F,\uDB80\uDFD6,\uDB80\uDFD7,\uF489]"));
             CHECK_CLIPBOARD_PASTE = Boolean.parseBoolean((String) config.getOrDefault("check_clipboard_paste", "true"));
 
@@ -367,6 +372,7 @@ public class FileFX extends javafx.application.Application {
     public static boolean SAVE_BOUNDS;
     public static boolean SAVE_PATH;
     public static boolean SAVE_SELECTION;
+    public static String TEMPLATES_DIR;
 
     public static String[][] TOP_BUTTONS;
 
@@ -398,6 +404,7 @@ public class FileFX extends javafx.application.Application {
     public static String[][] CUSTOM_ORDER;
     public static COLUMNS[] COLUMNS;
 
+    public static ITEMS[] CONTEXT_MENU_ITEMS;
     public static String[] CONTEXT_MENU_ICONS;
     public static boolean CHECK_CLIPBOARD_PASTE;
 
