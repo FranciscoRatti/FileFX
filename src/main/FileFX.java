@@ -2,6 +2,8 @@ package main;
 
 import entity.DesktopApplication;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
@@ -11,6 +13,7 @@ import panel.MainPane;
 import scene.Scene;
 import stage.OthersApplicationsStage;
 
+import javax.swing.text.html.Option;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -247,6 +250,20 @@ public class FileFX extends javafx.application.Application {
         stage=s;
         stage.getIcons().add(new Image("file://"+ABSOLUTE_PATH+"icon.png"));
         stage.setTitle("Explorador de archivos");
+
+        stage.setScene(scene);
+        printInfo("Mostrando escenario");
+        stage.show();
+        Platform.runLater(() -> {
+            stage.setWidth(Double.parseDouble(initValues.getProperty("width")));
+            stage.setHeight(Double.parseDouble(initValues.getProperty("height")));
+            updateRight();
+        });
+        printOk("Aplicacion iniciada con exito");
+
+        printInfo("Cargando applicaciones para abrir con");
+        othersApplicationsStage = new OthersApplicationsStage();
+
         stage.setOnCloseRequest(e -> {
             printExecute("Cerrando ventana");
             if (SAVE_BOUNDS || SAVE_PATH || SAVE_SELECTION || SAVE_RIGHT_WIDTH || SAVE_LEFT_WIDTH) {
@@ -255,7 +272,7 @@ public class FileFX extends javafx.application.Application {
                     String width = String.valueOf(stage.getWidth());
                     String height = String.valueOf(stage.getHeight());
                     String selection = centerPane.selectionModel.getSelectedItem() == null ? "" : centerPane.selectionModel.getSelectedItem().getName();
-                    
+
                     if (SAVE_BOUNDS) {
                         printInfo("   height="+height);
                         printInfo("   width="+width);
@@ -285,21 +302,9 @@ public class FileFX extends javafx.application.Application {
                 }
             }
 
+            System.exit(0);
             printOk("Aplicacion finalizada");
         });
-
-        stage.setScene(scene);
-        printInfo("Mostrando escenario");
-        stage.show();
-        Platform.runLater(() -> {
-            stage.setWidth(Double.parseDouble(initValues.getProperty("width")));
-            stage.setHeight(Double.parseDouble(initValues.getProperty("height")));
-            updateRight();
-        });
-        printOk("Aplicacion iniciada con exito");
-
-        printInfo("Cargando applicaciones para abrir con");
-        othersApplicationsStage = new OthersApplicationsStage();
     }
 
     private static void checkUpdate() {
@@ -314,7 +319,7 @@ public class FileFX extends javafx.application.Application {
             if (lastCheck.isBefore(now.minusDays(2))) {
 
                 // Actualizar
-                ProcessBuilder pb = new ProcessBuilder(LIB_PATH+"update.sh");
+                ProcessBuilder pb = new ProcessBuilder(LIB_PATH+"update.sh", String.valueOf(ProcessHandle.current().pid()));
                 pb.redirectErrorStream(true);
                 Process process = pb.start();
 
