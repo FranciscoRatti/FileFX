@@ -5,9 +5,9 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 import node.CenterNode;
 import panel.RightPane;
+import stage.PermissionsStage;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -26,11 +26,13 @@ public class Lib {
 
   public static boolean isCut = false;
   public static final String HOME = System.getenv("HOME");
+  public static final String USER = System.getenv("USER");
+
   public static final String TRASH = HOME + "/.local/share/Trash/";
-  public static final String ABSOLUTE_PATH = "/usr/share/filefx/";
-  //public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/resources/";
-  public static final String CONFIG_PATH = HOME + "/.config/filefx/";
-  //public static final String CONFIG_PATH = ABSOLUTE_PATH;
+  //public static final String ABSOLUTE_PATH = "/usr/share/filefx/";
+  public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/resources/";
+  //public static final String CONFIG_PATH = HOME + "/.config/filefx/";
+  public static final String CONFIG_PATH = ABSOLUTE_PATH;
   public static final String LIB_PATH = "/usr/lib/filefx/";
 
   public static final String RESET = "\u001B[0m";
@@ -42,13 +44,14 @@ public class Lib {
   public enum ORDER {NAME, DATE, SIZE, MIME}
   public enum COLUMNS {PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATED, TYPE}
   public enum ITEMS {
-    BACKWARD, FORWARD, OPEN, OPEN_WITH, CREATE_FILE, CREATE_DIR, CREATE_LINK, RENAME,
+    BACKWARD, FORWARD, OPEN, OPEN_WITH, CREATE_FILE, CREATE_DIR, CREATE_LINK, RENAME, PERMISSIONS,
     COPY, CUT, PASTE, RESTORE, TRASH, REMOVE, EXTRACT, COMPRESS, SHELL, SEPARATOR
   }
 
   public static final LinkedList<String> backBuffer = new LinkedList<>();
   public static final LinkedList<String> forwardBuffer = new LinkedList<>();
   public static final Lock lock = new ReentrantLock();
+  public static PermissionsStage permissionsStage;
 
   // METODOS -------------------------------------------------------------------------------------------------------------
 
@@ -62,7 +65,8 @@ public class Lib {
 
   public static ContextMenu createContextMenu(
         int backward, int forward,
-        int open, int openWith, int createFile, int createDir, int createLink, int rename,
+        int open, int openWith, int createFile, int createDir, int createLink,
+        int rename, int permissions,
         int copy, int cut, int paste,
         int restore, int trash, int remove,
         int extract, int compress, int shell) {
@@ -75,23 +79,24 @@ public class Lib {
     for (int i = 0; i < CONTEXT_MENU_ITEMS.length; i++) {
       ITEMS item = CONTEXT_MENU_ITEMS[i];
       switch (item) {
-        case BACKWARD ->    {if (backward == 1)   contextMenuItems.add(createNewBackwardItem(CONTEXT_MENU_ICONS[i]));}
-        case FORWARD ->     {if (forward == 1)    contextMenuItems.add(createNewForwardItem(CONTEXT_MENU_ICONS[i]));}
-        case OPEN ->        {if (open == 1)       contextMenuItems.add(createNewOpenItem(CONTEXT_MENU_ICONS[i]));}
-        case OPEN_WITH ->   {if (openWith == 1)   contextMenuItems.add(createNewOpenWithItem(CONTEXT_MENU_ICONS[i]));}
-        case CREATE_FILE -> {if (createFile == 1) contextMenuItems.add(createNewFileItem(CONTEXT_MENU_ICONS[i]));}
-        case CREATE_DIR ->  {if (createDir == 1)  contextMenuItems.add(createNewDirectoryItem(CONTEXT_MENU_ICONS[i]));}
-        case CREATE_LINK -> {if (createLink == 1) contextMenuItems.add(createNewLinkItem(CONTEXT_MENU_ICONS[i]));}
-        case RENAME ->      {if (rename == 1)     contextMenuItems.add(createRenameItem(CONTEXT_MENU_ICONS[i]));}
-        case COPY ->        {if (copy == 1)       contextMenuItems.add(createCopyItem(CONTEXT_MENU_ICONS[i]));}
-        case CUT ->         {if (cut == 1)        contextMenuItems.add(createCutItem(CONTEXT_MENU_ICONS[i]));}
-        case PASTE ->       {if (paste == 1)      contextMenuItems.add(pasteItem = createPasteItem(CONTEXT_MENU_ICONS[i]));}
-        case RESTORE ->     {if (restore == 1)    contextMenuItems.add(createRestoreItem(CONTEXT_MENU_ICONS[i]));}
-        case TRASH ->       {if (trash == 1)      contextMenuItems.add(createTrashItem(CONTEXT_MENU_ICONS[i]));}
-        case REMOVE ->      {if (remove == 1)     contextMenuItems.add(createRemoveItem(CONTEXT_MENU_ICONS[i]));}
-        case EXTRACT ->     {if (extract == 1)    contextMenuItems.add(extractHereItem = createExtractHereItem(CONTEXT_MENU_ICONS[i]));}
-        case COMPRESS ->    {if (compress == 1)   contextMenuItems.add(createCompressItem(CONTEXT_MENU_ICONS[i]));}
-        case SHELL ->       {if (shell == 1)      contextMenuItems.add(createOpenShellItem(CONTEXT_MENU_ICONS[i]));}
+        case BACKWARD ->    {if (backward == 1)    contextMenuItems.add(createNewBackwardItem(CONTEXT_MENU_ICONS[i]));}
+        case FORWARD ->     {if (forward == 1)     contextMenuItems.add(createNewForwardItem(CONTEXT_MENU_ICONS[i]));}
+        case OPEN ->        {if (open == 1)        contextMenuItems.add(createNewOpenItem(CONTEXT_MENU_ICONS[i]));}
+        case OPEN_WITH ->   {if (openWith == 1)    contextMenuItems.add(createNewOpenWithItem(CONTEXT_MENU_ICONS[i]));}
+        case CREATE_FILE -> {if (createFile == 1)  contextMenuItems.add(createNewFileItem(CONTEXT_MENU_ICONS[i]));}
+        case CREATE_DIR ->  {if (createDir == 1)   contextMenuItems.add(createNewDirectoryItem(CONTEXT_MENU_ICONS[i]));}
+        case CREATE_LINK -> {if (createLink == 1)  contextMenuItems.add(createNewLinkItem(CONTEXT_MENU_ICONS[i]));}
+        case RENAME ->      {if (rename == 1)      contextMenuItems.add(createRenameItem(CONTEXT_MENU_ICONS[i]));}
+        case PERMISSIONS -> {if (permissions == 1) contextMenuItems.add(createPermissionsItem(CONTEXT_MENU_ICONS[i]));}
+        case COPY ->        {if (copy == 1)        contextMenuItems.add(createCopyItem(CONTEXT_MENU_ICONS[i]));}
+        case CUT ->         {if (cut == 1)         contextMenuItems.add(createCutItem(CONTEXT_MENU_ICONS[i]));}
+        case PASTE ->       {if (paste == 1)       contextMenuItems.add(pasteItem = createPasteItem(CONTEXT_MENU_ICONS[i]));}
+        case RESTORE ->     {if (restore == 1)     contextMenuItems.add(createRestoreItem(CONTEXT_MENU_ICONS[i]));}
+        case TRASH ->       {if (trash == 1)       contextMenuItems.add(createTrashItem(CONTEXT_MENU_ICONS[i]));}
+        case REMOVE ->      {if (remove == 1)      contextMenuItems.add(createRemoveItem(CONTEXT_MENU_ICONS[i]));}
+        case EXTRACT ->     {if (extract == 1)     contextMenuItems.add(extractHereItem = createExtractHereItem(CONTEXT_MENU_ICONS[i]));}
+        case COMPRESS ->    {if (compress == 1)    contextMenuItems.add(createCompressItem(CONTEXT_MENU_ICONS[i]));}
+        case SHELL ->       {if (shell == 1)       contextMenuItems.add(createOpenShellItem(CONTEXT_MENU_ICONS[i]));}
         case SEPARATOR ->   contextMenuItems.add(new SeparatorMenuItem());
       }
     }
@@ -297,8 +302,13 @@ public class Lib {
   }
   private static MenuItem createNewLinkItem(String icon) {
     MenuItem item = new MenuItem("Crear enlace", createIconItem(icon));
-    item.setAccelerator(CREATE_LINK[0]);
     item.setOnAction(e -> createLink(centerPane.selectionModel.getSelectedItem().getFileProperties()));
+    return item;
+  }
+  private static MenuItem createPermissionsItem(String icon) {
+    MenuItem item = new MenuItem("Permisos", createIconItem(icon));
+    item.setAccelerator(CHANGE_PERMISSIONS[0]);
+    item.setOnAction(e -> showPermissionsStage());
     return item;
   }
   private static MenuItem createRenameItem(String icon) {
@@ -877,5 +887,33 @@ public class Lib {
     } catch (IOException ex) {
       printError("Error al abrir la terminal '" + TERMINAL + "'", ex);
     }
+  }
+
+  public static int changePermission(String value) {
+    CenterNode selectedItem = centerPane.selectionModel.getSelectedItem();
+    if (selectedItem == null) return 1;
+    FileProperties properties = selectedItem.getFileProperties();
+
+    try {
+      printExecute("Cambiando permisos de '"+YELLOW+properties.getOctetPermissions()+RESET+"' a '"+YELLOW+value+RESET+"'");
+      if (properties.getOwner().equals(USER)) {
+        return new ProcessBuilder("chmod", String.valueOf(value), properties.getAbsolutePath())
+                .start()
+                .waitFor();
+      } else {
+        return new ProcessBuilder("pkexec", "chmod", String.valueOf(value), properties.getAbsolutePath())
+                .start()
+                .waitFor();
+      }
+    } catch (Exception e) {
+      printError("Error al cambiar permisos de '"+selectedItem.getName()+"'", e);
+      return 1;
+    }
+  }
+
+  public static void showPermissionsStage() {
+    if (permissionsStage == null) permissionsStage = new PermissionsStage();
+    permissionsStage.update();
+    permissionsStage.showAndWait();
   }
 }

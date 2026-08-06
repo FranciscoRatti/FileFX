@@ -3,14 +3,12 @@ package panel;
 import entity.FileProperties;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import main.FileFX;
 import main.Lib;
 import node.CenterNode;
 import node.RightNode;
@@ -93,9 +91,13 @@ public class RightPane extends ScrollPane {
         createDateTimeNode = new RightNode("Creado :", false);
         modifiedDateTimeNode = new RightNode("Modificado :", false);
         typeNode = new RightNode("Tipo :", false);
+
         permissionsNode = new RightNode("Permisos :", false);
-        ownerNode = new RightNode("Usuario :", true);
-        groupNode = new RightNode("Grupo   :", true);
+        permissionsNode.value.setOnMouseClicked(e -> showPermissionsStage());
+
+        ownerNode = new RightNode("Usuario :", false);
+
+        groupNode = new RightNode("Grupo   :", false);
 
         children.addAll(
                 close,
@@ -233,11 +235,7 @@ public class RightPane extends ScrollPane {
             createDateTimeNode.value.setText(properties.getCreationString());
             modifiedDateTimeNode.value.setText(properties.getModifiedString());
             typeNode.value.setText(properties.getMimeType());
-            permissionsNode.value.setText(
-                    new String(properties.getOwnerPermissions()) +
-                    new String(properties.getGroupPermissions()) +
-                    new String(properties.getOtherPermissions())
-            );
+            permissionsNode.value.setText(properties.getPermissionsString());
             ownerNode.value.setText(properties.getOwner());
             groupNode.value.setText(properties.getGroup());
         }

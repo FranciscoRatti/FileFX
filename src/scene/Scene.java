@@ -73,6 +73,7 @@ public class Scene extends javafx.scene.Scene {
                         updateCenter();
                         centerPane.selectFirst();
                     })) return;
+                    if (setKeyBindAction(CHANGE_PERMISSIONS, () -> showPermissionsStage())) return;
                     if (setKeyBindAction(UPDATE_ALL, () -> updateAll())) return;
 
                     if (setKeyBindAction(FOCUS_PATH, () -> Platform.runLater(() -> TopPane.focusSearch()))) return;
@@ -80,9 +81,7 @@ public class Scene extends javafx.scene.Scene {
                     if (setKeyBindAction(FOCUS_INSIDE, () -> Platform.runLater(() -> RightPane.focusInside()))) return;
                     if (setKeyBindAction(SAVE_INSIDE, () -> RightPane.saveInside())) return;
 
-                    if (setKeyBindAction(CREATE_LINK, () -> createLink(centerPane.selectionModel.getSelectedItem().getFileProperties()))) return;
                     setKeyBindAction(OPEN_SHELL, () -> openShell());
-
                 } catch (IllegalArgumentException ignored) {}
             } else {
                 try {

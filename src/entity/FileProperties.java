@@ -111,6 +111,14 @@ public class FileProperties extends File{
     public char[] getOwnerPermissions() {return ownerPermissions;}
     public char[] getGroupPermissions() {return groupPermissions;}
     public char[] getOtherPermissions() {return otherPermissions;}
+    public String getPermissionsString() {return String.valueOf(ownerPermissions)+String.valueOf(groupPermissions)+String.valueOf(otherPermissions);}
+    public String getOctetPermissions() {
+        int ownerValue = (ownerPermissions[0] == 'r' ? 4 : 0) + (ownerPermissions[1] == 'w' ? 2 : 0) + (ownerPermissions[2] == 'x' ? 1 : 0);
+        int groupValue = (groupPermissions[0] == 'r' ? 4 : 0) + (groupPermissions[1] == 'w' ? 2 : 0) + (groupPermissions[2] == 'x' ? 1 : 0);
+        int otherValue = (otherPermissions[0] == 'r' ? 4 : 0) + (otherPermissions[1] == 'w' ? 2 : 0) + (otherPermissions[2] == 'x' ? 1 : 0);
+        return String.valueOf(ownerValue) + String.valueOf(groupValue) + String.valueOf(otherValue);
+    }
+
     public String getOwner() {return owner;}
     public String getGroup() {return group;}
     public long getSize() {return size;}

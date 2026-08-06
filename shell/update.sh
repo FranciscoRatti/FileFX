@@ -4,6 +4,7 @@ rm -rf /tmp/filefx-build
 mkdir -p /tmp/filefx-build
 cd /tmp/filefx-build/
 
+# Version del archivo
 CURRENT_VERSION=$(grep version /var/lib/filefx/metadata.properties | cut -c 9-)
 
 echo -e "[\e[32mUPDATE\e[0m]   Tomando version"

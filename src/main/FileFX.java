@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import panel.MainPane;
 import scene.Scene;
 import stage.OthersApplicationsStage;
+import stage.PermissionsStage;
 
 import javax.swing.text.html.Option;
 import java.io.*;
@@ -36,7 +37,7 @@ public class FileFX extends javafx.application.Application {
     public static String path = "";
 
     public static ArrayList<DesktopApplication> desktopApplications;
-    public static Stage othersApplicationsStage;
+    public static OthersApplicationsStage othersApplicationsStage;
 
     public static MainPane mainPane;
     public static Scene scene;
@@ -166,6 +167,7 @@ public class FileFX extends javafx.application.Application {
             SHOW_MENU_CREATE = getKeyCombination("show_menu_create", "n");
             CHANGE_SHOW_RIGHT_PANE = getKeyCombination("change_show_right_pane", "space");
             CHANGE_SHOW_HIDDEN = getKeyCombination("change_show_hidden", "h");
+            CHANGE_PERMISSIONS = getKeyCombination("change_permissions", "p");
             UPDATE_ALL = getKeyCombination("update_all", "f5");
 
             FOCUS_PATH = getKeyCombination("focus_path", "s");
@@ -173,7 +175,6 @@ public class FileFX extends javafx.application.Application {
             FOCUS_INSIDE = getKeyCombination("focus_inside", "i");
             SAVE_INSIDE = getKeyCombination("save_inside", "ctrl+s");
 
-            CREATE_LINK = getKeyCombination("create_link", "l");
             OPEN_SHELL = getKeyCombination("open_shell", "ctrl+t");
         } catch (IOException e) {
             printError("No se pudo leer el archivo de combinaciones de teclado", e);
@@ -316,7 +317,7 @@ public class FileFX extends javafx.application.Application {
             LocalDate now = LocalDate.now();
 
             // Si hace mas de dos dias que no se chequea
-            if (lastCheck.isBefore(now.minusDays(2))) {
+            if (lastCheck.isBefore(now.minusDays(1))) {
 
                 // Actualizar
                 ProcessBuilder pb = new ProcessBuilder(LIB_PATH+"update.sh", String.valueOf(ProcessHandle.current().pid()));
@@ -445,6 +446,7 @@ public class FileFX extends javafx.application.Application {
     public static KeyCombination[] SHOW_MENU_CREATE;
     public static KeyCombination[] CHANGE_SHOW_RIGHT_PANE;
     public static KeyCombination[] CHANGE_SHOW_HIDDEN;
+    public static KeyCombination[] CHANGE_PERMISSIONS;
     public static KeyCombination[] UPDATE_ALL;
 
     public static KeyCombination[] FOCUS_PATH;
@@ -452,7 +454,6 @@ public class FileFX extends javafx.application.Application {
     public static KeyCombination[] FOCUS_INSIDE;
     public static KeyCombination[] SAVE_INSIDE;
 
-    public static KeyCombination[] CREATE_LINK;
     public static KeyCombination[] OPEN_SHELL;
 
     // Colores

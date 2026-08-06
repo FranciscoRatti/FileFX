@@ -22,6 +22,7 @@ import static panel.MainPane.*;
 public class OthersApplicationsStage extends Stage {
     public OthersApplicationsStage() {
         setTitle("Abrir con");
+        setAlwaysOnTop(true);
 
         VBox pane = new VBox();
         pane.setId("OtherPane");
@@ -37,7 +38,6 @@ public class OthersApplicationsStage extends Stage {
         Scene scene = new Scene(mainPane);
         scene.getStylesheets().add("file://"+CONFIG_PATH+"theme.css");
         setScene(scene);
-
 
         // Cargar applicaciones
         ArrayList<File> desktopFiles = new ArrayList<>();
@@ -110,12 +110,7 @@ public class OthersApplicationsStage extends Stage {
         setOnShown(e -> Platform.runLater(() -> {
             double width = pane.getWidth()+17.0;
             setMaxWidth(width);
-            setWidth(width);
-
-            setHeight(500);
             setMaxHeight(pane.getHeight());
-
-            Platform.runLater(() -> centerOnScreen());
         }));
     }
 }

@@ -12,6 +12,8 @@ import static main.Lib.CONFIG_PATH;
 public class PartitionStage extends Stage {
     public PartitionStage(PartitionProperties properties) {
         setTitle(properties.labelText);
+        setAlwaysOnTop(true);
+        setResizable(false);
 
         VBox titlesPane, valuesPane;
 

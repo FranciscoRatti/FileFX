@@ -25,7 +25,6 @@ public class CenterPane extends ListView<CenterNode> {
 
     private final ContextMenu menuFile;
     private final ContextMenu menuDirectory;
-    private final ContextMenu menuMultiple;
     private final ContextMenu menuCreate;
     private final ContextMenu menuTrash;
 
@@ -75,11 +74,10 @@ public class CenterPane extends ListView<CenterNode> {
             }
         });
 
-        menuFile      = createContextMenu(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1);
-        menuDirectory = createContextMenu(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1);
-        menuMultiple  = createContextMenu(1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1);
-        menuCreate    = createContextMenu(0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        menuTrash     = createContextMenu(1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1);
+        menuFile      = createContextMenu(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1);
+        menuDirectory = createContextMenu(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1);
+        menuCreate    = createContextMenu(0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        menuTrash     = createContextMenu(1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1);
 
         // Acciones generales
         setOnMouseClicked(e -> {
@@ -263,12 +261,9 @@ public class CenterPane extends ListView<CenterNode> {
 
         if (path.startsWith(Lib.TRASH+"files")) {
             menuTrash.show(anchor, x, y);
-        } else if (selectedItems.size() == 1) {
-            if (selectedItems.getFirst().getFileProperties().isDirectory()) menuDirectory.show(anchor, x, y);
-            else menuFile.show(anchor, x, y);
-        } else {
-            menuMultiple.show(anchor, x, y);
-        }
+        } else if (selectionModel.getSelectedItem().getFileProperties().isDirectory()) {
+            menuDirectory.show(anchor, x, y);
+        } else menuFile.show(anchor, x, y);
     }
     public void showMenu() {
         printInfo("Mostrando menu");
@@ -276,12 +271,9 @@ public class CenterPane extends ListView<CenterNode> {
         hideAll();
         if (path.startsWith(Lib.TRASH+"files")) {
             menuTrash.show(Window.getWindows().getFirst());
-        } else if (selectedItems.size() == 1) {
-            if (selectedItems.getFirst().getFileProperties().isDirectory()) menuDirectory.show(Window.getWindows().getFirst());
-            else menuFile.show(Window.getWindows().getFirst());
-        } else {
-            menuMultiple.show(Window.getWindows().getFirst());
-        }
+        } else if (selectedItems.getFirst().getFileProperties().isDirectory()) {
+            menuDirectory.show(Window.getWindows().getFirst());
+        } else menuFile.show(Window.getWindows().getFirst());
     }
     public void showMenuCreate() {
         hideAll();
@@ -292,13 +284,11 @@ public class CenterPane extends ListView<CenterNode> {
     public void hideAll() {
         menuFile.hide();
         menuDirectory.hide();
-        menuMultiple.hide();
         menuCreate.hide();
         menuTrash.hide();
     }
     public boolean isAnyShow() {
-        return  menuFile.isShowing() || menuDirectory.isShowing() ||
-                menuMultiple.isShowing() || menuCreate.isShowing() || menuTrash.isShowing();
+        return menuFile.isShowing() || menuDirectory.isShowing() || menuCreate.isShowing() || menuTrash.isShowing();
     }
 
     public void openSelected() {

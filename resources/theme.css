@@ -452,6 +452,91 @@
 }
 
 
+#PermissionsPane {
+    -fx-background-color: #232323FF;
+    -fx-spacing: 8;
+    -fx-alignment: CENTER;
+    -fx-padding: 10;
+}
+
+#PermissionsChars_pane {
+    -fx-alignment: CENTER;
+    -fx-spacing: 5;
+}
+
+#PermissionsChars_button {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-background-color: #404040FF;
+    -fx-border-width: 0;
+    -fx-padding: 0 5 0 5;
+}
+#PermissionsChars_button:hover {
+    -fx-background-color: gray;
+}
+#PermissionsChars_button:focused {
+    -fx-background-color: gray;
+}
+
+#PermissionsOctet_pane {
+    -fx-alignment: CENTER;
+    -fx-spacing: 3;
+}
+
+#PermissionsOctet_button {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-background-color: #404040FF;
+    -fx-border-width: 0;
+    -fx-padding: 0 5 0 5;
+}
+#PermissionsOctet_button:hover {
+    -fx-background-color: gray;
+}
+#PermissionsOctet_button:focused {
+    -fx-background-color: gray;
+}
+
+#PermissionsOctet_value {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-background-color: #595959;
+    -fx-border-width: 0;
+    -fx-padding: 0 5 0 5;
+}
+#PermissionsOctet_value:hover {
+    -fx-background-color: gray;
+}
+#PermissionsOctet_value:focused {
+    -fx-background-color: gray;
+}
+
+#PermissionsButtons_pane {
+    -fx-alignment: CENTER;
+    -fx-spacing: 10;
+}
+
+#PermissionsButtons_button {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 12;
+    -fx-background-color: #373737;
+    -fx-border-style: solid;
+    -fx-border-radius: 2;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+}
+#PermissionsButtons_button:hover {
+    -fx-border-color: white;
+}
+#PermissionsButtons_button:focused {
+    -fx-border-color: white;
+}
+
+
 /* CLASES ----------------------------------------------------------------------------------------------------------- */
 
 .tooltip {

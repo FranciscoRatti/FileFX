@@ -100,17 +100,17 @@ Todo se configura a traves de cinco archivos de configuracion en **~/.config/fil
 archivos comparten la sintaxis de "**nombre**=**valor**", a continuacion se enumeran los tipos de
 datos que pueden ir en _valor_ seguido de los archivos y sus configuraciones:
 
-|    Tipo     |                                                                              Valor                                                                              |
-|:-----------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-|   boolean   |                                                                          true o false                                                                           |
-|   double    |                                                                         Numero con coma                                                                         |
-|   String    |                                                                           Texto plano                                                                           |
-|  String[]   |                                                      Lista de texto, su<br/>sintaxis es [valor,valor,...]                                                       |
-| String[][]  |                                     Lista de listas de texto, su<br/>sintaxis es [{valor;valor;...},{valor;valor;...},...]                                      |
-|    ORDER    |                                                                     NAME, DATE, SIZE o MIME                                                                     |
-|   COLUMNS   |                                                    PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATED, TYPE                                                     |
-| TOP_BUTTONS |                                                        BACKWARD, FORWARD, PARENT, SEARCH, CLEAN, RELOAD                                                         |
-|    ITEMS    | BACKWARD, FORWARD, OPEN, OPEN_WITH, CREATE_FILE, CREATE_DIR, CREATE_LINK, RENAME, COPY, CUT, PASTE, RESTORE, TRASH, REMOVE, EXTRACT, COMPRESS, SHELL, SEPARATOR |
+|    Tipo     |                                                                                    Valor                                                                                     |
+|:-----------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|   boolean   |                                                                                 true o false                                                                                 |
+|   double    |                                                                               Numero con coma                                                                                |
+|   String    |                                                                                 Texto plano                                                                                  |
+|  String[]   |                                                             Lista de texto, su<br/>sintaxis es [valor,valor,...]                                                             |
+| String[][]  |                                            Lista de listas de texto, su<br/>sintaxis es [{valor;valor;...},{valor;valor;...},...]                                            |
+|    ORDER    |                                                                           NAME, DATE, SIZE o MIME                                                                            |
+|   COLUMNS   |                                                           PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATED, TYPE                                                           |
+| TOP_BUTTONS |                                                               BACKWARD, FORWARD, PARENT, SEARCH, CLEAN, RELOAD                                                               |
+|    ITEMS    | BACKWARD, FORWARD, OPEN, OPEN_WITH, CREATE_FILE, CREATE_DIR, CREATE_LINK, RENAME, PERMISSIONS, COPY, CUT, PASTE, RESTORE, TRASH, REMOVE, EXTRACT, COMPRESS, SHELL, SEPARATOR |
 
 - **_config.properties_**: Configuraciones principales.
   - **General :**
