@@ -29,10 +29,10 @@ public class Lib {
   public static final String USER = System.getenv("USER");
 
   public static final String TRASH = HOME + "/.local/share/Trash/";
-  //public static final String ABSOLUTE_PATH = "/usr/share/filefx/";
-  public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/resources/";
-  //public static final String CONFIG_PATH = HOME + "/.config/filefx/";
-  public static final String CONFIG_PATH = ABSOLUTE_PATH;
+  public static final String ABSOLUTE_PATH = "/usr/share/filefx/";
+  //public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/resources/";
+  public static final String CONFIG_PATH = HOME + "/.config/filefx/";
+  //public static final String CONFIG_PATH = ABSOLUTE_PATH;
   public static final String LIB_PATH = "/usr/lib/filefx/";
 
   public static final String RESET = "\u001B[0m";

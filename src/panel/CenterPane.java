@@ -2,7 +2,6 @@ package panel;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
@@ -82,7 +81,6 @@ public class CenterPane extends ListView<CenterNode> {
         // Acciones generales
         setOnMouseClicked(e -> {
             MouseButton button = e.getButton();
-            EventTarget target = e.getTarget();
 
             if (button.equals(MouseButton.MIDDLE)) parent();
             else if (button.equals(MouseButton.BACK)) backward();

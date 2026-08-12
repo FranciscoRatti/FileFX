@@ -5,7 +5,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
 public class RightNode extends HBox {
-    public final TextField value;
+    public TextField value;
 
     public RightNode(String titleText, boolean editable) {
         setAlignment(Pos.CENTER_LEFT);
@@ -14,14 +14,13 @@ public class RightNode extends HBox {
         Label title = new Label(titleText);
         title.setId("RightNode_title");
         title.setMinWidth(Region.USE_PREF_SIZE);
-        getChildren().add(title);
 
-        this.value = new TextField();
-        this.value.setId("RightNode_value");
-        this.value.setEditable(editable);
-        this.value.setMaxWidth(Double.MAX_VALUE);
-        setHgrow(this.value, Priority.ALWAYS);
+        value = new TextField();
+        value.setId("RightNode_value");
+        value.setEditable(editable);
+        value.setMaxWidth(Double.MAX_VALUE);
+        setHgrow(value, Priority.ALWAYS);
 
-        getChildren().add(this.value);
+        getChildren().addAll(title, value);
     }
 }

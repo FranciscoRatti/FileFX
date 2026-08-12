@@ -3,7 +3,6 @@ package main;
 import entity.DesktopApplication;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
@@ -12,9 +11,7 @@ import javafx.stage.Stage;
 import panel.MainPane;
 import scene.Scene;
 import stage.OthersApplicationsStage;
-import stage.PermissionsStage;
 
-import javax.swing.text.html.Option;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -44,12 +41,30 @@ public class FileFX extends javafx.application.Application {
     public static Stage stage;
 
     public static void main(String[] args) {
-        new Thread(() -> checkUpdate()).start();
-
+        boolean disableAutoUpdate = false;
         if (args.length > 0) {
-            path = args[0];
-            if (path.charAt(path.length()-1) != '/') path += "/";
+            if (args[0].equals("--disable-auto-update")) {
+                disableAutoUpdate = true;
+                if (args.length > 1) {
+                    path = args[1];
+                    if (path.charAt(path.length()-1) != '/') path += "/";
+                }
+            } else {
+                path = args[0];
+                if (path.charAt(path.length()-1) != '/') path += "/";
+            }
         }
+
+        if (!disableAutoUpdate) {
+            Task<Void> task = new Task<>() {
+                protected Void call() throws Exception {
+                    checkUpdate();
+                    return null;
+                }
+            };
+            new Thread(task).start();
+        }
+
         launch(args);
     }
 
@@ -89,7 +104,7 @@ public class FileFX extends javafx.application.Application {
 
             TOP_BUTTONS = splitTwoTimes((String) config.getOrDefault("top_buttons", "[{back;\uF177},{forward;\uF178},{parent;\uDB81\uDE45},{search},{clean;\uDB80\uDCE2},{reload;\uF2F1}]"));
 
-            SAVE_RIGHT_WIDTH = Boolean.parseBoolean((String) config.getOrDefault("show_right_width", "false"));
+            SAVE_RIGHT_WIDTH = Boolean.parseBoolean((String) config.getOrDefault("save_right_width", "false"));
             SHOW_RIGHT_PANE = Boolean.parseBoolean((String) config.getOrDefault("show_right_pane", "true"));
             SHOW_MINIATURA = Boolean.parseBoolean((String) config.getOrDefault("show_miniatura", "false"));
             FILL_MINIATURA_LIKE_ICON = Boolean.parseBoolean((String) config.getOrDefault("fill_miniatura_like_icon", "true"));
@@ -99,7 +114,7 @@ public class FileFX extends javafx.application.Application {
             BOTTOM_BUTTONS = split((String) config.getOrDefault("bottom_buttons", "[order,filter]"));
             ORDER_ICONS = split((String) config.getOrDefault("order_icons", "[\uEB69,\uF073,\uDB83\uDC8E,\uEBB9]"));
 
-            SAVE_LEFT_WIDTH = Boolean.parseBoolean((String) config.getOrDefault("show_left_width", "false"));
+            SAVE_LEFT_WIDTH = Boolean.parseBoolean((String) config.getOrDefault("save_left_width", "false"));
             SHOW_PLACES = Boolean.parseBoolean((String) config.getOrDefault("show_places", "true"));
             PLACES = splitTwoTimes((String) config.getOrDefault("places", "[{Home;\uF46D;~/},{Descargas;\uF019;~/Downloads/},{Documentos;\uDB85\uDD17;~/Documents/},{Imagenes;\uF03E;~/Images/},{Papelera;\uF014;~/.local/share/Trash/files/},{Config;\uF013;~/.config/filefx/}]"));
             SHOW_DEVICES = Boolean.parseBoolean((String) config.getOrDefault("show_devices", "true"));
@@ -338,7 +353,7 @@ public class FileFX extends javafx.application.Application {
                 }
             }
         } catch (Exception e) {
-            printError("Error al actualizar aplicacion", e);
+            e.printStackTrace();
         }
     }
 

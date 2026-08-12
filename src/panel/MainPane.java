@@ -3,14 +3,11 @@ package panel;
 import javafx.geometry.Orientation;
 import javafx.scene.Cursor;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import main.FileFX;
-import main.Lib;
 import node.Separator;
 
 import static main.FileFX.LEFT_WIDTH;
 import static main.FileFX.RIGHT_WIDTH;
-import static panel.RightPane.*;
 
 public class MainPane extends BorderPane {
     public static TopPane topPane;
@@ -37,8 +34,7 @@ public class MainPane extends BorderPane {
         rightBorder.setOnMouseExited(e -> setCursor(Cursor.DEFAULT));
         rightBorder.setOnMouseDragged(e -> {
             RIGHT_WIDTH = FileFX.scene.getWidth() - e.getSceneX();
-            rightPane.setMaxWidth(RIGHT_WIDTH);
-            RightPane.setSize();
+            rightPane.setSize();
         });
 
         centerPane = new CenterPane();

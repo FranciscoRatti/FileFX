@@ -122,7 +122,7 @@ datos que pueden ir en _valor_ seguido de los archivos y sus configuraciones:
     - `top_buttons = String[][]` : Define los botones que aparecerán en el TopPane. La sintaxis es
       _[{boton;icono},{boton;icono},...]_, el primer valor es TOP_BUTTON y el segundo String.
   - **Right Pane :**
-    - `show_right_width = true` : Si es true se guarda el tamaño del panel derecho.
+    - `save_right_width = true` : Si es true se guarda el tamaño del panel derecho.
     - `show_right_pane = boolean` : Define si se muestra el RightPane al iniciar.
     - `show_miniatura = boolean` : Dentro del RightPane hay una miniatura, si es true en caso de
       seleccionar una imagen esta se mostrará, si es false se muestra siempre el icono.
@@ -138,7 +138,7 @@ datos que pueden ir en _valor_ seguido de los archivos y sus configuraciones:
     - `order_icons = String[]` : Define los iconos de los botones para cambiar el orden. El orden es
       [NAME,DATE,SIZE,MIME].
   - **Left Pane :**
-    - `show_left_width = true` : Si es true se guarda el tamaño del panel izquierda.
+    - `save_left_width = true` : Si es true se guarda el tamaño del panel izquierda.
     - `show_places = boolean` : Define si se muestran las ubicaciones en el LeftPane.
     - `places = String[][]` : Define ubicaciones personalizadas que aparecerán en Lugares en el
       LeftPane. Su sintaxis es _[{nombre;icono;direccion},{nombre;icono;direccion},...]_.

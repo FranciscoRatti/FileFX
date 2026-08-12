@@ -30,13 +30,13 @@ public class RightPane extends ScrollPane {
     private static TextArea textNode;
 
     private static RightNode nameNode;
-    private static RightNode permissionsNode;
-    private static RightNode ownerNode;
-    private static RightNode groupNode;
     private static RightNode sizeNode;
     private static RightNode modifiedDateTimeNode;
     private static RightNode createDateTimeNode;
     private static RightNode typeNode;
+    private static RightNode permissionsNode;
+    private static RightNode ownerNode;
+    private static RightNode groupNode;
 
     public static boolean isRightPaneShow;
 
@@ -45,6 +45,7 @@ public class RightPane extends ScrollPane {
         setStyle("-fx-background: transparent; -fx-background-color: transparent;");
         setFitToWidth(true);
         setId("RightPane");
+        setMaxWidth(RIGHT_WIDTH);
 
         VBox pane = new VBox();
         pane.setId("RightPane_pane");
@@ -78,8 +79,6 @@ public class RightPane extends ScrollPane {
         insidePane.setMinSize(RIGHT_WIDTH, RIGHT_WIDTH);
         insidePane.setMaxSize(RIGHT_WIDTH, RIGHT_WIDTH);
 
-        update();
-
         // Propiedades
         nameNode = new RightNode("Nombre :", !path.startsWith(Lib.TRASH+"files"));
         nameNode.value.setOnKeyPressed(e -> {
@@ -96,7 +95,6 @@ public class RightPane extends ScrollPane {
         permissionsNode.value.setOnMouseClicked(e -> showPermissionsStage());
 
         ownerNode = new RightNode("Usuario :", false);
-
         groupNode = new RightNode("Grupo   :", false);
 
         children.addAll(
@@ -241,7 +239,9 @@ public class RightPane extends ScrollPane {
         }
     }
 
-    public static void setSize() {
+    public void setSize() {
+        setMaxWidth(RIGHT_WIDTH);
+
         miniaturaPane.setMinSize(RIGHT_WIDTH, RIGHT_WIDTH);
         miniaturaPane.setMaxSize(RIGHT_WIDTH, RIGHT_WIDTH);
         insidePane.setMinSize(RIGHT_WIDTH, RIGHT_WIDTH);
