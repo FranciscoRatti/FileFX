@@ -19,7 +19,7 @@ Para los iconos utiliza una **Nerd fonts**, estos se pueden encontrar en la [che
 pensado para utilizarse con **atajos de teclado**, ser muy configurable y modificar contenido de
 archivos rapidamente, todo esto inspirado en Yazi, tiene **previsualization de imágenes**, soporta png,
 jpg, jpeg, bmp, gif y svg, haciendo click derecho en las particiones o discos (Panel izquierdo) se
-pueden ver sus caracteristicas. <br> 
+pueden ver sus caracteristicas. <br>
 El estilo de la aplicacion esta definido en **un archivo css**, pensado para que la comunidad haga
 sus temas y pueda compartilos eficazmente. <br>
 Se **actualiza automaticamente** cada tres dias o mas directamente desde github.
@@ -85,6 +85,8 @@ el comando:
 filefx
 ```
 
+Si se usa el parametro `--disable-auto-update` se ejecutara la aplicacion sin actualizar automaticamente
+
 Para **DESINSTALAR** la aplicacion se deben borrar los directorios creados con _install.sh_, los
 archivos _.desktop_ y el binario.
 
@@ -101,7 +103,7 @@ archivos comparten la sintaxis de "**nombre**=**valor**", a continuacion se enum
 datos que pueden ir en _valor_ seguido de los archivos y sus configuraciones:
 
 |    Tipo     |                                                                                    Valor                                                                                     |
-|:-----------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| :---------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 |   boolean   |                                                                                 true o false                                                                                 |
 |   double    |                                                                               Numero con coma                                                                                |
 |   String    |                                                                                 Texto plano                                                                                  |
@@ -166,7 +168,7 @@ datos que pueden ir en _valor_ seguido de los archivos y sus configuraciones:
       _[{path;orden},{path;orden},...]_, el primer valor es String y el segundo es ORDER.
     - `columns = COLUMNS[]` : Define las columnas del CenterPane.
   - **Context Menu :**
-    - `context_menu_items = ITEMS[]` : Define los items del menu contextual y su orden 
+    - `context_menu_items = ITEMS[]` : Define los items del menu contextual y su orden
     - `context_menu_icons = String[]` : Define los iconos del menu contextual.
       El orden es el mismo de _context_menu_items_.
     - `check_clipboard_paste = boolean` : Si es true revisará el portapapeles del sistema antes de
@@ -226,7 +228,7 @@ datos que pueden ir en _valor_ seguido de los archivos y sus configuraciones:
   Los colores pueden estar en hexadecimal o pueden ser los nombres de las constantes que aparecen en
   la [Api de JavaFX](https://docs.oracle.com/en/java/java-components/javafx/21/docs/javafx.graphics/javafx/scene/paint/Color.html). Existen algunas propiedades especiales que siempre deben estar presentes,
   estas son:
-  - `focus` : Usado cuando un archivo o directorio esta seleccionado (Solo color). 
+  - `focus` : Usado cuando un archivo o directorio esta seleccionado (Solo color).
   - `unknow` : Es el valor que se utilizara en ultima instancia.
   - `lock` : Utilizado para directorios bloqueados o archivos sin permisos de lectura.
   - `this` : Utilizado para el directorio "." si _show_this_ es true.
@@ -244,3 +246,4 @@ Si no sabes css o no querés revisar la guía, la inteligencia artificial es muy
 se puede ver la etiqueta de cada componente y de que clase es:
 
 ![componentes.png](images/componentes.png)
+

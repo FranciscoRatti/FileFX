@@ -56,13 +56,9 @@ public class FileFX extends javafx.application.Application {
         }
 
         if (!disableAutoUpdate) {
-            Task<Void> task = new Task<>() {
-                protected Void call() throws Exception {
-                    checkUpdate();
-                    return null;
-                }
-            };
-            new Thread(task).start();
+            Thread thread = new Thread(() -> checkUpdate(), "filefx-autoupdate-thread");
+            thread.setDaemon(true);
+            thread.start();
         }
 
         launch(args);

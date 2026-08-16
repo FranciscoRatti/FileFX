@@ -19,8 +19,7 @@ if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
   curl -L -s -o FileFX.zip $(grep '"browser_download_url"' github.rest | cut -d'"' -f4)
   unzip -q FileFX.zip -d FileFX
   kill $1
-  pkexec sudo -v
-  ./FileFX/shell/install.sh
+  ./FileFX/shell/install.sh --use-pkexec
   rm -rf /tmp/filefx-build
 
   echo -e "[ \e[32mOK\e[0m ]     \e[32mActualizando\e[0m"
@@ -28,3 +27,4 @@ if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
 else
   echo -e "[ \e[32mOK\e[0m ]     \e[32mAplicacion en su ultima version\e[0m"
 fi
+
