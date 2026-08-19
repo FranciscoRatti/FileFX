@@ -34,6 +34,7 @@ public class CenterPane extends ListView<CenterNode> {
 
     public final MultipleSelectionModel<CenterNode> selectionModel;
     public final ObservableList<CenterNode> items, selectedItems;
+    public double itemHeight;
 
     public CenterPane() {
         setId("CenterPane");
@@ -58,6 +59,8 @@ public class CenterPane extends ListView<CenterNode> {
         update();
 
         Platform.runLater(() -> {
+            itemHeight = items.getFirst().getHeight();
+
             String initSelect = initValues.getProperty("init_selection");
             if (initSelect != null) {
                 for (CenterNode label : getItems()) {
@@ -246,9 +249,7 @@ public class CenterPane extends ListView<CenterNode> {
 
     public void setSelectedOnCenter() {
         if (items.isEmpty()) return;
-
-        double cellHeight = items.getFirst().prefHeight(-1);
-        int visibleCount = (int) Math.floor(getHeight() / cellHeight);
+        int visibleCount = (int) Math.floor(getHeight() / itemHeight);
         scrollTo(selectionModel.getSelectedIndex() - (visibleCount / 2));
     }
 

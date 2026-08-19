@@ -253,12 +253,18 @@
 /* CENTER PANE */
 
 #CenterPane {
+    -fx-background-color: #232323FF;
     -fx-padding: 0;
 }
 
 #CenterPane .list-cell {
     -fx-background-color: #232323FF;
     -fx-padding: 0;
+}
+
+#CenterPane .corner {
+    -fx-background-color: #232323FF;
+    -fx-background-insets: 0;
 }
 
 #CenterPane .scroll-bar .track {
@@ -294,6 +300,7 @@
     -fx-background-insets: 0;
     -fx-background-radius: 0;
     -fx-border-width: 0;
+    -fx-padding: 0 0 1 0;
 }
 #CenterPane .scroll-bar:horizontal .increment-button {-fx-padding: 1 5 2 5;}
 #CenterPane .scroll-bar:horizontal .decrement-button {-fx-padding: 1 5 2 5;}
@@ -575,7 +582,6 @@
 
 .scroll-pane > .corner {
     -fx-background-color: #232323FF;
-    -fx-background-insets: 0;
 }
 
 .scroll-pane > .scroll-bar .track {
@@ -615,4 +621,5 @@
 .scroll-pane > .scroll-bar:horizontal .decrement-button {-fx-padding: 1 5 2 5;}
 .scroll-pane > .scroll-bar .decrement-arrow {-fx-background-color: white;}
 
+.line {-fx-border-width: 0 0 4 0;}
 .line {-fx-border-width: 0 0 4 0;}
