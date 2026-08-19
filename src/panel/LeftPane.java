@@ -72,58 +72,61 @@ public class LeftPane extends VBox {
                         // Tomar meta datos
                         String[] properties = line.substring(0, line.length()-1).split("\" ");
                         PartitionProperties part = new PartitionProperties(properties);
-                        PartitionStage stage = new PartitionStage(part);
-                        LeftNode node = new LeftNode(
-                                part.labelText,
-                                part.icon,
-                                part.type == PartitionProperties.TYPE.PART ? !part.mountpoint.isEmpty() ? part.mountpoint : null : null
-                        );
-                        node.setColor(Color.valueOf(colorsMime.getProperty(part.type.toString().toLowerCase())));
-                        node.setOnMouseReleased(e -> {
-                            if (e.getButton() == MouseButton.SECONDARY) stage.showAndWait();
-                        });
 
-                        // Si es disco
-                        if (part.type == PartitionProperties.TYPE.DISK) {
-                            node.getTooltip().setText(part.labelText);
+                        if (part.type == PartitionProperties.TYPE.DISK || part.type == PartitionProperties.TYPE.PART) {
+                            PartitionStage stage = new PartitionStage(part);
+                            LeftNode node = new LeftNode(
+                                    part.labelText,
+                                    part.icon,
+                                    part.type == PartitionProperties.TYPE.PART ? !part.mountpoint.isEmpty() ? part.mountpoint : null : null
+                            );
+                            node.setColor(Color.valueOf((String) colorsMime.getOrDefault(part.type.toString().toLowerCase(), "partition")));
+                            node.setOnMouseReleased(e -> {
+                                if (e.getButton() == MouseButton.SECONDARY) stage.showAndWait();
+                            });
 
-                            devicesChildren.add(node);
-                        }
+                            // Si es disco
+                            if (part.type == PartitionProperties.TYPE.DISK) {
+                                node.getTooltip().setText(part.labelText);
 
-                        // Si es particion
-                        else if (part.type == PartitionProperties.TYPE.PART){
-
-                            // Si esta montado
-                            if (!part.mountpoint.isEmpty()) {
-
-                                // Si se puede desmontar
-                                if (part.rm.charAt(0) == '1') {
-                                    devicesChildren.add(
-                                        new HBox(
-                                            node,
-                                            new Button(UNMOUNT_ICON, "Desmontar", "LeftNode_unmount", e -> {
-                                                try {
-                                                    printExecute("Expulsando '"+YELLOW+part.name+RESET+"'");
-                                                    new ProcessBuilder("udisksctl", "unmount", "-b", "/dev/"+part.name, "&&", "udisksctl", "power-off", "-b", "/dev/"+part.name)
-                                                            .start().waitFor();
-                                                    updateLeft();
-                                                } catch (Exception ex) {
-                                                    printError("Error al expulsar '"+part.name+"'", ex);
-                                                }
-                                            })
-                                        )
-                                    );
-                                }
-
-                                // Si no se puede desmontar
-                                else {
-                                    node.setTooltip(null);
-                                    devicesChildren.add(node);
-                                }
+                                devicesChildren.add(node);
                             }
 
-                            // Si no esta montado
-                            else if (SHOW_UNMOUNTED) devicesChildren.add(node);
+                            // Si es particion
+                            else {
+
+                                // Si esta montado
+                                if (!part.mountpoint.isEmpty()) {
+
+                                    // Si se puede desmontar
+                                    if (part.rm.charAt(0) == '1') {
+                                        devicesChildren.add(
+                                                new HBox(
+                                                        node,
+                                                        new Button(UNMOUNT_ICON, "Desmontar", "LeftNode_unmount", e -> {
+                                                            try {
+                                                                printExecute("Expulsando '" + YELLOW + part.name + RESET + "'");
+                                                                new ProcessBuilder("udisksctl", "unmount", "-b", "/dev/" + part.name, "&&", "udisksctl", "power-off", "-b", "/dev/" + part.name)
+                                                                        .start().waitFor();
+                                                                updateLeft();
+                                                            } catch (Exception ex) {
+                                                                printError("Error al expulsar '" + part.name + "'", ex);
+                                                            }
+                                                        })
+                                                )
+                                        );
+                                    }
+
+                                    // Si no se puede desmontar
+                                    else {
+                                        node.getTooltip().setText(part.mountpoint);
+                                        devicesChildren.add(node);
+                                    }
+                                }
+
+                                // Si no esta montado
+                                else if (SHOW_UNMOUNTED) devicesChildren.add(node);
+                            }
                         }
                     }
                 }

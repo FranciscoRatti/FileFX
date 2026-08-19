@@ -22,7 +22,7 @@ public class PartitionProperties {
         // Si es particion
         if (type == TYPE.PART) {
             if (!mountpoint.isEmpty()) {
-                for (String[] partitionIcon : PARTITION_ICONS) {
+                for (String[] partitionIcon : PARTITION_LABELS) {
                     if (partitionIcon[0].equals(mountpoint)) {
                         labelText = partitionIcon[1];
                     }
@@ -33,7 +33,7 @@ public class PartitionProperties {
     }
 
     public enum TYPE {
-        DISK, PART
+        DISK, PART, LOOP
     }
 
     public final String name;

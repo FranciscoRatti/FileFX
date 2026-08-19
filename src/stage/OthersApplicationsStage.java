@@ -36,7 +36,7 @@ public class OthersApplicationsStage extends Stage {
         mainPane.setId("MainPane");
 
         Scene scene = new Scene(mainPane);
-        scene.getStylesheets().add("file://"+CONFIG_PATH+"theme.css");
+        scene.getStylesheets().add("file://"+THEME_PATH);
         setScene(scene);
 
         // Cargar applicaciones
@@ -93,7 +93,7 @@ public class OthersApplicationsStage extends Stage {
                     button.setId("OtherNode");
                     button.setOnAction(e -> {
                         if (!centerPane.selectedItems.isEmpty()) {
-                            FileFX.othersApplicationsStage.close();
+                            othersApplicationsStage.close();
                             app.openWith(centerPane.selectionModel.getSelectedItem());
                         }
                     });

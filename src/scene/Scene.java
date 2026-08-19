@@ -16,7 +16,7 @@ public class Scene extends javafx.scene.Scene {
         super(mainPane, Double.parseDouble(initValues.getProperty("width")), Double.parseDouble(initValues.getProperty("height")));
 
         printInfo("Cargando hoja de estilos");
-        getStylesheets().add("file://"+CONFIG_PATH+"theme.css");
+        getStylesheets().add("file://"+THEME_PATH);
 
         updateKeyBinding();
     }

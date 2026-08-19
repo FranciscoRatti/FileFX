@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import node.PartitionNode;
 
 import static main.Lib.CONFIG_PATH;
+import static main.Lib.THEME_PATH;
 
 public class PartitionStage extends Stage {
     public PartitionStage(PartitionProperties properties) {
@@ -70,7 +71,7 @@ public class PartitionStage extends Stage {
         mainPane.setId("PartitionPane");
 
         Scene scene = new Scene(mainPane);
-        scene.getStylesheets().add("file://"+CONFIG_PATH+"theme.css");
+        scene.getStylesheets().add("file://"+THEME_PATH);
         setScene(scene);
     }
 }

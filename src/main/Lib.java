@@ -7,6 +7,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import node.CenterNode;
 import panel.RightPane;
+import stage.OthersApplicationsStage;
+import stage.PasswordStage;
 import stage.PermissionsStage;
 
 import java.io.*;
@@ -34,6 +36,7 @@ public class Lib {
   public static final String CONFIG_PATH = HOME + "/.config/filefx/";
   //public static final String CONFIG_PATH = ABSOLUTE_PATH;
   public static final String LIB_PATH = "/usr/lib/filefx/";
+  public static String THEME_PATH = CONFIG_PATH+"theme.css";
 
   public static final String RESET = "\u001B[0m";
   public static final String RED = "\u001B[31m";
@@ -45,13 +48,16 @@ public class Lib {
   public enum COLUMNS {PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATED, TYPE}
   public enum ITEMS {
     BACKWARD, FORWARD, OPEN, OPEN_WITH, CREATE_FILE, CREATE_DIR, CREATE_LINK, RENAME, PERMISSIONS,
-    COPY, CUT, PASTE, RESTORE, TRASH, REMOVE, EXTRACT, COMPRESS, SHELL, SEPARATOR
+    COPY, CUT, PASTE, RESTORE, TRASH, REMOVE, EXTRACT, COMPRESS, SHELL, ADMIN, SEPARATOR
   }
 
   public static final LinkedList<String> backBuffer = new LinkedList<>();
   public static final LinkedList<String> forwardBuffer = new LinkedList<>();
   public static final Lock lock = new ReentrantLock();
+
+  public static OthersApplicationsStage othersApplicationsStage;
   public static PermissionsStage permissionsStage;
+  public static PasswordStage passwordStage;
 
   // METODOS -------------------------------------------------------------------------------------------------------------
 
@@ -69,7 +75,7 @@ public class Lib {
         int rename, int permissions,
         int copy, int cut, int paste,
         int restore, int trash, int remove,
-        int extract, int compress, int shell) {
+        int extract, int compress, int shell, int admin) {
     ContextMenu contextMenu = new ContextMenu();
     contextMenu.setAutoHide(true);
     ObservableList<MenuItem> contextMenuItems = contextMenu.getItems();
@@ -79,6 +85,7 @@ public class Lib {
     for (int i = 0; i < CONTEXT_MENU_ITEMS.length; i++) {
       ITEMS item = CONTEXT_MENU_ITEMS[i];
       switch (item) {
+        case SEPARATOR ->   contextMenuItems.add(new SeparatorMenuItem());
         case BACKWARD ->    {if (backward == 1)    contextMenuItems.add(createNewBackwardItem(CONTEXT_MENU_ICONS[i]));}
         case FORWARD ->     {if (forward == 1)     contextMenuItems.add(createNewForwardItem(CONTEXT_MENU_ICONS[i]));}
         case OPEN ->        {if (open == 1)        contextMenuItems.add(createNewOpenItem(CONTEXT_MENU_ICONS[i]));}
@@ -97,7 +104,7 @@ public class Lib {
         case EXTRACT ->     {if (extract == 1)     contextMenuItems.add(extractHereItem = createExtractHereItem(CONTEXT_MENU_ICONS[i]));}
         case COMPRESS ->    {if (compress == 1)    contextMenuItems.add(createCompressItem(CONTEXT_MENU_ICONS[i]));}
         case SHELL ->       {if (shell == 1)       contextMenuItems.add(createOpenShellItem(CONTEXT_MENU_ICONS[i]));}
-        case SEPARATOR ->   contextMenuItems.add(new SeparatorMenuItem());
+        case ADMIN ->       {if (admin == 1)       contextMenuItems.add(createAdminItem(CONTEXT_MENU_ICONS[i]));}
       }
     }
 
@@ -204,12 +211,12 @@ public class Lib {
   }
   private static Menu createNewFileItem(String icon) {
     File[] templates = new File(TEMPLATES_DIR).listFiles();
-    MenuItem[] templatesItems = new MenuItem[templates.length];
+    MenuItem[] templatesItems = new MenuItem[templates == null ? 0 : templates.length];
     for (int i = 0; i < templatesItems.length; i++) {
       templatesItems[i] = createNewTemplateFileItem(new FileProperties(templates[i]));
     }
 
-    MenuItem withoutFormatItem = new MenuItem("Sin formato", createIconItem(iconsMime.getProperty("inode/x-empty")));
+    MenuItem withoutFormatItem = new MenuItem("Sin formato", createIconItem((String) iconsMime.getOrDefault("inode/x-empty", "")));
     withoutFormatItem.setOnAction(e -> {
       Optional<String> result = showAlert(new TextInputDialog(), "Ingrese nombre del archivo", null);
       if (result.isPresent()) {
@@ -372,6 +379,11 @@ public class Lib {
     item.setOnAction(e -> openShell());
     return item;
   }
+  private static MenuItem createAdminItem(String icon) {
+    MenuItem item = new MenuItem("Abrir como administrador ", createIconItem(icon));
+    item.setOnAction(e -> openWithAdmin());
+    return item;
+  }
   private static Label createIconItem(String text) {
     Label icon = new Label(text);
     icon.setFont(nerdFont);
@@ -427,6 +439,11 @@ public class Lib {
   }
   public static void printExecute(String message) {
     System.out.println("[" + YELLOW + "EXEC" + RESET + "]     " + message);
+  }
+  public static String showPasswordStage(String comand) {
+    passwordStage.command.setText(comand);
+    passwordStage.showAndWait();
+    return passwordStage.password.getText();
   }
 
   // Acciones
@@ -562,6 +579,44 @@ public class Lib {
         printError("Error al renombrar '" + file.getAbsolutePath() + "'", e);
       }
     }
+  }
+  public static int changePermission(String value) {
+    CenterNode selectedItem = centerPane.selectionModel.getSelectedItem();
+    if (selectedItem == null) return 1;
+    FileProperties properties = selectedItem.getFileProperties();
+
+    try {
+      printExecute("Cambiando permisos de '"+YELLOW+properties.getOctetPermissions()+RESET+"' a '"+YELLOW+value+RESET+"'");
+      if (properties.getOwner().equals(USER)) {
+        return new ProcessBuilder("chmod", String.valueOf(value), properties.getAbsolutePath())
+                .start()
+                .waitFor();
+      } else {
+        String password = showPasswordStage("sudo filefx");
+        if (password.isEmpty()) return 1;
+        password += "\n";
+
+        Process process = new ProcessBuilder("sudo", "-k", "-S", "chmod", String.valueOf(value), properties.getAbsolutePath())
+                .start();
+
+        try (OutputStream output = process.getOutputStream()) {
+          output.write(password.getBytes());
+          output.flush();
+        }
+
+        int exitCode = process.waitFor();
+        if (exitCode != 0)
+          printError("Contraseña incorrecta", null);
+        return exitCode;
+      }
+    } catch (Exception e) {
+      printError("Error al cambiar permisos de '"+selectedItem.getName()+"'", e);
+      return 1;
+    }
+  }
+  public static void showPermissionsStage() {
+    permissionsStage.update();
+    permissionsStage.showAndWait();
   }
 
   public static void copyToClipBoard(String text) {
@@ -888,32 +943,23 @@ public class Lib {
       printError("Error al abrir la terminal '" + TERMINAL + "'", ex);
     }
   }
-
-  public static int changePermission(String value) {
-    CenterNode selectedItem = centerPane.selectionModel.getSelectedItem();
-    if (selectedItem == null) return 1;
-    FileProperties properties = selectedItem.getFileProperties();
+  public static void openWithAdmin() {
+    String password = showPasswordStage("sudo filefx");
+    if (password.isEmpty()) return;
+    password += "\n";
 
     try {
-      printExecute("Cambiando permisos de '"+YELLOW+properties.getOctetPermissions()+RESET+"' a '"+YELLOW+value+RESET+"'");
-      if (properties.getOwner().equals(USER)) {
-        return new ProcessBuilder("chmod", String.valueOf(value), properties.getAbsolutePath())
-                .start()
-                .waitFor();
-      } else {
-        return new ProcessBuilder("pkexec", "chmod", String.valueOf(value), properties.getAbsolutePath())
-                .start()
-                .waitFor();
-      }
-    } catch (Exception e) {
-      printError("Error al cambiar permisos de '"+selectedItem.getName()+"'", e);
-      return 1;
-    }
-  }
+      Process process = new ProcessBuilder("sudo", "-k", "-S", "filefx").start();
 
-  public static void showPermissionsStage() {
-    if (permissionsStage == null) permissionsStage = new PermissionsStage();
-    permissionsStage.update();
-    permissionsStage.showAndWait();
+      try (OutputStream output = process.getOutputStream()) {
+        output.write(password.getBytes());
+        output.flush();
+      }
+
+      if (process.waitFor() != 0)
+        printError("Contraseña incorrecta", null);
+    } catch (Exception e) {
+      printError("Error al abrir como administrador", e);
+    }
   }
 }

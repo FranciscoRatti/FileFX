@@ -102,17 +102,17 @@ Todo se configura a traves de cinco archivos de configuracion en **~/.config/fil
 archivos comparten la sintaxis de "**nombre**=**valor**", a continuacion se enumeran los tipos de
 datos que pueden ir en _valor_ seguido de los archivos y sus configuraciones:
 
-|    Tipo     |                                                                                    Valor                                                                                     |
-| :---------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|   boolean   |                                                                                 true o false                                                                                 |
-|   double    |                                                                               Numero con coma                                                                                |
-|   String    |                                                                                 Texto plano                                                                                  |
-|  String[]   |                                                             Lista de texto, su<br/>sintaxis es [valor,valor,...]                                                             |
-| String[][]  |                                            Lista de listas de texto, su<br/>sintaxis es [{valor;valor;...},{valor;valor;...},...]                                            |
-|    ORDER    |                                                                           NAME, DATE, SIZE o MIME                                                                            |
-|   COLUMNS   |                                                           PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATED, TYPE                                                           |
-| TOP_BUTTONS |                                                               BACKWARD, FORWARD, PARENT, SEARCH, CLEAN, RELOAD                                                               |
-|    ITEMS    | BACKWARD, FORWARD, OPEN, OPEN_WITH, CREATE_FILE, CREATE_DIR, CREATE_LINK, RENAME, PERMISSIONS, COPY, CUT, PASTE, RESTORE, TRASH, REMOVE, EXTRACT, COMPRESS, SHELL, SEPARATOR |
+|    Tipo     |                                                                                        Valor                                                                                        |
+|:-----------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|   boolean   |                                                                                    true o false                                                                                     |
+|   double    |                                                                                   Numero con coma                                                                                   |
+|   String    |                                                                                     Texto plano                                                                                     |
+|  String[]   |                                                                Lista de texto, su<br/>sintaxis es [valor,valor,...]                                                                 |
+| String[][]  |                                               Lista de listas de texto, su<br/>sintaxis es [{valor;valor;...},{valor;valor;...},...]                                                |
+|    ORDER    |                                                                               NAME, DATE, SIZE o MIME                                                                               |
+|   COLUMNS   |                                                              PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATED, TYPE                                                               |
+| TOP_BUTTONS |                                                                  BACKWARD, FORWARD, PARENT, SEARCH, CLEAN, RELOAD                                                                   |
+|    ITEMS    | BACKWARD, FORWARD, OPEN, OPEN_WITH, CREATE_FILE, CREATE_DIR, CREATE_LINK, RENAME, PERMISSIONS, COPY, CUT, PASTE, RESTORE, TRASH, REMOVE, EXTRACT, COMPRESS, SHELL, ADMIN, SEPARATOR |
 
 - **_config.properties_**: Configuraciones principales.
   - **General :**
@@ -145,9 +145,8 @@ datos que pueden ir en _valor_ seguido de los archivos y sus configuraciones:
     - `places = String[][]` : Define ubicaciones personalizadas que aparecerán en Lugares en el
       LeftPane. Su sintaxis es _[{nombre;icono;direccion},{nombre;icono;direccion},...]_.
     - `show_devices = boolean` : Si es true apareceran los discos y particiones en el LeftPane.
-    - `partition_icons = String[][]` : Define el icono y nombre de particiones especificas, el resto
-      tendra el icono de la propiedad "**partition**" en _icons_binding.properties_. La sintaxis es
-      _[{punto de montaje;icono;nombre},...]_.
+    - `partition_labels = String[][]` : Define la etiqueta de particiones especificas, el resto
+      tendrá el nombre predeterminado. La sintaxis es _[{punto de montaje;nombre},...]_.
     - `show_unmounted = boolean` : Si es true se muestran las particiones que no estan montadas en
       el LeftPane.
     - `unmount_icon = String` : Define el icono del boton de desmontar.

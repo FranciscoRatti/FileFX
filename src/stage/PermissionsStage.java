@@ -180,7 +180,7 @@ public class PermissionsStage extends Stage {
         // Escena
         Scene scene = new Scene(pane);
         scene.setOnKeyPressed(e -> {if (e.getCode() == KeyCode.ESCAPE) close();});
-        scene.getStylesheets().add("file://"+CONFIG_PATH+"theme.css");
+        scene.getStylesheets().add("file://"+THEME_PATH);
         setScene(scene);
     }
     
