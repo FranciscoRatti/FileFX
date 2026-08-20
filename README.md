@@ -9,8 +9,8 @@ imagen nativa con **Liberica NIK** (Basado en GraalVM), disponible solo en Linux
 
 - [Caracteristicas](#caracteristicas)
 - [Depedencias](#dependencias)
-- [Instalación](#instalacion)
-- [Configuración](#configuracion)
+- [Instalación](#instalación)
+- [Configuración](#configuración)
 - [Tema](#tema)
 
 ## Caracteristicas

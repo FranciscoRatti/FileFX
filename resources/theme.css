@@ -544,6 +544,70 @@
 }
 
 
+#Password_pane {
+    -fx-background-color: #232323FF;
+    -fx-spacing: 8;
+    -fx-alignment: CENTER;
+    -fx-padding: 10;
+    -fx-max-width: 200;
+}
+
+#Password_message {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 12;
+    -fx-padding: 5 0 0 0;
+    -fx-text-alignment: center;
+}
+
+#Password_command {
+    -fx-text-fill: lime;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-padding: 0 0 5 0;
+    -fx-text-alignment: center;
+}
+
+#Password_password {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 12;
+    -fx-background-color: #373737;
+    -fx-border-style: solid;
+    -fx-border-radius: 2;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+}
+#Password_password:hover {
+    -fx-border-color: white;
+}
+#Password_password:focused {
+    -fx-border-color: white;
+}
+
+#Password_buttons_pane {
+    -fx-alignment: CENTER;
+    -fx-spacing: 10;
+}
+
+#Password_button {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 12;
+    -fx-background-color: #373737;
+    -fx-border-style: solid;
+    -fx-border-radius: 2;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+}
+#Password_button:hover {
+    -fx-border-color: white;
+}
+#Password_button:focused {
+    -fx-border-color: white;
+}
+
+
 /* CLASES ----------------------------------------------------------------------------------------------------------- */
 
 .tooltip {
