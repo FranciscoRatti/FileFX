@@ -36,7 +36,7 @@ public class Lib {
   public static final String CONFIG_PATH = HOME + "/.config/filefx/";
   //public static final String CONFIG_PATH = ABSOLUTE_PATH;
   public static final String LIB_PATH = "/usr/lib/filefx/";
-  public static String THEME_PATH = CONFIG_PATH+"theme.css";
+  public static String THEME;
 
   public static final String RESET = "\u001B[0m";
   public static final String RED = "\u001B[31m";

@@ -104,6 +104,8 @@ propiedades seguidas del valor predeterminado.
 
 - **_config.properties_**: Configuraciones principales.
   - **General :**
+    - `theme=theme_default` : Tema, debe coincidir con el nombre del archivo .css en
+      _~/.config/filefx/_ 
     - `terminal=xterm` : Comando a ejecutar al abrir una terminal.
     - `templates_dir=~/Templates` : Ubicación donde se guardan las plantillas de archivos que se
       usan al crear un nuevo archivo.

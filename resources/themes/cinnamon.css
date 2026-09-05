@@ -1,0 +1,684 @@
+/* ETIQUETAS -------------------------------------------------------------------------------------------------------- */
+
+/* CENTER PANE */
+
+#TopPane {
+    -fx-background-color: #222226;
+    -fx-border-style: solid;
+    -fx-border-width: 0 0 2 0;
+    -fx-border-color: #131313;
+    -fx-spacing: 10;
+    -fx-padding: 5;
+}
+
+#Top_search {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-background-color: #34343A;
+    -fx-border-style: solid;
+    -fx-border-radius: 2;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+    -fx-max-height: 35;
+}
+#Top_search:hover {
+    -fx-background-color: #686869;
+}
+#Top_search:focused {
+    -fx-background-color: #686869;
+}
+
+#TopNode_button {
+    -fx-background-color: #222226;
+    -fx-max-height: 35;
+    -fx-padding: 0 16 3 10;
+    -fx-label-padding: 0 5 0 5;
+}
+#TopNode_button:hover {
+    -fx-background-color: #686869;
+}
+
+#TopNode_icon {
+    -fx-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 18;
+    -fx-alignment: CENTER;
+}
+
+
+/* RIGHT PANE */
+
+#RightPane_border {
+    -fx-min-width: 2;
+    -fx-background-color: #1A1A1E;
+}
+
+#RightPane_pane {
+    -fx-background-color: #2E2E33;
+}
+
+#Right_close {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 12;
+    -fx-background-color: #2E2E33;
+    -fx-padding: 0 4 2 4;
+}
+#Right_close:hover {
+    -fx-background-color: #686869;
+}
+
+#Right_miniatura {
+    -fx-font-size: 170;
+}
+
+#Right_miniatura_pane {
+    -fx-border-style: solid;
+    -fx-border-radius: 1;
+    -fx-border-width: 1;
+    -fx-border-color: #686869;
+}
+
+#Right_miniatura_pane > .corner {
+    -fx-background-color: #2E2E33;
+}
+
+#Right_miniatura_text {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 10;
+    -fx-padding: 0;
+    -fx-highlight-fill: #0095c8;
+    -fx-highlight-text-fill: white;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+#Right_miniatura_text .content {
+    -fx-background-color: #2E2E33;
+}
+
+#RightNode_title {
+    -fx-text-fill: lightgray;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 12;
+    -fx-padding: 0 10 0 10;
+}
+
+#RightNode_value {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-background-color: #2E2E33;
+    -fx-padding: 1 2 1 2;
+}
+#RightNode_value:hover {
+    -fx-background-color: #686869;
+}
+#RightNode_value:focused {
+    -fx-background-color: #686869;
+}
+
+
+/* BOTTOM PANE */
+
+#BottomPane {
+    -fx-background-color: #2E2E33;
+    -fx-border-style: solid;
+    -fx-border-width: 2 0 0 0;
+    -fx-border-color: #1A1A1E;
+    -fx-spacing: 8;
+    -fx-padding: 5 8 5 8;
+}
+
+#Bottom_textfield {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-background-color: #222226;
+    -fx-border-style: solid;
+    -fx-border-radius: 2;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+    -fx-padding: 2 8 2 8;
+}
+#Bottom_textfield:hover {
+   -fx-background-color: #686869;
+}
+#Bottom_textfield:focused {
+    -fx-background-color: #686869;
+}
+
+#BottomNode_button {
+    -fx-background-color: #222226;
+    -fx-border-style: solid;
+    -fx-border-radius: 1;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+    -fx-padding: 1 10 1 5;
+}
+#BottomNode_button:hover {
+    -fx-background-color: #686869;
+}
+
+#BottomNode_button-selected {
+    -fx-background-color: #686869;
+    -fx-border-style: solid;
+    -fx-border-radius: 1;
+    -fx-border-width: 1;
+    -fx-border-color: #686869;
+    -fx-padding: 1 10 1 5;
+}
+#BottomNode_button-selected:hover {
+    -fx-background-color: #686869;
+}
+
+#BottomNode_icon {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-alignment: CENTER;
+}
+
+#BottomNode_icon-selected {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-alignment: CENTER;
+    -fx-font-weight: bold;
+}
+
+
+/* LEFT PANE */
+
+#LeftPane {
+    -fx-background-color: #2E2E33;
+}
+
+#LeftPane_border {
+    -fx-min-width: 2;
+    -fx-background-color: #1A1A1E;
+}
+
+#Left_title {
+    -fx-text-fill: lightgray;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-background-color: #2E2E33;
+    -fx-label-padding: 2 10 2 5;
+    -fx-font-weight: bold;
+}
+
+#LeftNode_label {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-background-color: #2E2E33;
+    -fx-label-padding: 4 10 4 10;
+    -fx-graphic-text-gap: 15;
+}
+#LeftNode_label:hover {
+    -fx-background-color: #686869;
+}
+
+#LeftNode_icon {
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-alignment: CENTER-RIGHT;
+}
+
+#LeftNode_unmount_icon {
+    -fx-fill: lightgray;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+}
+
+#LeftNode_unmount_button {
+    -fx-background-color: #2E2E33;
+    -fx-border-width: 0;
+    -fx-padding: 4 10 4 3;
+}
+#LeftNode_unmount_button:hover {
+    -fx-background-color: #686869;
+}
+
+
+/* CENTER PANE */
+
+#CenterPane {
+    -fx-background-color: #2E2E33;
+    -fx-padding: 0;
+}
+
+#CenterPane .list-cell {
+    -fx-background-color: #2E2E33;
+    -fx-padding: 0;
+}
+
+#CenterPane .corner {
+    -fx-background-color: #2E2E33;
+    -fx-background-insets: 0;
+}
+
+#CenterPane .scroll-bar .track {
+    -fx-background-color: #2E2E33;
+}
+
+#CenterPane .scroll-bar .thumb {
+    -fx-background-color: #404040FF;
+    -fx-border-style: solid;
+    -fx-border-radius: 5;
+    -fx-border-color: #686869;
+}
+#CenterPane .scroll-bar .thumb:hover {
+    -fx-background-color: #686869;
+    -fx-background-color: #686869;
+}
+
+#CenterPane .scroll-bar .increment-arrow {-fx-background-color: white;}
+#CenterPane .scroll-bar .decrement-arrow {-fx-background-color: white;}
+
+#CenterPane .scroll-bar:vertical {
+    -fx-background-color: #2E2E33;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+}
+#CenterPane .scroll-bar:vertical .increment-button {-fx-padding: 5 1 5 2;}
+#CenterPane .scroll-bar:vertical .decrement-button {-fx-padding: 5 1 5 2;}
+#CenterPane .scroll-bar:vertical {-fx-padding: 0 1 0 0;}
+
+#CenterPane .scroll-bar:horizontal {
+    -fx-background-color: #2E2E33;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-padding: 0 0 1 0;
+}
+#CenterPane .scroll-bar:horizontal .increment-button {-fx-padding: 1 5 2 5;}
+#CenterPane .scroll-bar:horizontal .decrement-button {-fx-padding: 1 5 2 5;}
+
+#CenterNode_boxB1 {
+    -fx-background-color: #2E2E33;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-border-color: #2E2E33;
+    -fx-spacing: 10;
+}
+#CenterNode_boxB1:hover {
+    -fx-background-color: #686869;
+    -fx-background-color: #686869;
+}
+
+#CenterNode_boxB1-focus {
+    -fx-background-color: #0095c8;
+    -fx-border-color: #0095c8;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-spacing: 10;
+}
+#CenterNode_boxB1-focus:hover {
+    -fx-background-color: #41aeff;
+    -fx-border-color: #41aeff;
+}
+
+#CenterNode_boxB2 {
+    -fx-background-color: #222226;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-border-color: #222226;
+    -fx-spacing: 10;
+}
+#CenterNode_boxB2:hover {
+    -fx-background-color: #686869;
+    -fx-background-color: #686869;
+}
+
+#CenterNode_boxB2-focus {
+    -fx-background-color: #0095c8;
+    -fx-border-color: #0095c8;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-spacing: 10;
+}
+#CenterNode_boxB2-focus:hover {
+    -fx-background-color: #41aeff;
+    -fx-border-color: #41aeff;
+}
+
+#CenterNode_icon {
+    -fx-label-padding: 0 5 0 5;
+}
+
+#CenterNode_icon-focus {
+    -fx-label-padding: 0 5 0 5;
+}
+
+#CenterNode_name {
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-label-padding: 2;
+}
+
+#CenterNode_name-focus {
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-label-padding: 2;
+    -fx-font-weight: bold;
+}
+
+#CenterNode_column {
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-padding: 2 10 2 10;
+}
+
+#CenterNode_column-focus {
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-padding: 2 10 2 10;
+    -fx-font-weight: bold;
+}
+
+
+/* OTROS ------------------------------------------------------------------------------------------------------------ */
+
+#MainPane {-fx-background-color: #2E2E33;}
+
+#OtherPane {-fx-background-color: #404040FF;}
+
+#OtherNode {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-background-color: #404040FF;
+    -fx-border-style: solid;
+    -fx-border-radius: 1;
+    -fx-border-width: 1;
+    -fx-border-color: #686869;
+    -fx-alignment: CENTER-LEFT;
+    -fx-content-display: LEFT;
+}
+#OtherNode:hover {
+    -fx-background-color: #686869;
+}
+#OtherNode:focused {
+    -fx-background-color: #686869;
+}
+
+
+#PartitionPane {
+    -fx-background-color: #2E2E33;
+}
+
+#PartitionColumn {
+    -fx-background-color: #2E2E33;
+    -fx-padding: 10;
+    -fx-spacing: 3;
+}
+
+#PartitionNode_title {
+    -fx-text-fill: lightgray;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-pref-height: 26px;
+    -fx-min-height: 26px;
+    -fx-max-height: 26px;
+    -fx-padding: 2 4 2 4;
+}
+
+#PartitionNode_value {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-background-color: #222226;
+    -fx-pref-height: 26px;
+    -fx-min-height: 26px;
+    -fx-max-height: 26px;
+    -fx-padding: 2 4 2 4;
+}
+#PartitionNode_value:hover {
+    -fx-background-color: #686869;
+}
+#PartitionNode_value:focused {
+    -fx-background-color: #686869;
+}
+
+
+#ContextMenu_icon {
+    -fx-text-fill: white;
+    -fx-font-size: 12;
+    -fx-alignment: CENTER;
+    -fx-label-padding: 0 10 0 0;
+}
+
+
+#PermissionsPane {
+    -fx-background-color: #2E2E33;
+    -fx-spacing: 8;
+    -fx-alignment: CENTER;
+    -fx-padding: 10;
+}
+
+#PermissionsChars_pane {
+    -fx-alignment: CENTER;
+    -fx-spacing: 5;
+}
+
+#PermissionsChars_button {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-background-color: #404040FF;
+    -fx-border-width: 0;
+    -fx-padding: 0 5 0 5;
+}
+#PermissionsChars_button:hover {
+    -fx-background-color: #686869;
+}
+#PermissionsChars_button:focused {
+    -fx-background-color: #686869;
+}
+
+#PermissionsOctet_pane {
+    -fx-alignment: CENTER;
+    -fx-spacing: 3;
+}
+
+#PermissionsOctet_button {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-background-color: #404040FF;
+    -fx-border-width: 0;
+    -fx-padding: 0 5 0 5;
+}
+#PermissionsOctet_button:hover {
+    -fx-background-color: #686869;
+}
+#PermissionsOctet_button:focused {
+    -fx-background-color: #686869;
+}
+
+#PermissionsOctet_value {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+    -fx-background-color: #595959;
+    -fx-border-width: 0;
+    -fx-padding: 0 5 0 5;
+}
+#PermissionsOctet_value:hover {
+    -fx-background-color: #686869;
+}
+#PermissionsOctet_value:focused {
+    -fx-background-color: #686869;
+}
+
+#PermissionsButtons_pane {
+    -fx-alignment: CENTER;
+    -fx-spacing: 10;
+}
+
+#PermissionsButtons_button {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 12;
+    -fx-background-color: #222226;
+    -fx-border-style: solid;
+    -fx-border-radius: 2;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+}
+#PermissionsButtons_button:hover {
+    -fx-background-color: #686869;
+}
+#PermissionsButtons_button:focused {
+    -fx-background-color: #686869;
+}
+
+
+#Password_pane {
+    -fx-background-color: #2E2E33;
+    -fx-spacing: 8;
+    -fx-alignment: CENTER;
+    -fx-padding: 10;
+    -fx-max-width: 200;
+}
+
+#Password_message {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 12;
+    -fx-padding: 5 0 0 0;
+    -fx-text-alignment: center;
+}
+
+#Password_command {
+    -fx-text-fill: lime;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-padding: 0 0 5 0;
+    -fx-text-alignment: center;
+}
+
+#Password_password {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 12;
+    -fx-background-color: #222226;
+    -fx-border-style: solid;
+    -fx-border-radius: 2;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+}
+#Password_password:hover {
+    -fx-background-color: #686869;
+}
+#Password_password:focused {
+    -fx-background-color: #686869;
+}
+
+#Password_buttons_pane {
+    -fx-alignment: CENTER;
+    -fx-spacing: 10;
+}
+
+#Password_button {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 12;
+    -fx-background-color: #222226;
+    -fx-border-style: solid;
+    -fx-border-radius: 2;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+}
+#Password_button:hover {
+    -fx-background-color: #686869;
+}
+#Password_button:focused {
+    -fx-background-color: #686869;
+}
+
+
+/* CLASES ----------------------------------------------------------------------------------------------------------- */
+
+.tooltip {
+    -fx-show-delay: 50ms;
+    -fx-hide-delay: 0ms;
+}
+
+.tooltip > .label {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+}
+
+
+.context-menu {
+    -fx-background-color: transparent;
+}
+
+
+.menu-item {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 11;
+    -fx-background-color: #404040FF;
+    -fx-border-style: solid;
+    -fx-border-radius: 1;
+    -fx-border-width: 1;
+    -fx-border-color: #686869;
+}
+.menu-item:hover {-fx-background-color: #686869;}
+.menu-item:focused {-fx-background-color: #686869;}
+
+.menu-item > .label {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+}
+
+.scroll-pane > .corner {
+    -fx-background-color: #2E2E33;
+}
+
+.scroll-pane > .scroll-bar .track {
+    -fx-background-color: #2E2E33;
+}
+
+.scroll-pane > .scroll-bar .thumb {
+    -fx-background-color: #404040FF;
+    -fx-border-style: solid;
+    -fx-border-radius: 5;
+    -fx-border-color: #686869;
+}
+.scroll-pane > .scroll-bar .thumb:hover {
+    -fx-background-color: #686869;
+}
+
+.scroll-pane > .scroll-bar .increment-button {
+    -fx-background-color: #2E2E33;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-padding: 5 1 5 2;
+}
+.scroll-pane > .scroll-bar:vertical .increment-button {-fx-padding: 5 1 5 2;}
+.scroll-pane > .scroll-bar:horizontal .increment-button {-fx-padding: 1 5 2 5;}
+.scroll-pane > .scroll-bar .increment-arrow {-fx-background-color: white;}
+
+.scroll-pane > .scroll-bar .decrement-button {
+    -fx-background-color: #2E2E33;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-padding: 5 1 5 2;
+}
+.scroll-pane > .scroll-bar:vertical .decrement-button {-fx-padding: 5 1 5 2;}
+.scroll-pane > .scroll-bar:horizontal .decrement-button {-fx-padding: 1 5 2 5;}
+.scroll-pane > .scroll-bar .decrement-arrow {-fx-background-color: white;}
+
+.line {-fx-border-width: 0 0 4 0;}
+.line {-fx-border-width: 0 0 4 0;}

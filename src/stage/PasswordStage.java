@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import static main.Lib.THEME_PATH;
+import static main.Lib.THEME;
 
 public class PasswordStage extends Stage {
     public final Label command;
@@ -56,7 +56,7 @@ public class PasswordStage extends Stage {
 
         Scene scene = new Scene(pane);
         scene.setOnKeyPressed(e -> {if (e.getCode() == KeyCode.ESCAPE) close();});
-        scene.getStylesheets().add("file://"+THEME_PATH);
+        scene.getStylesheets().add("file://"+ THEME);
         setScene(scene);
 
         setOnCloseRequest(e -> {if (reset) password.setText("");});

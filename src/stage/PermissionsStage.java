@@ -1,7 +1,6 @@
 package stage;
 
 import entity.FileProperties;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
@@ -180,7 +179,7 @@ public class PermissionsStage extends Stage {
         // Escena
         Scene scene = new Scene(pane);
         scene.setOnKeyPressed(e -> {if (e.getCode() == KeyCode.ESCAPE) close();});
-        scene.getStylesheets().add("file://"+THEME_PATH);
+        scene.getStylesheets().add("file://"+ THEME);
         setScene(scene);
     }
     

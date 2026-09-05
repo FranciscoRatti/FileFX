@@ -50,8 +50,8 @@ echo -e "$EXEC Copiando \e[33micons_binding.properties\e[0m a \e[34m~/.config/fi
 cp --update=none $DIR/resources/icons_binding.properties ~/.config/filefx/icons_binding.properties
 echo -e "$EXEC Copiando \e[33mcolors_binding.properties\e[0m a \e[34m~/.config/filefx/\e[0m"
 cp --update=none $DIR/resources/colors_binding.properties ~/.config/filefx/colors_binding.properties
-./FileFX/shell/copy.sh $DIR/resources/theme.css ~/.config/filefx/theme.css
-cp $DIR/resources/theme.css /usr/share/filefx/default_theme.css
+./FileFX/shell/copy.sh $DIR/resources/themes/default.css ~/.config/filefx/themes/default.css
+cp $DIR/resources/themes/default.css /usr/share/filefx/
 
 # Estaticos
 echo -e "\n$INFO ARCHIVOS ESTATICOS:"

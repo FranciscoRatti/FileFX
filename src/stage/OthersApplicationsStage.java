@@ -9,8 +9,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import main.FileFX;
-import node.CenterNode;
 
 import java.io.File;
 import java.util.*;
@@ -36,7 +34,7 @@ public class OthersApplicationsStage extends Stage {
         mainPane.setId("MainPane");
 
         Scene scene = new Scene(mainPane);
-        scene.getStylesheets().add("file://"+THEME_PATH);
+        scene.getStylesheets().add("file://"+ THEME);
         setScene(scene);
 
         // Cargar applicaciones

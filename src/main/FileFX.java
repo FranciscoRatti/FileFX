@@ -66,9 +66,6 @@ public class FileFX extends javafx.application.Application {
 
     public void start(Stage s) {
         nerdFont = Font.loadFont("file://" + ABSOLUTE_PATH + "0xProtoNerdFontMono-Regular.ttf", 16);
-        if (!new File(THEME_PATH).exists()) {
-            THEME_PATH = ABSOLUTE_PATH+"default_theme.css";
-        }
 
         printInfo("Cargando archivo de valores iniciales");
         if (new File(CONFIG_PATH+"init_values.properties").exists()) {
@@ -105,6 +102,10 @@ public class FileFX extends javafx.application.Application {
             try (Reader reader = new InputStreamReader(new FileInputStream(CONFIG_PATH + "config.properties"), StandardCharsets.UTF_8)) {
                 config = new Properties();
                 config.load(reader);
+
+                THEME = CONFIG_PATH + "themes/" + config.getOrDefault("theme", "default.css");
+                if (!new File(THEME).exists()) THEME = ABSOLUTE_PATH+ "default.css";
+                printInfo("Tema: "+BLUE+THEME.substring(THEME.lastIndexOf('/')+1)+RESET);
 
                 TERMINAL = (String) config.getOrDefault("terminal", "xterm");
                 SAVE_BOUNDS = Boolean.parseBoolean((String) config.getOrDefault("save_bounds", "false"));
