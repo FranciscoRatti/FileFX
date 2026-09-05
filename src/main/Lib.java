@@ -588,15 +588,15 @@ public class Lib {
     try {
       printExecute("Cambiando permisos de '"+YELLOW+properties.getOctetPermissions()+RESET+"' a '"+YELLOW+value+RESET+"'");
       if (properties.getOwner().equals(USER)) {
-        return new ProcessBuilder("chmod", String.valueOf(value), properties.getAbsolutePath())
+        return new ProcessBuilder("chmod", value, properties.getAbsolutePath())
                 .start()
                 .waitFor();
       } else {
-        String password = showPasswordStage("sudo filefx");
+        String password = showPasswordStage("sudo chmod "+value+" "+properties.getName());
         if (password.isEmpty()) return 1;
         password += "\n";
 
-        Process process = new ProcessBuilder("sudo", "-k", "-S", "chmod", String.valueOf(value), properties.getAbsolutePath())
+        Process process = new ProcessBuilder("sudo", "-k", "-S", "chmod", value, properties.getAbsolutePath())
                 .start();
 
         try (OutputStream output = process.getOutputStream()) {

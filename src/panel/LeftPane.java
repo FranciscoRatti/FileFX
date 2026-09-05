@@ -80,7 +80,7 @@ public class LeftPane extends VBox {
                                     part.icon,
                                     part.type == PartitionProperties.TYPE.PART ? !part.mountpoint.isEmpty() ? part.mountpoint : null : null
                             );
-                            node.setColor(Color.valueOf((String) colorsMime.getOrDefault(part.type.toString().toLowerCase(), "partition")));
+                            node.setColor(Color.valueOf((String) colorsMime.getOrDefault(part.type.toString().toLowerCase(), "white")));
                             node.setOnMouseReleased(e -> {
                                 if (e.getButton() == MouseButton.SECONDARY) stage.showAndWait();
                             });

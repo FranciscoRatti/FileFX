@@ -326,8 +326,8 @@ public class FileFX extends javafx.application.Application {
                 iconsMime.putIfAbsent("lock", "\uF456");
                 iconsMime.putIfAbsent("this", "\uF4D3");
                 iconsMime.putIfAbsent("parent", "\uF4D3");
-                iconsMime.putIfAbsent("disc", "\uDB80\uDECA");
-                iconsMime.putIfAbsent("partition", "\uF200");
+                iconsMime.putIfAbsent("disk", "\uDB80\uDECA");
+                iconsMime.putIfAbsent("part", "\uF200");
             } catch (IOException e) {
                 printError("No se pudo leer el archivo de iconos", e);
             }
@@ -339,8 +339,8 @@ public class FileFX extends javafx.application.Application {
             iconsMime.put("lock", "\uF456");
             iconsMime.put("this", "\uF4D3");
             iconsMime.put("parent", "\uF4D3");
-            iconsMime.put("disc", "\uDB80\uDECA");
-            iconsMime.put("partition", "\uF200");
+            iconsMime.put("disk", "\uDB80\uDECA");
+            iconsMime.put("part", "\uF200");
             iconsMime.put("inode/directory", "\uF4D3");
         }
 
@@ -383,8 +383,9 @@ public class FileFX extends javafx.application.Application {
                 colorsMime.putIfAbsent("lock", "#FF0000");
                 colorsMime.putIfAbsent("this", "#ffe066");
                 colorsMime.putIfAbsent("parent", "#ffe066");
-                colorsMime.putIfAbsent("disc", "white");
-                colorsMime.putIfAbsent("partition", "white");
+                colorsMime.putIfAbsent("disk", "white");
+                colorsMime.putIfAbsent("part", "white");
+                colorsMime.putIfAbsent("inode/directory", "#ffe066");
             } catch (IOException e) {
                 printError("No se puedo leer archivo de colores", e);
             }
@@ -401,8 +402,8 @@ public class FileFX extends javafx.application.Application {
             colorsMime.put("lock", "#FF0000");
             colorsMime.put("this", "#ffe066");
             colorsMime.put("parent", "#ffe066");
-            colorsMime.put("disc", "white");
-            colorsMime.put("partition", "white");
+            colorsMime.put("disk", "white");
+            colorsMime.put("part", "white");
             colorsMime.put("inode/directory", "#ffe066");
         }
 
@@ -506,7 +507,8 @@ public class FileFX extends javafx.application.Application {
                 }
             }
         } catch (Exception e) {
-            printError("Error con el archivo de actuazalicion", e);
+            printError("Error con el archivo de actuazalicion", null);
+            e.printStackTrace();
         }
     }
 

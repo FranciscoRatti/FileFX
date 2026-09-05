@@ -17,7 +17,7 @@ public class PartitionProperties {
         model = properties[10].split("=")[1].substring(1);
 
         labelText = label.isEmpty() ? model.isEmpty() ? name : model : label;
-        icon = iconsMime.getProperty(type.toString().toLowerCase());
+        icon = (String) iconsMime.getOrDefault(type.toString().toLowerCase(), "");
 
         // Si es particion
         if (type == TYPE.PART) {

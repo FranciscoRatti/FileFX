@@ -1,3 +1,4 @@
+#!/bin/bash
 DIR=$(pwd)/FileFX
 EXEC="[\e[33mEXEC\e[0m]    "
 INFO="[\e[34mINFO\e[0m]    "
@@ -55,8 +56,8 @@ cp $DIR/resources/theme.css /usr/share/filefx/default_theme.css
 # Estaticos
 echo -e "\n$INFO ARCHIVOS ESTATICOS:"
 
-if [ ! -d ~/.config/filefx/ ]; then
-  echo -e "Creando directorio \e[33m/usr/share/filefx/\e[0m"
+if [ ! -d /usr/share/filefx/ ]; then
+  echo -e "$INFO Creando directorio \e[33m/usr/share/filefx/\e[0m"
   sudo mkdir -p /usr/share/filefx/
 else
   echo -e "$INFO El directorio \e[34m/usr/share/filefx/\e[0m ya existe"
@@ -72,8 +73,8 @@ sudo cp $DIR/resources/notFound.png /usr/share/filefx/
 # Dinamicos
 echo -e "\n$INFO ARCHIVOS DINAMICOS:"
 
-if [ ! -d ~/.config/filefx/ ]; then
-  echo -e "Creando directorio \e[33m/var/lib/filefx/\e[0m"
+if [ ! -d /var/lib/filefx/ ]; then
+  echo -e "$INFO Creando directorio \e[33m/var/lib/filefx/\e[0m"
   sudo mkdir -p /var/lib/filefx/
 else
   echo -e "$INFO El directorio \e[34m/var/lib/filefx/\e[0m ya existe"
@@ -86,8 +87,8 @@ sudo chmod 666 /var/lib/filefx/metadata.properties
 # Binarios
 echo -e "\n$INFO ARCHIVOS BINARIOS:"
 
-if [ ! -d ~/.config/filefx/ ]; then
-  echo -e "Creando directorio \e[33m/usr/lib/filefx/\e[0m"
+if [ ! -d /usr/lib/filefx/ ]; then
+  echo -e "$INFO Creando directorio \e[33m/usr/lib/filefx/\e[0m"
   sudo mkdir -p /usr/lib/filefx/
 else
   echo -e "$INFO El directorio \e[34m/usr/lib/filefx/\e[0m ya existe"
