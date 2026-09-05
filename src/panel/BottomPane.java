@@ -22,7 +22,7 @@ public class BottomPane extends HBox {
         ObservableList<Node> children = getChildren();
 
         for (String button : BOTTOM_BUTTONS) {
-            if (button.equals("order")) {
+            if (button.equals("ORDER")) {
                 orderButtons = new Button[]{
                         new Button(ORDER_ICONS[0], "Nombre", "BottomNode", e -> changeOrder(ORDER.NAME)),
                         new Button(ORDER_ICONS[1], "Fecha", "BottomNode", e -> changeOrder(ORDER.DATE)),
@@ -32,7 +32,7 @@ public class BottomPane extends HBox {
                 selectOrder();
                 children.add(new HBox(2, orderButtons));
 
-            } else if (button.equals("filter")) {
+            } else if (button.equals("FILTER")) {
                 filter = new TextField("");
                 filter.setId("Bottom_textfield");
                 filter.setPromptText("Filtro");

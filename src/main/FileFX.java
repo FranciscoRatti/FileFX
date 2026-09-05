@@ -122,7 +122,7 @@ public class FileFX extends javafx.application.Application {
                 SHOW_INSIDE_DIRECTORIES = Boolean.parseBoolean((String) config.getOrDefault("show_inside_directories", "false"));
                 SHOW_INSIDE_FILES = Boolean.parseBoolean((String) config.getOrDefault("show_inside_files", "false"));
 
-                BOTTOM_BUTTONS = split((String) config.getOrDefault("bottom_buttons", "[order,filter]"));
+                BOTTOM_BUTTONS = split((String) config.getOrDefault("bottom_buttons", "[ORDER,FILTER]"));
                 ORDER_ICONS = split((String) config.getOrDefault("order_icons", "[\uEB69,\uF073,\uDB83\uDC8E,\uEBB9]"));
 
                 SAVE_LEFT_WIDTH = Boolean.parseBoolean((String) config.getOrDefault("save_left_width", "false"));
@@ -175,7 +175,7 @@ public class FileFX extends javafx.application.Application {
             SHOW_INSIDE_DIRECTORIES = false;
             SHOW_INSIDE_FILES = false;
 
-            BOTTOM_BUTTONS = new String[]{"order", "filter"};
+            BOTTOM_BUTTONS = new String[]{"ORDER", "FILTER"};
             ORDER_ICONS = new String[]{"\uEB69", "\uF073", "\uDB83\uDC8E", "\uEBB9"};
 
             SAVE_LEFT_WIDTH = false;
