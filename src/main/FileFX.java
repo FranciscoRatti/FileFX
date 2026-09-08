@@ -483,11 +483,18 @@ public class FileFX extends javafx.application.Application {
 
         try (FileInputStream input = new FileInputStream("/var/lib/filefx/metadata.properties")) {
             metadata.load(input);
-            LocalDate lastCheck = LocalDate.parse(metadata.getProperty("last_check"));
+            String[] values = ((String) metadata.getOrDefault("last_check", "2000-00-00")).split("-");
+            LocalDate lastCheck = LocalDate.of(Integer.parseInt(values[0]), Integer.parseInt(values[2]), Integer.parseInt(values[1]));
             LocalDate now = LocalDate.now();
 
             // Si hace mas de dos dias que no se chequea
             if (lastCheck.isBefore(now)) {
+
+                // Guardar last_check
+                try (FileOutputStream output = new FileOutputStream("/var/lib/filefx/metadata.properties")) {
+                    metadata.put("last_check", now.toString());
+                    metadata.store(output, "");
+                }
 
                 // Actualizar
                 ProcessBuilder pb = new ProcessBuilder(LIB_PATH+"update.sh", String.valueOf(ProcessHandle.current().pid()));
@@ -499,12 +506,6 @@ public class FileFX extends javafx.application.Application {
                     while ((line = reader.readLine()) != null) {
                         System.out.println(line);
                     }
-                }
-
-                // Guardar last_check
-                try (FileOutputStream output = new FileOutputStream("/var/lib/filefx/metadata.properties")) {
-                    metadata.put("last_check", now.toString());
-                    metadata.store(output, "");
                 }
             }
         } catch (Exception e) {

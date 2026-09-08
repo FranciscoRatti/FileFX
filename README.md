@@ -78,8 +78,7 @@ Por último podes borrar los archivos de instalacion utilizando:
 rm -rf FileFX
 ```
 
-Para ejecutar podés usar el menu de aplicaciones que es lo mismo que ejecutar
-el comando:
+Para ejecutar podés usar el menu de aplicaciones o podes ver los logs ejecutando:
 
 ```
 filefx
