@@ -20,11 +20,12 @@ if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
   unzip -q FileFX.zip -d FileFX
   ./FileFX/shell/install.sh --use-pkexec
   rm -rf /tmp/filefx-build
-  kill $1
   filefx
 
   echo -e "[ \e[32mOK\e[0m ]     \e[32mActualizado\e[0m"
   notify-send -i /usr/share/filefx/icon.png "Nueva actualizacion" "FileFX se actualizo a la version $LATEST_VERSION\nVea los cambios en github.com/FranciscoRatti/FileFX/releases/tag/v$LATEST_VERSION"
+
+  kill $1
 else
   echo -e "[ \e[32mOK\e[0m ]     \e[32mAplicacion en su ultima version\e[0m"
 fi

@@ -34,7 +34,7 @@ if [ "$1" = "--use-pkexec" ]; then
     cp $DIR/resources/notFound.png /usr/share/filefx/
     mkdir -p /var/lib/filefx/
     cp $DIR/resources/metadata.properties /var/lib/filefx/
-    chmod 666 /var/lib/filefx/metadata.properties
+    chmod 777 /var/lib/filefx/metadata.properties
     mkdir -p /usr/lib/filefx/
     cp $DIR/shell/update.sh /usr/lib/filefx/
     cp $DIR/out/filefx /usr/bin/
@@ -99,7 +99,7 @@ fi
 
 echo -e "$EXEC Copiando \e[33mmetadata.properties\e[0m a \e[34m/var/lib/filefx/\e[0m"
 sudo cp $DIR/resources/metadata.properties /var/lib/filefx/
-sudo chmod 666 /var/lib/filefx/metadata.properties
+sudo chmod 777 /var/lib/filefx/metadata.properties
 
 # Binarios
 echo -e "\n$INFO ARCHIVOS BINARIOS:"
