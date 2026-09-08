@@ -52,7 +52,7 @@ public class CenterPane extends ListView<CenterNode> {
         });
 
         if (!new File(path).exists()) {
-            printError("El directorio inicial '"+path+"' no existe", null);
+            printErrorAndShow("El directorio inicial '"+path+"' no existe", null);
             path = HOME+"/";
         }
 
@@ -110,7 +110,7 @@ public class CenterPane extends ListView<CenterNode> {
         try {
             content = directory.listFiles();
         } catch (Exception ex) {
-            printError("No existe '"+path+"'", ex);
+            printErrorAndShow("No existe '"+path+"'", ex);
             return;
         }
 
@@ -317,7 +317,7 @@ public class CenterPane extends ListView<CenterNode> {
                     ProcessBuilder pb = new ProcessBuilder("open", absolutePath);
                     pb.start();
                 } catch (IOException ex) {
-                    Lib.printError("No se puede abrir el archivo "+absolutePath, ex);
+                    Lib.printErrorAndShow("No se puede abrir el archivo "+absolutePath, ex);
                 }
             }
         }

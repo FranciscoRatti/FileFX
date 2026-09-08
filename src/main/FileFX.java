@@ -83,7 +83,7 @@ public class FileFX extends javafx.application.Application {
                 RIGHT_WIDTH = Double.parseDouble(initValues.getProperty("right_width"));
                 LEFT_WIDTH = Double.parseDouble(initValues.getProperty("left_width"));
             } catch (IOException e) {
-                printError("No se pudo leer el archivo de valores iniciales", e);
+                printErrorAndShow("No se pudo leer el archivo de valores iniciales", e);
             }
         } else {
             initValues = new Properties();
@@ -156,7 +156,7 @@ public class FileFX extends javafx.application.Application {
                 CHECK_CLIPBOARD_PASTE = Boolean.parseBoolean((String) config.getOrDefault("check_clipboard_paste", "true"));
 
             } catch (IOException e) {
-                printError("No se pudo leer el archivo de configuracion", e);
+                printErrorAndShow("No se pudo leer el archivo de configuracion", e);
             }
         } else {
             config = new Properties();
@@ -249,7 +249,7 @@ public class FileFX extends javafx.application.Application {
 
                 OPEN_SHELL = getKeyCombination("open_shell", "ctrl+t");
             } catch (IOException e) {
-                printError("No se pudo leer el archivo de combinaciones de teclado", e);
+                printErrorAndShow("No se pudo leer el archivo de combinaciones de teclado", e);
             }
         } else {
             keyBinding = new Properties();
@@ -330,7 +330,7 @@ public class FileFX extends javafx.application.Application {
                 iconsMime.putIfAbsent("disk", "\uDB80\uDECA");
                 iconsMime.putIfAbsent("part", "\uF200");
             } catch (IOException e) {
-                printError("No se pudo leer el archivo de iconos", e);
+                printErrorAndShow("No se pudo leer el archivo de iconos", e);
             }
         } else {
             iconsMime = new Properties();
@@ -388,7 +388,7 @@ public class FileFX extends javafx.application.Application {
                 colorsMime.putIfAbsent("part", "white");
                 colorsMime.putIfAbsent("inode/directory", "#ffe066");
             } catch (IOException e) {
-                printError("No se puedo leer archivo de colores", e);
+                printErrorAndShow("No se puedo leer archivo de colores", e);
             }
         } else {
             colorsMime = new Properties();
@@ -469,7 +469,7 @@ public class FileFX extends javafx.application.Application {
 
                     initValues.store(output, "");
                 } catch (IOException ex) {
-                    printError("Error al actualizar datos en init_values.properties", ex);
+                    printErrorAndShow("Error al actualizar datos en init_values.properties", ex);
                 }
             }
 
@@ -508,8 +508,7 @@ public class FileFX extends javafx.application.Application {
                 }
             }
         } catch (Exception e) {
-            printError("Error con el archivo de actuazalicion", null);
-            e.printStackTrace();
+            printError("Error con el archivo de actualizacion", e);
         }
     }
 

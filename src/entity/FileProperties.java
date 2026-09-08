@@ -40,7 +40,7 @@ public class FileProperties extends File{
                 mimeType = new String(process.getInputStream().readAllBytes()).trim();
             } catch (Exception ex) {
                 mimeType = "?";
-                printError("Error al leer tipo mime de '"+file.getAbsolutePath()+"'", ex);
+                printErrorAndShow("Error al leer tipo mime de '"+file.getAbsolutePath()+"'", ex);
             }
 
             // Trash Path
@@ -61,7 +61,7 @@ public class FileProperties extends File{
                             setTrashPath(trashProperties.getProperty("Path"));
                             setModifiedDateTime(LocalDateTime.parse(trashProperties.getProperty("DeletionDate")));
                         } catch (Exception e) {
-                            printError("Error al leer archivo '"+trashInfo.getAbsolutePath()+"'", e);
+                            printErrorAndShow("Error al leer archivo '"+trashInfo.getAbsolutePath()+"'", e);
                         }
                         break;
                     }
@@ -79,7 +79,7 @@ public class FileProperties extends File{
             if (modifiedDateTime == null) modifiedDateTime = LocalDateTime.now();
             if (creationDateTime == null) creationDateTime = LocalDateTime.now();
             if (mimeType == null) mimeType = "?";
-            printError("Error al leer las propiedades de '"+getAbsolutePath()+"'", e);
+            printErrorAndShow("Error al leer las propiedades de '"+getAbsolutePath()+"'", e);
         }
     }
 

@@ -216,7 +216,7 @@ public class RightPane extends ScrollPane {
                     insidePane.setContent(textNode);
                     miniaturaPane.getChildren().add(insidePane);
                 } catch (Exception e) {
-                    printError("Error al leer interior del archivo "+centerPane.selectionModel.getSelectedItem().getFileProperties().getAbsolutePath(), e);
+                    printErrorAndShow("Error al leer interior del archivo "+centerPane.selectionModel.getSelectedItem().getFileProperties().getAbsolutePath(), e);
                 }
 
             // Si es especial
@@ -264,7 +264,7 @@ public class RightPane extends ScrollPane {
                     writer.write(lines[i]);
                 }
             } catch (Exception ex) {
-                printError("Error al guardar cambios en '"+centerPane.selectionModel.getSelectedItem().getName()+"'", ex);
+                printErrorAndShow("Error al guardar cambios en '"+centerPane.selectionModel.getSelectedItem().getName()+"'", ex);
             }
         }
     }

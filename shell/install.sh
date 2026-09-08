@@ -24,11 +24,28 @@ echo -e "\n"
 
 echo -e "\e[1;32m  Instalador de JavaFX\e[0m"
 echo -e "Se copiaran todos los archivos a sus debidos lugares en el sistema."
+
 if [ "$1" = "--use-pkexec" ]; then
-  pkexec sudo -v
-else
-  sudo -v
+  pkexec sudo bash -c '
+    cp $DIR/resources/themes/default.css /usr/share/filefx/
+    mkdir -p /usr/share/filefx/
+    cp $DIR/resources/*.ttf /usr/share/filefx/
+    cp $DIR/resources/icon.png /usr/share/filefx/
+    cp $DIR/resources/notFound.png /usr/share/filefx/
+    mkdir -p /var/lib/filefx/
+    cp $DIR/resources/metadata.properties /var/lib/filefx/
+    chmod 666 /var/lib/filefx/metadata.properties
+    mkdir -p /usr/lib/filefx/
+    cp $DIR/shell/update.sh /usr/lib/filefx/
+    cp $DIR/out/filefx /usr/bin/
+    cp --update=none $DIR/resources/filefx.desktop /usr/share/applications/
+    cp --update=none $DIR/resources/openWith_filefx.desktop /usr/share/applications/
+  '
+  exit 0
+  echo "fin"
 fi
+
+sudo -v
 
 # Configuracion
 echo -e "\n$INFO ARCHIVOS DE CONFIGURACION:"
@@ -51,7 +68,7 @@ cp --update=none $DIR/resources/icons_binding.properties ~/.config/filefx/icons_
 echo -e "$EXEC Copiando \e[33mcolors_binding.properties\e[0m a \e[34m~/.config/filefx/\e[0m"
 cp --update=none $DIR/resources/colors_binding.properties ~/.config/filefx/colors_binding.properties
 ./FileFX/shell/copy.sh $DIR/resources/themes/default.css ~/.config/filefx/themes/default.css
-cp $DIR/resources/themes/default.css /usr/share/filefx/
+sudo cp $DIR/resources/themes/default.css /usr/share/filefx/
 
 # Estaticos
 echo -e "\n$INFO ARCHIVOS ESTATICOS:"

@@ -50,7 +50,7 @@ public class TopPane extends HBox {
                             else if (text.startsWith("trash")) text = Lib.TRASH+"files"+text.substring(5);
 
                             if (!new File(text).exists()) {
-                                printError("El archivo o directorio "+text+" no existe", null);
+                                printErrorAndShow("El archivo o directorio "+text+" no existe", null);
                             } else {
                                 path = text;
                                 printInfo("Actualizando path a '"+BLUE+path+RESET+"'");
@@ -81,7 +81,7 @@ public class TopPane extends HBox {
                                     new ProcessBuilder("rm", "-Rf", Lib.TRASH+"files", Lib.TRASH+"info").start().waitFor();
                                     new ProcessBuilder("mkdir", Lib.TRASH+"files", Lib.TRASH+"info").start().waitFor();
                                 } catch (Exception ex) {
-                                    printError("Error al eliminar archivo", ex);
+                                    printErrorAndShow("Error al eliminar archivo", ex);
                                 }
 
                                 path = Lib.TRASH+"files/";

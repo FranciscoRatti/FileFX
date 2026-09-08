@@ -3,7 +3,6 @@ package panel;
 import entity.PartitionProperties;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
@@ -110,7 +109,7 @@ public class LeftPane extends VBox {
                                                                         .start().waitFor();
                                                                 updateLeft();
                                                             } catch (Exception ex) {
-                                                                printError("Error al expulsar '" + part.name + "'", ex);
+                                                                printErrorAndShow("Error al expulsar '" + part.name + "'", ex);
                                                             }
                                                         })
                                                 )
@@ -131,7 +130,7 @@ public class LeftPane extends VBox {
                     }
                 }
             } catch (Exception e) {
-                printError("Error al cargar particiones", e);
+                printErrorAndShow("Error al cargar particiones", e);
             }
 
             devicesChildren.add(new node.Separator(20, Orientation.HORIZONTAL));

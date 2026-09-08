@@ -55,7 +55,7 @@ public class DesktopApplication {
                 }
             } while(line != null);
         } catch (IOException e) {
-            printError("Error al leer archivo '"+desktopFile.getAbsolutePath()+"'", e);
+            printErrorAndShow("Error al leer archivo '"+desktopFile.getAbsolutePath()+"'", e);
         }
 
         if (name == null) name = "";
@@ -79,10 +79,10 @@ public class DesktopApplication {
                 ProcessBuilder pb = new ProcessBuilder(comand.split("\\s+"));
                 pb.start();
             } catch (Exception e) {
-                printError("Error al abrir ejecutando '"+comand+"'", e);
+                printErrorAndShow("Error al abrir ejecutando '"+comand+"'", e);
             }
         } else {
-            printError("El comando no recibe parametros", null);
+            printErrorAndShow("El comando no recibe parametros", null);
         }
     }
 
@@ -117,7 +117,7 @@ public class DesktopApplication {
 
                             icon = new Image("file://"+png.getAbsolutePath());
                         } catch (Exception e) {
-                            printError("Error al parsear " + RED + iconPath + RESET + " a .svg", e);
+                            printErrorAndShow("Error al parsear " + RED + iconPath + RESET + " a .svg", e);
                             icon = new Image("file://" + ABSOLUTE_PATH + "notFound.png");
                         } finally {
                             png.delete();
@@ -125,7 +125,7 @@ public class DesktopApplication {
                     } else if (!iconPath.isEmpty()) icon = new Image("file://" + iconPath);
                     else icon = new Image("file://" + ABSOLUTE_PATH + "notFound.png");
                 } catch (IOException e) {
-                    printError("Error al carga icono de " + name, e);
+                    printErrorAndShow("Error al carga icono de " + name, e);
                 }
             }
         }

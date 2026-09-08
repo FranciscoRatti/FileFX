@@ -278,7 +278,7 @@ public class Lib {
           centerPane.select(template.getName());
           updateRight();
         } catch (Exception ex) {
-          printError("Error al crear archivo '"+result.get()+"'", ex);
+          printErrorAndShow("Error al crear archivo '"+result.get()+"'", ex);
         }
       }
     });
@@ -415,9 +415,11 @@ public class Lib {
   public static void printInfo(String message) {
     System.out.println("[" + BLUE + "INFO" + RESET + "]     " + message);
   }
-  public static void printError(String message, Exception e) {
+  public static void printErrorAndShow(String message, Exception e) {
+    printError(message, e);
     showAlert(new Alert(Alert.AlertType.ERROR), message, "ERROR");
-
+  }
+  public static void printError(String message, Exception e) {
     System.out.println("[" + RED + "ERROR" + RESET + "]    " + message);
 
     if (e != null) {
@@ -510,9 +512,9 @@ public class Lib {
       try {
         printExecute("Creando nuevo archivo '" + YELLOW + file.getAbsolutePath() + RESET + "'");
         if (!file.createNewFile())
-          printError("No se pudo crear el archivo " + file.getAbsolutePath(), null);
+          printErrorAndShow("No se pudo crear el archivo " + file.getAbsolutePath(), null);
       } catch (Exception ex) {
-        printError("No se pudo crear el archivo " + file, ex);
+        printErrorAndShow("No se pudo crear el archivo " + file, ex);
       }
 
       updateCenter();
@@ -525,9 +527,9 @@ public class Lib {
       try {
         printExecute("Creando nuevo directorio '" + YELLOW + directory + RESET + "'");
         if (!directory.mkdir())
-          printError("No se pudo crear el directorio " + directory, null);
+          printErrorAndShow("No se pudo crear el directorio " + directory, null);
       } catch (Exception ex) {
-        printError("No se pudo crear el directorio " + directory, ex);
+        printErrorAndShow("No se pudo crear el directorio " + directory, ex);
       }
 
       updateCenter();
@@ -549,7 +551,7 @@ public class Lib {
         updateRight();
       }
     } catch (Exception e) {
-      printError("Error al crear enlace simbolico de '" + file.getName() + "'", e);
+      printErrorAndShow("Error al crear enlace simbolico de '" + file.getName() + "'", e);
     }
   }
 
@@ -576,7 +578,7 @@ public class Lib {
         }
         updateRight();
       } catch (Exception e) {
-        printError("Error al renombrar '" + file.getAbsolutePath() + "'", e);
+        printErrorAndShow("Error al renombrar '" + file.getAbsolutePath() + "'", e);
       }
     }
   }
@@ -606,11 +608,11 @@ public class Lib {
 
         int exitCode = process.waitFor();
         if (exitCode != 0)
-          printError("Contraseña incorrecta", null);
+          printErrorAndShow("Contraseña incorrecta", null);
         return exitCode;
       }
     } catch (Exception e) {
-      printError("Error al cambiar permisos de '"+selectedItem.getName()+"'", e);
+      printErrorAndShow("Error al cambiar permisos de '"+selectedItem.getName()+"'", e);
       return 1;
     }
   }
@@ -629,7 +631,7 @@ public class Lib {
           writer.write(text);
         }
       } catch (Exception e) {
-        printError("Error al pegar en el portapeles", e);
+        printErrorAndShow("Error al pegar en el portapeles", e);
       }
     }
   }
@@ -673,10 +675,10 @@ public class Lib {
                 + RESET + "' a '" + YELLOW + destination + RESET));
             pb.start().waitFor();
           } catch (Exception e) {
-            printError("No se pudo pegar '" + file.getAbsolutePath() + "'", e);
+            printErrorAndShow("No se pudo pegar '" + file.getAbsolutePath() + "'", e);
           }
         } else {
-          printError("El archivo '" + file.getAbsolutePath() + "' no existe", null);
+          printErrorAndShow("El archivo '" + file.getAbsolutePath() + "' no existe", null);
           break;
         }
       }
@@ -701,7 +703,7 @@ public class Lib {
         files[i] = new File(filesPath[i]);
       return files;
     } catch (Exception e) {
-      printError("Error al leer porpapeles", e);
+      printErrorAndShow("Error al leer porpapeles", e);
       return null;
     }
   }
@@ -712,7 +714,7 @@ public class Lib {
         return input.readLine();
       }
     } catch (Exception e) {
-      printError("Error al leer portapeles", e);
+      printErrorAndShow("Error al leer portapeles", e);
       return null;
     }
   }
@@ -750,10 +752,10 @@ public class Lib {
 
           trashInfo.delete();
         } catch (Exception e) {
-          printError("No se pudo mover el archivo '" + file.getName() + "'", e);
+          printErrorAndShow("No se pudo mover el archivo '" + file.getName() + "'", e);
         }
       } else {
-        printError("No se encontro archivo trash info de '" + file.getName() + "'", null);
+        printErrorAndShow("No se encontro archivo trash info de '" + file.getName() + "'", null);
         continue;
       }
 
@@ -796,7 +798,7 @@ public class Lib {
           cp.start();
           rm.start();
         } catch (Exception e) {
-          printError("Error al enviar a la papelera el archivo " + file.getAbsolutePath(), e);
+          printErrorAndShow("Error al enviar a la papelera el archivo " + file.getAbsolutePath(), e);
           break;
         }
       }
@@ -825,7 +827,7 @@ public class Lib {
           writer.newLine();
           writer.write("DeletionDate=" + LocalDateTime.now());
         } catch (IOException e) {
-          printError("Error al crear archivo el '" + file.getAbsolutePath() + ".trashinfo'", e);
+          printErrorAndShow("Error al crear archivo el '" + file.getAbsolutePath() + ".trashinfo'", e);
           break;
         }
       }
@@ -860,7 +862,7 @@ public class Lib {
                   }
                   pb.start().waitFor();
                 } catch (Exception e) {
-                  printError("Error al eliminar el archivo " + file.getAbsolutePath(), e);
+                  printErrorAndShow("Error al eliminar el archivo " + file.getAbsolutePath(), e);
                   break;
                 }
               }
@@ -891,7 +893,7 @@ public class Lib {
       centerPane.selectFirst();
       updateRight();
     } catch (Exception e) {
-      printError("Error al descomprimir archivo '" + file.getName() + "'", e);
+      printErrorAndShow("Error al descomprimir archivo '" + file.getName() + "'", e);
     }
   }
   public static void compress(File[] files) {
@@ -926,7 +928,7 @@ public class Lib {
         centerPane.selectFirst();
       updateRight();
     } catch (Exception e) {
-      printError("Error al compirmir archivos '" + Arrays.toString(paths) + "'", e);
+      printErrorAndShow("Error al compirmir archivos '" + Arrays.toString(paths) + "'", e);
     }
   }
 
@@ -940,7 +942,7 @@ public class Lib {
       ProcessBuilder pb = new ProcessBuilder(TERMINAL).directory(new File(shellPath));
       pb.start();
     } catch (IOException ex) {
-      printError("Error al abrir la terminal '" + TERMINAL + "'", ex);
+      printErrorAndShow("Error al abrir la terminal '" + TERMINAL + "'", ex);
     }
   }
   public static void openWithAdmin() {
@@ -957,9 +959,9 @@ public class Lib {
       }
 
       if (process.waitFor() != 0)
-        printError("Contraseña incorrecta", null);
+        printErrorAndShow("Contraseña incorrecta", null);
     } catch (Exception e) {
-      printError("Error al abrir como administrador", e);
+      printErrorAndShow("Error al abrir como administrador", e);
     }
   }
 }
