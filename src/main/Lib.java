@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.locks.*;
 
 import static main.FileFX.*;
@@ -31,10 +32,10 @@ public class Lib {
   public static final String USER = System.getenv("USER");
 
   public static final String TRASH = HOME + "/.local/share/Trash/";
-  public static final String ABSOLUTE_PATH = "/usr/share/filefx/";
-  //public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/resources/";
-  public static final String CONFIG_PATH = HOME + "/.config/filefx/";
-  //public static final String CONFIG_PATH = ABSOLUTE_PATH;
+  //public static final String ABSOLUTE_PATH = "/usr/share/filefx/";
+  public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/resources/";
+  //public static final String CONFIG_PATH = HOME + "/.config/filefx/";
+  public static final String CONFIG_PATH = ABSOLUTE_PATH;
   public static final String LIB_PATH = "/usr/lib/filefx/";
   public static String THEME;
 
@@ -177,7 +178,7 @@ public class Lib {
       childrens.clear();
 
       String mimeType = centerPane.selectionModel.getSelectedItem().getFileProperties().getMimeType();
-      for (DesktopApplication app : desktopApplications) {
+      for (DesktopApplication app : othersApplicationsStage.desktopApplications) {
         boolean isMimeTypeEqual = false;
 
         for (String mimeTypeApp : app.getMimeTypes()) {
@@ -201,7 +202,7 @@ public class Lib {
       MenuItem others = new MenuItem("Otra...");
       others.setOnAction(ev -> {
         lock.lock();
-        othersApplicationsStage.showAndWait();
+        othersApplicationsStage.show();
         lock.unlock();
       });
       childrens.add(others);
@@ -315,7 +316,7 @@ public class Lib {
   private static MenuItem createPermissionsItem(String icon) {
     MenuItem item = new MenuItem("Permisos", createIconItem(icon));
     item.setAccelerator(CHANGE_PERMISSIONS[0]);
-    item.setOnAction(e -> showPermissionsStage());
+    item.setOnAction(e -> permissionsStage.show());
     return item;
   }
   private static MenuItem createRenameItem(String icon) {
@@ -615,10 +616,6 @@ public class Lib {
       printErrorAndShow("Error al cambiar permisos de '"+selectedItem.getName()+"'", e);
       return 1;
     }
-  }
-  public static void showPermissionsStage() {
-    permissionsStage.update();
-    permissionsStage.showAndWait();
   }
 
   public static void copyToClipBoard(String text) {

@@ -92,6 +92,7 @@ public class CenterPane extends ListView<CenterNode> {
             else if (button.equals(MouseButton.PRIMARY)) {
                 if (isAnyShow()) hideAll();
                 updateRight();
+                if (permissionsStage.isShowing()) permissionsStage.update();
             }
 
             e.consume();

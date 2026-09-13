@@ -6,6 +6,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import main.Lib;
+import scene.Scene;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -65,6 +66,8 @@ public class CenterNode extends HBox {
 
         // Evento
         if (selectable) setOnMouseClicked(e -> {
+            if (Scene.isAnyShowing()) return;
+
             MouseButton button = e.getButton();
             int clickCount = e.getClickCount();
 

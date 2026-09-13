@@ -392,7 +392,20 @@
 
 #MainPane {-fx-background-color: #232323FF;}
 
-#OtherPane {-fx-background-color: #404040FF;}
+#OtherPane {
+    -fx-background-color: #232323FF;
+    -fx-background-radius: 4;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-border-color: white;
+    -fx-max-width: 300;
+    -fx-max-height: 1000;
+}
+
+#OtherPane_pane {
+    -fx-background-color: #404040FF;
+}
 
 #OtherNode {
     -fx-text-fill: white;
@@ -415,6 +428,13 @@
 
 #PartitionPane {
     -fx-background-color: #232323FF;
+    -fx-background-radius: 4;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-border-color: white;
+    -fx-max-width: 320;
+    -fx-max-height: 120;
 }
 
 #PartitionColumn {
@@ -430,7 +450,7 @@
     -fx-pref-height: 26px;
     -fx-min-height: 26px;
     -fx-max-height: 26px;
-    -fx-padding: 2 4 2 4;
+    -fx-padding: 2 0 2 4;
 }
 
 #PartitionNode_value {
@@ -442,6 +462,7 @@
     -fx-min-height: 26px;
     -fx-max-height: 26px;
     -fx-padding: 2 4 2 4;
+    -fx-pref-width: 180px;
 }
 #PartitionNode_value:hover {
     -fx-background-color: gray;
@@ -461,9 +482,16 @@
 
 #PermissionsPane {
     -fx-background-color: #232323FF;
+    -fx-background-radius: 4;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-border-color: white;
     -fx-spacing: 8;
     -fx-alignment: CENTER;
     -fx-padding: 10;
+    -fx-max-width: 200;
+    -fx-max-height: 120;
 }
 
 #PermissionsChars_pane {
@@ -546,6 +574,10 @@
 
 #Password_pane {
     -fx-background-color: #232323FF;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-border-radius: 2;
+    -fx-border-color: white;
     -fx-spacing: 8;
     -fx-alignment: CENTER;
     -fx-padding: 10;

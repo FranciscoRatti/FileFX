@@ -205,21 +205,22 @@ propiedades seguidas del valor predeterminado.
   - `select_first=shift+home` : Seleccionar hasta el primero.
   - `select_last=shift+end` : Seleccionar hasta el ultimo.
   - `deselect_all=esc` : Deseleccionar todo.
-  - `back=ctrl+z` : Deshacer.
+  - `backward=ctrl+z` : Deshacer.
   - `forward=ctrl+y` : Rehacer.
-  - `open_shell=ctrl+t` : Abrir una terminal aquí.
   - `show_menu=context menu,ctrl+space` : Mostrar menu contextual, equivalente a hacer click derecho.
   - `show_menu_create=n` : Crear archivo o directorio.
+  - `change_show_right_pane=space` : Mostrar o esconder RightPane.
+  - `change_show_hidden=h` : Cambiar mostrar archivos ocultos.
+  - `change_permissions=p` : Cambiar permisos.
+  - `update_all=f5` : Actualizar todo.
+  - `close=esc,q` : Cerrar ventana.
   - `focus_path=s` : Pasarle el foco a la barra de busqueda.
   - `focus_filter=f` : Pasarle el foco a la barra de filtro.
   - `focus_inside=i` : Si _show_inside_files_ es true, le pasa el foco al interior del archivo
     seleccionado.
   - `save_inside=ctrl+s` : Si _show_inside_files_ es true, guarda los cambios del interior del archivo
     seleccionado.
-  - `update_all=f5` : Actualizar todo.
-  - `change_show_right_pane=space` : Mostrar o esconder RightPane.
-  - `change_show_hidden=h` : Cambiar mostrar archivos ocultos.
-  - `change_permissions=p` : Cambiar permisos.
+  - `open_shell=ctrl+t` : Abrir una terminal aquí.
 
 - **_colors_binding.properties_**, **_icons_binding.properties_**: Define los iconos y los colores
   que aparecerán al lado de cada archivo o directorio. Para definir que icono y color asignarle a

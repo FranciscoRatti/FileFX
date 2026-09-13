@@ -1,25 +1,25 @@
 package stage;
 
 import entity.FileProperties;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.*;
 import node.CenterNode;
+import scene.Scene;
 
+import static main.FileFX.CLOSE;
+import static main.FileFX.mainPane;
 import static main.Lib.*;
 import static panel.MainPane.*;
 
-public class PermissionsStage extends Stage {
-    private final Button[] octetValues;
+public class PermissionsStage extends VBox {
     private final Button[] charsButtons;
+    private final Button[] octetValues;
+    private boolean isShowing;
 
     public PermissionsStage() {
-        setTitle("Cambiar permisos");
-        setAlwaysOnTop(true);
-        setResizable(false);
+        isShowing = false;
 
         // Caracteres
         HBox charsBox = new HBox();
@@ -173,34 +173,50 @@ public class PermissionsStage extends Stage {
         buttonsBox.getChildren().addAll(applyButton, cancelButton);
 
         // Panel
-        VBox pane = new VBox(charsBox, octetBox, buttonsBox);
-        pane.setId("PermissionsPane");
-
-        // Escena
-        Scene scene = new Scene(pane);
-        scene.setOnKeyPressed(e -> {if (e.getCode() == KeyCode.ESCAPE) close();});
-        scene.getStylesheets().add("file://"+ THEME);
-        setScene(scene);
+        getChildren().addAll(charsBox, octetBox, buttonsBox);
+        setId("PermissionsPane");
+        setOnKeyPressed(e -> {
+            KeyCombination key = Scene.getKeyCombination(e);
+            for (KeyCombination keyCombination : CLOSE)
+                if (keyCombination.equals(key)) {
+                    close();
+                    break;
+                }
+        });
     }
     
     public void update() {
         CenterNode selectedItem = centerPane.selectionModel.getSelectedItem();
         if (selectedItem != null) {
             FileProperties properties = selectedItem.getFileProperties();
-            
+
             String ownerChars = String.valueOf(properties.getOwnerPermissions());
             String groupChars = String.valueOf(properties.getGroupPermissions());
             String otherChars = String.valueOf(properties.getOtherPermissions());
-            
+
             setCharacters(ownerChars, 0);
             setCharacters(groupChars, 3);
             setCharacters(otherChars, 6);
-            
+
             setOwner(ownerChars);
             setGroup(groupChars);
             setOther(otherChars);
         }
     }
+
+    public void show() {
+        centerPane.hideAll();
+
+        isShowing = true;
+        update();
+        mainPane.getChildren().add(this);
+        charsButtons[4].requestFocus();
+    }
+    public void close() {
+        isShowing = false;
+        mainPane.getChildren().remove(this);
+    }
+    public boolean isShowing() {return isShowing;}
 
     private void setOwner(String value) {octetValues[0].setText(String.valueOf(charsToOctet(value)));}
     private void setOwner(int value) {setCharacters(octetToChars(value), 0);}

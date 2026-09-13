@@ -2,26 +2,30 @@ package stage;
 
 import entity.PartitionProperties;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
 import node.PartitionNode;
+import scene.Scene;
 
-import static main.Lib.THEME;
+import static main.FileFX.CLOSE;
+import static main.FileFX.mainPane;
+import static panel.MainPane.centerPane;
 
-public class PartitionStage extends Stage {
+public class PartitionStage extends HBox {
+    private boolean isShowing;
+    private final PartitionNode uuidNode;
+
     public PartitionStage(PartitionProperties properties) {
-        setTitle(properties.labelText);
-        setAlwaysOnTop(true);
-        setResizable(false);
+        isShowing = false;
+        setAlignment(Pos.CENTER);
 
         VBox titlesPane, valuesPane;
 
-        PartitionNode nameNode       = new PartitionNode("Nombre :", properties.name, false);
-        PartitionNode uuidNode       = new PartitionNode("ID :", properties.uuid, false);
-        PartitionNode labelNode      = new PartitionNode("Etiqueta :", properties.label, false);
-        PartitionNode typeNode       = new PartitionNode("Tipo :", properties.type.toString(), false);
-        PartitionNode sizeNode       = new PartitionNode("Tamaño :", properties.size, false);
+        PartitionNode nameNode  = new PartitionNode("Nombre :", properties.name, false);
+        uuidNode  = new PartitionNode("ID :", properties.uuid, false);
+        PartitionNode labelNode = new PartitionNode("Etiqueta :", properties.label, false);
+        PartitionNode typeNode  = new PartitionNode("Tipo :", properties.type.toString(), false);
+        PartitionNode sizeNode  = new PartitionNode("Tamaño :", properties.size, false);
 
         if (properties.type == PartitionProperties.TYPE.PART) {
             PartitionNode fsavailNode    = new PartitionNode("Libre :", properties.fsavail, false);
@@ -37,7 +41,7 @@ public class PartitionStage extends Stage {
                 else if (value < 40) fsuseNode.value.setStyle("-fx-text-fill: yellow;");
                 else if (value < 60) fsuseNode.value.setStyle("-fx-text-fill: orange;");
                 else if (value < 80) fsuseNode.value.setStyle("-fx-text-fill: red;");
-                else fsuseNode.value.setStyle("-fx-text-fill: drakred;");
+                else fsuseNode.value.setStyle("-fx-text-fill: darkred;");
             }
 
             titlesPane = new VBox(
@@ -64,13 +68,33 @@ public class PartitionStage extends Stage {
         titlesPane.setId("PartitionColumn");
         titlesPane.setAlignment(Pos.CENTER_RIGHT);
         valuesPane.setId("PartitionColumn");
-        valuesPane.setAlignment(Pos.CENTER_RIGHT);
+        valuesPane.setAlignment(Pos.CENTER_LEFT);
+        valuesPane.setMaxWidth(Double.MAX_VALUE);
 
-        HBox mainPane = new HBox(titlesPane, valuesPane);
-        mainPane.setId("PartitionPane");
+        getChildren().addAll(titlesPane, valuesPane);
+        setId("PartitionPane");
+        setOnKeyPressed(e -> {
+            KeyCombination key = Scene.getKeyCombination(e);
+            for (KeyCombination keyCombination : CLOSE)
+                if (keyCombination.equals(key)) {
+                    close();
+                    break;
+                }
+        });
+    }
 
-        Scene scene = new Scene(mainPane);
-        scene.getStylesheets().add("file://"+ THEME);
-        setScene(scene);
+    public void show() {
+        centerPane.hideAll();
+
+        isShowing = true;
+        mainPane.getChildren().add(this);
+        uuidNode.value.requestFocus();
+    }
+    public void close() {
+        isShowing = false;
+        mainPane.getChildren().remove(this);
+    }
+    public boolean isShowing() {
+        return isShowing;
     }
 }

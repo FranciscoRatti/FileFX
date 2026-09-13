@@ -34,8 +34,6 @@ public class FileFX extends javafx.application.Application {
     public static Font nerdFont;
     public static String path = "";
 
-    public static ArrayList<DesktopApplication> desktopApplications;
-
     public static MainPane mainPane;
     public static Scene scene;
     public static Stage stage;
@@ -232,7 +230,7 @@ public class FileFX extends javafx.application.Application {
                 SELECT_LAST = getKeyCombination("select_last", "shift+end");
                 DESELECT_ALL = getKeyCombination("deselect_all", "esc");
 
-                BACKWARD = getKeyCombination("back", "ctrl+z");
+                BACKWARD = getKeyCombination("backward", "ctrl+z");
                 FORWARD = getKeyCombination("forward", "ctrl+y");
 
                 SHOW_MENU = getKeyCombination("show_menu", "context menu,ctrl+space");
@@ -241,6 +239,7 @@ public class FileFX extends javafx.application.Application {
                 CHANGE_SHOW_HIDDEN = getKeyCombination("change_show_hidden", "h");
                 CHANGE_PERMISSIONS = getKeyCombination("change_permissions", "p");
                 UPDATE_ALL = getKeyCombination("update_all", "f5");
+                CLOSE = getKeyCombination("close", "esc,q");
 
                 FOCUS_PATH = getKeyCombination("focus_path", "s");
                 FOCUS_FILTER = getKeyCombination("focus_filter", "f");
@@ -287,6 +286,7 @@ public class FileFX extends javafx.application.Application {
             CHANGE_SHOW_HIDDEN = new KeyCombination[]{new KeyCodeCombination(KeyCode.H)};
             CHANGE_PERMISSIONS = new KeyCombination[]{new KeyCodeCombination(KeyCode.P)};
             UPDATE_ALL = new KeyCombination[]{new KeyCodeCombination(KeyCode.F5)};
+            CLOSE = new KeyCombination[]{new KeyCodeCombination(KeyCode.ESCAPE), new KeyCodeCombination(KeyCode.Q)};
 
             FOCUS_PATH = new KeyCombination[]{new KeyCodeCombination(KeyCode.S)};
             FOCUS_FILTER = new KeyCombination[]{new KeyCodeCombination(KeyCode.F)};
@@ -484,7 +484,7 @@ public class FileFX extends javafx.application.Application {
         try (FileInputStream input = new FileInputStream("/var/lib/filefx/metadata.properties")) {
             metadata.load(input);
             String[] values = ((String) metadata.getOrDefault("last_check", "2000-00-00")).split("-");
-            LocalDate lastCheck = LocalDate.of(Integer.parseInt(values[0]), Integer.parseInt(values[2]), Integer.parseInt(values[1]));
+            LocalDate lastCheck = LocalDate.of(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
             LocalDate now = LocalDate.now();
 
             // Si hace mas de dos dias que no se chequea
@@ -619,6 +619,7 @@ public class FileFX extends javafx.application.Application {
     public static KeyCombination[] CHANGE_SHOW_HIDDEN;
     public static KeyCombination[] CHANGE_PERMISSIONS;
     public static KeyCombination[] UPDATE_ALL;
+    public static KeyCombination[] CLOSE;
 
     public static KeyCombination[] FOCUS_PATH;
     public static KeyCombination[] FOCUS_FILTER;

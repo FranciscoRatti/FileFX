@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.input.*;
 import main.FileFX;
 import panel.*;
+import stage.PartitionStage;
 
 import static main.FileFX.*;
 import static main.Lib.*;
@@ -22,7 +23,15 @@ public class Scene extends javafx.scene.Scene {
     }
 
     public static boolean isAnyFocus() {
-        return  TopPane.isSearchFocus() || RightPane.isAnyFocus() || BottomPane.isFilterFocus();
+        return  TopPane.isSearchFocus() ||
+                RightPane.isAnyFocus() ||
+                BottomPane.isFilterFocus();
+    }
+
+    public static boolean isAnyShowing() {
+        return  permissionsStage.isShowing() ||
+                leftPane.isAnyShowing() ||
+                othersApplicationsStage.isShowing();
     }
 
     private KeyCombination key;
@@ -31,7 +40,7 @@ public class Scene extends javafx.scene.Scene {
             key = getKeyCombination(e);
             if (key == null) return;
 
-            if (!isAnyFocus()) {
+            if (!isAnyFocus() && !isAnyShowing()) {
                 e.consume();
                 try {
                     if (setKeyBindAction(CUT, () -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), true))) return;
@@ -73,7 +82,7 @@ public class Scene extends javafx.scene.Scene {
                         updateCenter();
                         centerPane.selectFirst();
                     })) return;
-                    if (setKeyBindAction(CHANGE_PERMISSIONS, () -> showPermissionsStage())) return;
+                    if (setKeyBindAction(CHANGE_PERMISSIONS, () -> permissionsStage.show())) return;
                     if (setKeyBindAction(UPDATE_ALL, () -> updateAll())) return;
 
                     if (setKeyBindAction(FOCUS_PATH, () -> Platform.runLater(() -> TopPane.focusSearch()))) return;
@@ -85,7 +94,15 @@ public class Scene extends javafx.scene.Scene {
                 } catch (IllegalArgumentException ignored) {}
             } else {
                 try {
-                    setKeyBindAction(DESELECT_ALL, () -> centerPane.selectionModel.getSelectedItem().requestFocus());
+                    setKeyBindAction(DESELECT_ALL, () -> {
+                        centerPane.selectionModel.getSelectedItem().requestFocus();
+                        if (leftPane.isAnyShowing()) {
+                            for (PartitionStage stage : leftPane.partitionStages)
+                                if (stage.isShowing()) stage.close();
+                        } else if (othersApplicationsStage.isShowing()) {
+                            othersApplicationsStage.close();
+                        }
+                    });
                 } catch (IllegalArgumentException ignored) {}
             }
         });

@@ -26,7 +26,7 @@ echo -e "\e[1;32m  Instalador de JavaFX\e[0m"
 echo -e "Se copiaran todos los archivos a sus debidos lugares en el sistema."
 
 if [ "$1" = "--use-pkexec" ]; then
-  pkexec sudo bash -c '
+  pkexec sudo bash -c "
     cp $DIR/resources/themes/default.css /usr/share/filefx/
     mkdir -p /usr/share/filefx/
     cp $DIR/resources/*.ttf /usr/share/filefx/
@@ -40,7 +40,7 @@ if [ "$1" = "--use-pkexec" ]; then
     cp $DIR/out/filefx /usr/bin/
     cp --update=none $DIR/resources/filefx.desktop /usr/share/applications/
     cp --update=none $DIR/resources/openWith_filefx.desktop /usr/share/applications/
-  '
+  "
   exit 0
   echo "fin"
 fi

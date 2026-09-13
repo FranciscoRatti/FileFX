@@ -1,14 +1,15 @@
 package stage;
 
 import entity.DesktopApplication;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.geometry.Insets;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
+import scene.Scene;
 
 import java.io.File;
 import java.util.*;
@@ -17,25 +18,19 @@ import static main.FileFX.*;
 import static main.Lib.*;
 import static panel.MainPane.*;
 
-public class OthersApplicationsStage extends Stage {
+public class OthersApplicationsStage extends StackPane {
+    public final ArrayList<DesktopApplication> desktopApplications;
+    private final ArrayList<Button> desktopButtons;
+    private boolean isShowing;
+
     public OthersApplicationsStage() {
-        setTitle("Abrir con");
-        setAlwaysOnTop(true);
+        isShowing = false;
 
         VBox pane = new VBox();
-        pane.setId("OtherPane");
+        pane.setId("OtherPane_pane");
 
         ScrollPane scrollPane = new ScrollPane(pane);
         scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-
-        StackPane mainPane = new StackPane(scrollPane);
-        mainPane.setId("MainPane");
-
-        Scene scene = new Scene(mainPane);
-        scene.getStylesheets().add("file://"+ THEME);
-        setScene(scene);
 
         // Cargar applicaciones
         ArrayList<File> desktopFiles = new ArrayList<>();
@@ -55,6 +50,7 @@ public class OthersApplicationsStage extends Stage {
         }
 
         desktopApplications = new ArrayList<>();
+        desktopButtons = new ArrayList<>();
 
         // Hilo
         Task<Void> task = new Task<>() {
@@ -95,8 +91,9 @@ public class OthersApplicationsStage extends Stage {
                             app.openWith(centerPane.selectionModel.getSelectedItem());
                         }
                     });
-                    children.add(button);
+                    desktopButtons.add(button);
                 }
+                children.addAll(desktopButtons);
 
                 printOk("Applicaciones para abrir con cargadas con exito");
                 lock.unlock();
@@ -105,10 +102,31 @@ public class OthersApplicationsStage extends Stage {
         };
         new Thread(task).start();
 
-        setOnShown(e -> Platform.runLater(() -> {
-            double width = pane.getWidth()+17.0;
-            setMaxWidth(width);
-            setMaxHeight(pane.getHeight());
-        }));
+        getChildren().add(scrollPane);
+        setId("OtherPane");
+        StackPane.setMargin(this, new Insets(10, 0, 10, 0));
+        setOnKeyPressed(e -> {
+            KeyCombination key = Scene.getKeyCombination(e);
+            for (KeyCombination keyCombination : CLOSE)
+                if (keyCombination.equals(key)) {
+                    close();
+                    break;
+                }
+        });
+    }
+
+    public void show() {
+        centerPane.hideAll();
+
+        isShowing = true;
+        mainPane.getChildren().add(this);
+        desktopButtons.getFirst().requestFocus();
+    }
+    public void close() {
+        isShowing = false;
+        mainPane.getChildren().remove(this);
+    }
+    public boolean isShowing() {
+        return isShowing;
     }
 }

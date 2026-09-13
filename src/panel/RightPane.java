@@ -92,7 +92,7 @@ public class RightPane extends ScrollPane {
         typeNode = new RightNode("Tipo :", false);
 
         permissionsNode = new RightNode("Permisos :", false);
-        permissionsNode.value.setOnMouseClicked(e -> showPermissionsStage());
+        permissionsNode.value.setOnMouseClicked(e -> permissionsStage.show());
 
         ownerNode = new RightNode("Usuario :", false);
         groupNode = new RightNode("Grupo   :", false);
@@ -284,9 +284,9 @@ public class RightPane extends ScrollPane {
     public static void changeShow(boolean isRightPaneShow) {
         RightPane.isRightPaneShow=isRightPaneShow;
         if (isRightPaneShow) {
-            mainPane.setRight(rightPane);
+            mainPane.borderPane.setRight(rightPane);
         } else {
-            mainPane.setRight(null);
+            mainPane.borderPane.setRight(null);
         }
     }
     public static void changeShow() {

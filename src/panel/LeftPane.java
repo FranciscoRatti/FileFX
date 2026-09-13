@@ -13,15 +13,19 @@ import node.*;
 import stage.PartitionStage;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import static main.FileFX.*;
 import static main.Lib.*;
 
 public class LeftPane extends VBox {
     private VBox devicesBox;
+    private Label devicesTitle = new Label("Dispositivos");
+    public final ArrayList<PartitionStage> partitionStages;
 
     public LeftPane() {
         setMaxWidth(LEFT_WIDTH);
+        partitionStages = new ArrayList<>();
         setId("LeftPane");
 
         if (SHOW_PLACES) {
@@ -45,6 +49,8 @@ public class LeftPane extends VBox {
 
         if (SHOW_DEVICES) {
             devicesBox = new VBox();
+            devicesTitle = new Label("Dispositivos");
+            devicesTitle.setId("Left_title");
             update();
             getChildren().add(devicesBox);
         }
@@ -56,9 +62,8 @@ public class LeftPane extends VBox {
             ObservableList<Node> devicesChildren = devicesBox.getChildren();
             devicesChildren.clear();
 
-            Label title = new Label("Dispositivos");
-            title.setId("Left_title");
-            devicesChildren.add(title);
+            devicesChildren.add(devicesTitle);
+            partitionStages.clear();
 
             // Tomar discos y particiones
             try {
@@ -74,6 +79,8 @@ public class LeftPane extends VBox {
 
                         if (part.type == PartitionProperties.TYPE.DISK || part.type == PartitionProperties.TYPE.PART) {
                             PartitionStage stage = new PartitionStage(part);
+                            partitionStages.add(stage);
+
                             LeftNode node = new LeftNode(
                                     part.labelText,
                                     part.icon,
@@ -81,7 +88,7 @@ public class LeftPane extends VBox {
                             );
                             node.setColor(Color.valueOf((String) colorsMime.getOrDefault(part.type.toString().toLowerCase(), "white")));
                             node.setOnMouseReleased(e -> {
-                                if (e.getButton() == MouseButton.SECONDARY) stage.showAndWait();
+                                if (e.getButton() == MouseButton.SECONDARY) stage.show();
                             });
 
                             // Si es disco
@@ -135,5 +142,12 @@ public class LeftPane extends VBox {
 
             devicesChildren.add(new node.Separator(20, Orientation.HORIZONTAL));
         }
+    }
+
+    public boolean isAnyShowing() {
+        for (PartitionStage stage : partitionStages)
+            if (stage.isShowing()) return true;
+
+        return false;
     }
 }

@@ -2,6 +2,7 @@ package panel;
 
 import javafx.geometry.Orientation;
 import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import main.FileFX;
 import node.Separator;
@@ -9,7 +10,8 @@ import node.Separator;
 import static main.FileFX.LEFT_WIDTH;
 import static main.FileFX.RIGHT_WIDTH;
 
-public class MainPane extends BorderPane {
+public class MainPane extends StackPane {
+    public final BorderPane borderPane;
     public static TopPane topPane;
     public static RightPane rightPane;
     public static BottomPane bottomPane;
@@ -39,14 +41,19 @@ public class MainPane extends BorderPane {
 
         centerPane = new CenterPane();
         HBox.setHgrow(centerPane, Priority.ALWAYS);
-        setCenter(new HBox(centerPane, rightBorder));
         topPane = new TopPane();
-        setTop(topPane);
         rightPane = new RightPane();
-        setRight(rightPane);
         bottomPane = new BottomPane();
-        setBottom(bottomPane);
         leftPane = new LeftPane();
-        setLeft(new HBox(leftPane, leftBorder));
+
+        borderPane = new BorderPane(
+                new HBox(centerPane, rightBorder),
+                topPane,
+                rightPane,
+                bottomPane,
+                new HBox(leftPane, leftBorder)
+        );
+        borderPane.setId("MainPane");
+        getChildren().add(borderPane);
     }
 }

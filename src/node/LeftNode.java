@@ -8,6 +8,7 @@ import main.FileFX;
 import static main.FileFX.*;
 import static main.Lib.*;
 import static panel.MainPane.*;
+import static scene.Scene.isAnyShowing;
 
 public class LeftNode extends Label {
     private final Label label;
@@ -21,6 +22,7 @@ public class LeftNode extends Label {
 
         if (path != null) {
             setOnMouseClicked(e -> {
+                if (isAnyShowing()) return;
                 if (e.getButton().equals(MouseButton.PRIMARY)) {
                     printExecute("Yendo a '"+BLUE+path+RESET+"'");
 

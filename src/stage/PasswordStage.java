@@ -8,6 +8,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import static main.Lib.THEME;
 
@@ -20,6 +21,8 @@ public class PasswordStage extends Stage {
         setTitle("Contraseña");
         setAlwaysOnTop(true);
         setResizable(false);
+        initStyle(StageStyle.UNDECORATED);
+
         reset = true;
 
         Label message = new Label("Ingrese la contraseña para ejecutar");
