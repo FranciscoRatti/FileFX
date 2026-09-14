@@ -160,7 +160,7 @@ public class RightPane extends ScrollPane {
                     int size;
                     for (size = 0; size < content.length && size < 25; size++) {
                         File file = content[size];
-                        CenterNode node = new CenterNode(file, false);
+                        CenterNode node = new CenterNode(new FileProperties(file), false);
 
                         if (file.isDirectory()) directoriesList.add(node);
                         else filesList.add(node);

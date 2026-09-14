@@ -29,10 +29,10 @@ public class CenterNode extends HBox {
     public Label nameLabel, iconLabel;
     public ArrayList<Label> columns;
 
-    public CenterNode(File file, boolean selectable) {
+    public CenterNode(FileProperties file, boolean selectable) {
 
         // Propiedades
-        fileProperties = new FileProperties(file);
+        fileProperties = file;
 
         isDirectory = file.isDirectory();
         name = file.getName();

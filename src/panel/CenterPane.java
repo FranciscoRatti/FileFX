@@ -1,5 +1,6 @@
 package panel;
 
+import entity.FileProperties;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -15,6 +16,7 @@ import node.CenterNode;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static main.FileFX.*;
 import static main.Lib.*;
@@ -27,10 +29,10 @@ public class CenterPane extends ListView<CenterNode> {
     private final ContextMenu menuCreate;
     private final ContextMenu menuTrash;
 
-    private final Comparator<CenterNode> compareByName = Comparator.comparing(CenterNode::getName, String.CASE_INSENSITIVE_ORDER);
-    private final Comparator<CenterNode> compareByDate = Comparator.comparing(n -> n.getFileProperties().getModifiedDateTime());
-    private final Comparator<CenterNode> compareBySize = Comparator.comparing(n -> n.getFileProperties().getSize());
-    private final Comparator<CenterNode> compareByMime = Comparator.comparing(n -> n.getFileProperties().getMimeType(), String.CASE_INSENSITIVE_ORDER);
+    private final Comparator<FileProperties> compareByName = Comparator.comparing(FileProperties::getName, String.CASE_INSENSITIVE_ORDER);
+    private final Comparator<FileProperties> compareByDate = Comparator.comparing(n -> n.getModifiedDateTime());
+    private final Comparator<FileProperties> compareBySize = Comparator.comparing(n -> n.getSize());
+    private final Comparator<FileProperties> compareByMime = Comparator.comparing(n -> n.getMimeType(), String.CASE_INSENSITIVE_ORDER);
 
     public final MultipleSelectionModel<CenterNode> selectionModel;
     public final ObservableList<CenterNode> items, selectedItems;
@@ -115,65 +117,47 @@ public class CenterPane extends ListView<CenterNode> {
             return;
         }
 
-        ArrayList<CenterNode> filesList = new ArrayList<>();
-        ArrayList<CenterNode> directoriesList = new ArrayList<>();
+        LinkedList<CenterNode> filesList = new LinkedList<>();
+        LinkedList<CenterNode> directoriesList = new LinkedList<>();
 
         // Crear nodos
         if (content != null) {
 
-            for (File file : content) {
-                boolean isHidden = file.getName().startsWith(".");
-                if (!SHOW_HIDDEN && isHidden) continue;
+            Stream<File> streamFile = Arrays.stream(content);
+            if (!SHOW_HIDDEN) streamFile = streamFile.filter(file -> !file.getName().startsWith("."));
+            if (filter != null) streamFile = streamFile.filter(file -> file.getName().contains(filter));
 
-                if (filter != null) {
-                    if (file.getName().contains(filter)) {
-                        CenterNode centerNode = new CenterNode(file, true);
-                        if (file.isDirectory()) directoriesList.add(centerNode);
-                        else filesList.add(centerNode);
-                    }
-                } else {
-                    CenterNode centerNode = new CenterNode(file, true);
-                    if (file.isDirectory()) directoriesList.add(centerNode);
-                    else filesList.add(centerNode);
-                }
-            }
+            Stream<FileProperties> streamFileProperties = streamFile.map(file -> new FileProperties(file));
 
-            // Ordenar
             ORDER order = DEFAULT_ORDER;
             for (String[] customOrder : CUSTOM_ORDER) {
                 if (path.equals(
                         customOrder[0].charAt(0) == '~' ? HOME+(customOrder[0].substring(1)) :
-                        customOrder[0].startsWith("trash") ? Lib.TRASH+"files"+(customOrder[0].substring(5)) :
-                        customOrder[0])) {
+                                customOrder[0].startsWith("trash") ? Lib.TRASH+"files"+(customOrder[0].substring(5)) :
+                                        customOrder[0])) {
                     order = ORDER.valueOf(customOrder[1]);
                     break;
                 }
             }
 
             switch (order) {
-                case DATE -> {
-                    filesList.sort(compareByDate.reversed());
-                    directoriesList.sort(compareByDate.reversed());
-                }
-                case SIZE -> {
-                    filesList.sort(compareBySize);
-                    directoriesList.sort(compareBySize);
-                }
-                case MIME -> {
-                    filesList.sort(compareByMime);
-                    directoriesList.sort(compareByMime);
-                }
-                default -> {
-                    filesList.sort(compareByName);
-                    directoriesList.sort(compareByName);
-                }
+                case DATE -> streamFileProperties=streamFileProperties.sorted(compareByDate.reversed());
+                case SIZE -> streamFileProperties=streamFileProperties.sorted(compareBySize);
+                case MIME -> streamFileProperties=streamFileProperties.sorted(compareByMime);
+                default -> streamFileProperties=streamFileProperties.sorted(compareByName);
             }
+
+            streamFileProperties.forEach(file -> {
+                CenterNode centerNode = new CenterNode(file, true);
+                if (file.isDirectory()) directoriesList.add(centerNode);
+                else filesList.add(centerNode);
+            });
         }
 
         if (SHOW_PARENT) {
             File parent = directory.getParentFile();
             if (parent != null) {
-                CenterNode parentNode = new CenterNode(parent, true);
+                CenterNode parentNode = new CenterNode(new FileProperties(parent), true);
                 parentNode.nameLabel.setText("..");
                 parentNode.setIcon(iconsMime.getProperty("parent"), Color.valueOf(colorsMime.getProperty("parent")));
                 directoriesList.addFirst(parentNode);
@@ -181,7 +165,7 @@ public class CenterPane extends ListView<CenterNode> {
         }
 
         if (SHOW_THIS) {
-            CenterNode thisNode = new CenterNode(directory, true);
+            CenterNode thisNode = new CenterNode(new FileProperties(directory), true);
             thisNode.nameLabel.setText(".");
             thisNode.setIcon(iconsMime.getProperty("this"), Color.valueOf(colorsMime.getProperty("this")));
             directoriesList.addFirst(thisNode);
@@ -329,7 +313,7 @@ public class CenterPane extends ListView<CenterNode> {
             items.getFirst().setSelected(true);
             scrollTo(0);
         } else {
-            CenterNode thisNode = new CenterNode(new File(path), true);
+            CenterNode thisNode = new CenterNode(new FileProperties(new File(path)), true);
             thisNode.setIcon(iconsMime.getProperty("this"), Color.valueOf(colorsMime.getProperty("this")));
             getSelectionModel().select(thisNode);
         }
