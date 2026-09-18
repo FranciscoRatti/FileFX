@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import static main.FileFX.*;
 import static main.Lib.*;
 import static panel.MainPane.*;
+import static scene.Scene.addFocused;
+import static scene.Scene.minusFocused;
 
 public class RightPane extends ScrollPane {
     private static StackPane miniaturaPane;
@@ -56,6 +58,7 @@ public class RightPane extends ScrollPane {
 
         Button close = new Button("x");
         close.setId("Right_close");
+        close.setFocusTraversable(false);
         close.setOnAction(e -> changeShow(false));
 
         // Miniatura
@@ -81,21 +84,58 @@ public class RightPane extends ScrollPane {
 
         // Propiedades
         nameNode = new RightNode("Nombre :", !path.startsWith(Lib.TRASH+"files"));
+        nameNode.value.focusedProperty().addListener((obs, before, now) -> {
+            if (now) addFocused();
+            else minusFocused();
+        });
         nameNode.value.setOnKeyPressed(e -> {
             if (!centerPane.selectedItems.isEmpty() && e.getCode().equals(KeyCode.ENTER)) {
                 renameFile(centerPane.selectionModel.getSelectedItem().getFileProperties(), nameNode.value.getText());
             }
         });
+
         sizeNode = new RightNode("Tamaño :", false);
+        sizeNode.value.focusedProperty().addListener((obs, before, now) -> {
+            if (now) addFocused();
+            else minusFocused();
+        });
+
         createDateTimeNode = new RightNode("Creado :", false);
+        createDateTimeNode.value.focusedProperty().addListener((obs, before, now) -> {
+            if (now) addFocused();
+            else minusFocused();
+        });
+
         modifiedDateTimeNode = new RightNode("Modificado :", false);
+        modifiedDateTimeNode.value.focusedProperty().addListener((obs, before, now) -> {
+            if (now) addFocused();
+            else minusFocused();
+        });
+
         typeNode = new RightNode("Tipo :", false);
+        typeNode.value.focusedProperty().addListener((obs, before, now) -> {
+            if (now) addFocused();
+            else minusFocused();
+        });
 
         permissionsNode = new RightNode("Permisos :", false);
+        permissionsNode.value.focusedProperty().addListener((obs, before, now) -> {
+            if (now) addFocused();
+            else minusFocused();
+        });
         permissionsNode.value.setOnMouseClicked(e -> permissionsStage.show());
 
         ownerNode = new RightNode("Usuario :", false);
+        ownerNode.value.focusedProperty().addListener((obs, before, now) -> {
+            if (now) addFocused();
+            else minusFocused();
+        });
+
         groupNode = new RightNode("Grupo   :", false);
+        groupNode.value.focusedProperty().addListener((obs, before, now) -> {
+            if (now) addFocused();
+            else minusFocused();
+        });
 
         children.addAll(
                 close,
@@ -291,16 +331,5 @@ public class RightPane extends ScrollPane {
     }
     public static void changeShow() {
         changeShow(!isRightPaneShow);
-    }
-    public static boolean isAnyFocus() {
-        return  (textNode != null && textNode.isFocused()) ||
-                (nameNode != null && nameNode.value.isFocused()) ||
-                (sizeNode != null && sizeNode.value.isFocused()) ||
-                (modifiedDateTimeNode != null && modifiedDateTimeNode.value.isFocused()) ||
-                (createDateTimeNode != null && createDateTimeNode.value.isFocused()) ||
-                (typeNode != null && typeNode.value.isFocused()) ||
-                (permissionsNode != null && permissionsNode.value.isFocused()) ||
-                (ownerNode != null && ownerNode.value.isFocused()) ||
-                (groupNode != null && groupNode.value.isFocused());
     }
 }

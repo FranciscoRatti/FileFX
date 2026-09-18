@@ -22,6 +22,8 @@ import java.util.concurrent.locks.*;
 import static main.FileFX.*;
 import static panel.CenterPane.*;
 import static panel.MainPane.*;
+import static scene.Scene.addShowing;
+import static scene.Scene.minusShowing;
 
 public class Lib {
 
@@ -79,7 +81,9 @@ public class Lib {
         int extract, int compress, int shell, int admin) {
     ContextMenu contextMenu = new ContextMenu();
     contextMenu.setAutoHide(true);
+    contextMenu.setOnHidden(e -> minusShowing());
     ObservableList<MenuItem> contextMenuItems = contextMenu.getItems();
+
     MenuItem pasteItem = null;
     MenuItem extractHereItem = null;
 
@@ -221,20 +225,13 @@ public class Lib {
     withoutFormatItem.setOnAction(e -> {
       Optional<String> result = showAlert(new TextInputDialog(), "Ingrese nombre del archivo", null);
       if (result.isPresent()) {
-        File newFile;
         String fileName = "sin_nombre";
         String input = result.get();
 
         if (!input.isEmpty())
           fileName = input;
 
-        newFile = new File(path + "/" + fileName);
-        if (centerPane.selectedItems.size() == 1) {
-          File selectedFile = centerPane.selectedItems.getFirst().getFileProperties();
-          if (selectedFile.isDirectory())
-            newFile = new File(selectedFile.getAbsolutePath() + "/" + fileName);
-        }
-        createNewFile(newFile);
+        createNewFile(new File(path + "/" + fileName));
       }
     });
 
@@ -264,15 +261,9 @@ public class Lib {
         String input = result.get();
         if (!input.isEmpty()) fileName = input;
 
-        File newFile = new File(path + "/" + fileName);
-
-        File selectedFile = centerPane.selectionModel.getSelectedItem().getFileProperties();
-        if (selectedFile.isDirectory())
-          newFile = new File(selectedFile.getAbsolutePath() + "/" + fileName);
-
         try {
           printExecute("Creando nuevo archivo a partir de una plantilla '" + YELLOW + template.getAbsolutePath() + RESET + "'");
-          new ProcessBuilder("cp", template.getAbsolutePath(), newFile.getAbsolutePath())
+          new ProcessBuilder("cp", template.getAbsolutePath(), new File(path + "/" + fileName).getAbsolutePath())
                   .start().waitFor();
 
           updateCenter();
@@ -290,20 +281,13 @@ public class Lib {
     item.setOnAction(e -> {
       Optional<String> result = showAlert(new TextInputDialog(), "Ingrese nombre de la carpeta", null);
       if (result.isPresent()) {
-        File newDirectory;
         String directoryName = "sin_nombre";
         String input = result.get();
 
         if (!input.isEmpty())
           directoryName = input;
 
-        newDirectory = new File(path + "/" + directoryName);
-        if (centerPane.selectedItems.size() == 1) {
-          File selectedFile = centerPane.selectedItems.getFirst().getFileProperties();
-          if (selectedFile.isDirectory())
-            newDirectory = new File(selectedFile.getAbsolutePath() + "/" + directoryName);
-        }
-        createNewDirectory(newDirectory);
+        createNewDirectory(new File(path + "/" + directoryName));
       }
     });
     return item;
@@ -368,9 +352,8 @@ public class Lib {
   private static MenuItem createCompressItem(String icon) {
     MenuItem item = new MenuItem("Comprimir", createIconItem(icon));
     item.setOnAction(e -> {
-      if (!centerPane.selectedItems.isEmpty()) {
+      if (!centerPane.selectedItems.isEmpty())
         compress(parseCenterNodesToFiles(centerPane.selectedItems));
-      }
     });
     return item;
   }
@@ -542,13 +525,12 @@ public class Lib {
     try {
       Optional<String> option = showAlert(new TextInputDialog(), "Nombre del enlace", "Crear enlace");
       if (option.isPresent()) {
-        printExecute("Creando enlace simbolico de '" + YELLOW + file.getName() + "'");
-        Files.createSymbolicLink(Path.of(path + option.get()), file.toPath());
+        String linkName = option.get();
+        printExecute("Creando enlace simbolico '" + YELLOW + linkName + "'");
+        Files.createSymbolicLink(Path.of(path + linkName), file.toPath());
 
         updateCenter();
-        centerPane.selectionModel.clearSelection();
-        if (!centerPane.select(option.get()))
-          centerPane.selectFirst();
+        centerPane.select(linkName);
         updateRight();
       }
     } catch (Exception e) {
@@ -568,15 +550,9 @@ public class Lib {
         ProcessBuilder pb = new ProcessBuilder("mv", file.getAbsolutePath(), newAbsolutePath);
         pb.start().waitFor();
 
-        centerPane.selectionModel.clearSelection();
         updateCenter();
-        for (CenterNode centerNode : centerPane.items) {
-          if (centerNode.getName().equals(newName)) {
-            centerNode.setSelected(true);
-            centerNode.requestFocus();
-            break;
-          }
-        }
+        centerPane.select(newName);
+        centerPane.selectionModel.getSelectedItem().requestFocus();
         updateRight();
       } catch (Exception e) {
         printErrorAndShow("Error al renombrar '" + file.getAbsolutePath() + "'", e);
@@ -681,7 +657,7 @@ public class Lib {
       }
 
       updateCenter();
-      centerPane.selectFirst();
+      centerPane.select(new ArrayList<>(Arrays.stream(files).map(f -> f.getName()).toList()));
     }
   }
   public static File[] getClipboardFiles() {
@@ -719,7 +695,7 @@ public class Lib {
   public static void restoreFiles(File[] files) {
     for (File file : files) {
       printExecute(
-          "Restaurando archivo '" + YELLOW + file.getAbsolutePath().substring(TRASH.length() + 6) + RESET + "'");
+          "Restaurando archivo '" + YELLOW + file.getName() + RESET + "'");
 
       File[] childrens = null;
       boolean isDirectory = file.isDirectory();
@@ -800,7 +776,6 @@ public class Lib {
         }
       }
 
-      centerPane.selectionModel.clearSelection();
       updateCenter();
       centerPane.selectFirst();
       updateRight();
@@ -837,7 +812,7 @@ public class Lib {
       String message = "";
       if (files.length == 1) {
         String type = files[0].isDirectory() ? "directorio '" : "archivo '";
-        message = "El " + type + files[0].getAbsolutePath() + "'\nsera eliminado permanentemente";
+        message = "El " + type + files[0].getName() + "'\nsera eliminado permanentemente";
       } else if (files.length > 1)
         message = "Los archivos y/o directorios\nseran eliminados permanentemente";
 
@@ -900,10 +875,6 @@ public class Lib {
     }
 
     try {
-      List<String> command = new ArrayList<>();
-      command.add("tar");
-      command.add("-czf");
-
       Optional<String> option = showAlert(new TextInputDialog(), "Nombre del archivo comprimido:",
           "Comprimir archivos");
       String name;
@@ -913,16 +884,17 @@ public class Lib {
       else
         return;
 
+      List<String> command = new ArrayList<>();
+      command.add("tar");
+      command.add("-czf");
       command.add(path + name);
-
       command.addAll(Arrays.asList(paths));
 
       printExecute("Creando archivo comprimido '" + YELLOW + name + RESET + "'");
       new ProcessBuilder(command).directory(new File(path)).start().waitFor();
 
       updateCenter();
-      if (!centerPane.select(name))
-        centerPane.selectFirst();
+      centerPane.select(name);
       updateRight();
     } catch (Exception e) {
       printErrorAndShow("Error al compirmir archivos '" + Arrays.toString(paths) + "'", e);

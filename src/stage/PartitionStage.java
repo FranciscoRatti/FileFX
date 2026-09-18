@@ -10,6 +10,8 @@ import scene.Scene;
 import static main.FileFX.CLOSE;
 import static main.FileFX.mainPane;
 import static panel.MainPane.centerPane;
+import static scene.Scene.addShowing;
+import static scene.Scene.minusShowing;
 
 public class PartitionStage extends HBox {
     private boolean isShowing;
@@ -87,11 +89,15 @@ public class PartitionStage extends HBox {
         centerPane.hideAll();
 
         isShowing = true;
+        addShowing();
+
         mainPane.getChildren().add(this);
         uuidNode.value.requestFocus();
     }
     public void close() {
         isShowing = false;
+        minusShowing();
+
         mainPane.getChildren().remove(this);
     }
     public boolean isShowing() {

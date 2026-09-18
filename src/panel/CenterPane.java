@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 import static main.FileFX.*;
 import static main.Lib.*;
+import static scene.Scene.addShowing;
 
 public class CenterPane extends ListView<CenterNode> {
     public String filter = null;
@@ -40,6 +41,7 @@ public class CenterPane extends ListView<CenterNode> {
 
     public CenterPane() {
         setId("CenterPane");
+        setFocusTraversable(false);
         items = getItems();
 
         selectionModel = getSelectionModel();
@@ -92,7 +94,7 @@ public class CenterPane extends ListView<CenterNode> {
             else if (button.equals(MouseButton.FORWARD)) forward();
             else if (button.equals(MouseButton.SECONDARY)) showMenu(mainPane, e.getScreenX(), e.getScreenY());
             else if (button.equals(MouseButton.PRIMARY)) {
-                if (isAnyShow()) hideAll();
+                if (isAnyShowing()) hideAll();
                 updateRight();
                 if (permissionsStage.isShowing()) permissionsStage.update();
             }
@@ -242,6 +244,7 @@ public class CenterPane extends ListView<CenterNode> {
         printInfo("Mostrando menu");
 
         hideAll();
+        addShowing();
 
         if (path.startsWith(Lib.TRASH+"files")) {
             menuTrash.show(anchor, x, y);
@@ -253,6 +256,8 @@ public class CenterPane extends ListView<CenterNode> {
         printInfo("Mostrando menu");
 
         hideAll();
+        addShowing();
+
         if (path.startsWith(Lib.TRASH+"files")) {
             menuTrash.show(Window.getWindows().getFirst());
         } else if (selectedItems.getFirst().getFileProperties().isDirectory()) {
@@ -260,8 +265,11 @@ public class CenterPane extends ListView<CenterNode> {
         } else menuFile.show(Window.getWindows().getFirst());
     }
     public void showMenuCreate() {
-        hideAll();
         printInfo("Mostrando menu");
+
+        hideAll();
+        addShowing();
+
         menuCreate.show(Window.getWindows().getFirst());
     }
 
@@ -271,7 +279,7 @@ public class CenterPane extends ListView<CenterNode> {
         menuCreate.hide();
         menuTrash.hide();
     }
-    public boolean isAnyShow() {
+    public boolean isAnyShowing() {
         return menuFile.isShowing() || menuDirectory.isShowing() || menuCreate.isShowing() || menuTrash.isShowing();
     }
 
@@ -340,6 +348,22 @@ public class CenterPane extends ListView<CenterNode> {
             }
         }
         return false;
+    }
+    public void select(ArrayList<String> names) {
+        int size;
+        for (CenterNode item : items) {
+            size = names.size();
+            if (size == 0) break;
+
+            String itemName = item.getName();
+            for (int i = 0; i < size; i++) {
+                if (itemName.equals(names.get(i))) {
+                    item.setSelected(true);
+                    names.remove(i);
+                    break;
+                }
+            }
+        }
     }
 
     public static File[] parseCenterNodesToFiles(ObservableList<CenterNode> centerNodeList) {

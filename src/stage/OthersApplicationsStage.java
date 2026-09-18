@@ -17,6 +17,8 @@ import java.util.*;
 import static main.FileFX.*;
 import static main.Lib.*;
 import static panel.MainPane.*;
+import static scene.Scene.addShowing;
+import static scene.Scene.minusShowing;
 
 public class OthersApplicationsStage extends StackPane {
     public final ArrayList<DesktopApplication> desktopApplications;
@@ -119,11 +121,15 @@ public class OthersApplicationsStage extends StackPane {
         centerPane.hideAll();
 
         isShowing = true;
+        addShowing();
+
         mainPane.getChildren().add(this);
         desktopButtons.getFirst().requestFocus();
     }
     public void close() {
         isShowing = false;
+        minusShowing();
+
         mainPane.getChildren().remove(this);
     }
     public boolean isShowing() {

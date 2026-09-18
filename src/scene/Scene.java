@@ -22,17 +22,15 @@ public class Scene extends javafx.scene.Scene {
         updateKeyBinding();
     }
 
-    public static boolean isAnyFocus() {
-        return  TopPane.isSearchFocus() ||
-                RightPane.isAnyFocus() ||
-                BottomPane.isFilterFocus();
-    }
+    private static int focused = 0;
+    public static void addFocused() {focused++;}
+    public static void minusFocused() {if (focused > 0) focused--;}
+    public static boolean isAnyFocus() {return focused != 0;}
 
-    public static boolean isAnyShowing() {
-        return  permissionsStage.isShowing() ||
-                leftPane.isAnyShowing() ||
-                othersApplicationsStage.isShowing();
-    }
+    private static int showing = 0;
+    public static void addShowing() {showing++;}
+    public static void minusShowing() {if (showing > 0) showing--;}
+    public static boolean isAnyShowing() {return showing != 0;}
 
     private KeyCombination key;
     public void updateKeyBinding() {
@@ -40,7 +38,7 @@ public class Scene extends javafx.scene.Scene {
             key = getKeyCombination(e);
             if (key == null) return;
 
-            if (!isAnyFocus() && !isAnyShowing()) {
+            if (focused == 0 && showing == 0) {
                 e.consume();
                 try {
                     if (setKeyBindAction(CUT, () -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), true))) return;

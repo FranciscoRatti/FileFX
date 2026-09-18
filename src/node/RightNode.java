@@ -18,6 +18,7 @@ public class RightNode extends HBox {
         value = new TextField();
         value.setId("RightNode_value");
         value.setEditable(editable);
+        value.setFocusTraversable(false);
         value.setMaxWidth(Double.MAX_VALUE);
         setHgrow(value, Priority.ALWAYS);
 

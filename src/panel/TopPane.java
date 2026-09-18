@@ -15,6 +15,8 @@ import java.util.Optional;
 import static main.FileFX.*;
 import static main.Lib.*;
 import static panel.MainPane.*;
+import static scene.Scene.addFocused;
+import static scene.Scene.minusFocused;
 
 public class TopPane extends HBox {
     private static Button back;
@@ -38,7 +40,12 @@ public class TopPane extends HBox {
                 case SEARCH -> {
                     search = new TextField();
                     search.setId("Top_search");
+                    search.setFocusTraversable(false);
                     search.setPrefColumnCount(200);
+                    search.focusedProperty().addListener((obs, before, now) -> {
+                        if (now) addFocused();
+                        else minusFocused();
+                    });
                     search.setOnKeyPressed(e -> {
                         KeyCode key = e.getCode();
 
@@ -127,7 +134,4 @@ public class TopPane extends HBox {
     }
 
     public static void focusSearch() {search.requestFocus();}
-    public static boolean isSearchFocus() {
-        return search.isFocused();
-    }
 }

@@ -12,6 +12,8 @@ import java.util.*;
 import static main.Lib.*;
 import static main.FileFX.*;
 import static panel.MainPane.*;
+import static scene.Scene.addFocused;
+import static scene.Scene.minusFocused;
 
 public class BottomPane extends HBox {
     private static TextField filter;
@@ -36,8 +38,13 @@ public class BottomPane extends HBox {
                 filter = new TextField("");
                 filter.setId("Bottom_textfield");
                 filter.setPromptText("Filtro");
+                filter.setFocusTraversable(false);
                 filter.setMaxWidth(Double.MAX_VALUE);
                 HBox.setHgrow(filter, Priority.ALWAYS);
+                filter.focusedProperty().addListener((obs, before, now) -> {
+                    if (now) addFocused();
+                    else minusFocused();
+                });
                 filter.setOnKeyPressed(e -> {
                     KeyCode key = e.getCode();
 

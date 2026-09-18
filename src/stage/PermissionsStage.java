@@ -12,6 +12,8 @@ import static main.FileFX.CLOSE;
 import static main.FileFX.mainPane;
 import static main.Lib.*;
 import static panel.MainPane.*;
+import static scene.Scene.addShowing;
+import static scene.Scene.minusShowing;
 
 public class PermissionsStage extends VBox {
     private final Button[] charsButtons;
@@ -208,12 +210,16 @@ public class PermissionsStage extends VBox {
         centerPane.hideAll();
 
         isShowing = true;
+        addShowing();
+
         update();
         mainPane.getChildren().add(this);
         charsButtons[4].requestFocus();
     }
     public void close() {
         isShowing = false;
+        minusShowing();
+
         mainPane.getChildren().remove(this);
     }
     public boolean isShowing() {return isShowing;}

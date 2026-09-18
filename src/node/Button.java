@@ -16,6 +16,7 @@ public class Button extends javafx.scene.control.Button {
 
         setTooltip(new Tooltip(tooltip));
         setEventHandler(ActionEvent.ACTION, event);
+        setFocusTraversable(false);
 
         changeId(id);
     }
