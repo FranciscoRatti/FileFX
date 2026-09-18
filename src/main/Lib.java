@@ -16,13 +16,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.locks.*;
 
 import static main.FileFX.*;
 import static panel.CenterPane.*;
 import static panel.MainPane.*;
-import static scene.Scene.addShowing;
 import static scene.Scene.minusShowing;
 
 public class Lib {
@@ -91,13 +89,13 @@ public class Lib {
       ITEMS item = CONTEXT_MENU_ITEMS[i];
       switch (item) {
         case SEPARATOR ->   contextMenuItems.add(new SeparatorMenuItem());
-        case BACKWARD ->    {if (backward == 1)    contextMenuItems.add(createNewBackwardItem(CONTEXT_MENU_ICONS[i]));}
-        case FORWARD ->     {if (forward == 1)     contextMenuItems.add(createNewForwardItem(CONTEXT_MENU_ICONS[i]));}
-        case OPEN ->        {if (open == 1)        contextMenuItems.add(createNewOpenItem(CONTEXT_MENU_ICONS[i]));}
-        case OPEN_WITH ->   {if (openWith == 1)    contextMenuItems.add(createNewOpenWithItem(CONTEXT_MENU_ICONS[i]));}
-        case CREATE_FILE -> {if (createFile == 1)  contextMenuItems.add(createNewFileItem(CONTEXT_MENU_ICONS[i]));}
-        case CREATE_DIR ->  {if (createDir == 1)   contextMenuItems.add(createNewDirectoryItem(CONTEXT_MENU_ICONS[i]));}
-        case CREATE_LINK -> {if (createLink == 1)  contextMenuItems.add(createNewLinkItem(CONTEXT_MENU_ICONS[i]));}
+        case BACKWARD ->    {if (backward == 1)    contextMenuItems.add(createBackwardItem(CONTEXT_MENU_ICONS[i]));}
+        case FORWARD ->     {if (forward == 1)     contextMenuItems.add(createForwardItem(CONTEXT_MENU_ICONS[i]));}
+        case OPEN ->        {if (open == 1)        contextMenuItems.add(createOpenItem(CONTEXT_MENU_ICONS[i]));}
+        case OPEN_WITH ->   {if (openWith == 1)    contextMenuItems.add(createOpenWithItem(CONTEXT_MENU_ICONS[i]));}
+        case CREATE_FILE -> {if (createFile == 1)  contextMenuItems.add(createFileItem(CONTEXT_MENU_ICONS[i]));}
+        case CREATE_DIR ->  {if (createDir == 1)   contextMenuItems.add(createDirectoryItem(CONTEXT_MENU_ICONS[i]));}
+        case CREATE_LINK -> {if (createLink == 1)  contextMenuItems.add(createLinkItem(CONTEXT_MENU_ICONS[i]));}
         case RENAME ->      {if (rename == 1)      contextMenuItems.add(createRenameItem(CONTEXT_MENU_ICONS[i]));}
         case PERMISSIONS -> {if (permissions == 1) contextMenuItems.add(createPermissionsItem(CONTEXT_MENU_ICONS[i]));}
         case COPY ->        {if (copy == 1)        contextMenuItems.add(createCopyItem(CONTEXT_MENU_ICONS[i]));}
@@ -156,25 +154,25 @@ public class Lib {
     return contextMenu;
   }
 
-  private static MenuItem createNewBackwardItem(String icon) {
+  private static MenuItem createBackwardItem(String icon) {
     MenuItem item = new MenuItem("Deshacer", createIconItem(icon));
     item.setAccelerator(BACKWARD[0]);
     item.setOnAction(e -> backward());
     return item;
   }
-  private static MenuItem createNewForwardItem(String icon) {
+  private static MenuItem createForwardItem(String icon) {
     MenuItem item = new MenuItem("Rehacer", createIconItem(icon));
     item.setAccelerator(FORWARD[0]);
     item.setOnAction(e -> forward());
     return item;
   }
-  private static MenuItem createNewOpenItem(String icon) {
+  private static MenuItem createOpenItem(String icon) {
     MenuItem item = new MenuItem("Abrir", createIconItem(icon));
     item.setAccelerator(OPEN[0]);
     item.setOnAction(e -> centerPane.openSelected());
     return item;
   }
-  private static Menu createNewOpenWithItem(String icon) {
+  private static Menu createOpenWithItem(String icon) {
     Menu menu = new Menu("Abrir con", createIconItem(icon));
     ObservableList<MenuItem> childrens = menu.getItems();
 
@@ -214,11 +212,11 @@ public class Lib {
 
     return menu;
   }
-  private static Menu createNewFileItem(String icon) {
+  private static Menu createFileItem(String icon) {
     File[] templates = new File(TEMPLATES_DIR).listFiles();
     MenuItem[] templatesItems = new MenuItem[templates == null ? 0 : templates.length];
     for (int i = 0; i < templatesItems.length; i++) {
-      templatesItems[i] = createNewTemplateFileItem(new FileProperties(templates[i]));
+      templatesItems[i] = createTemplateFileItem(new FileProperties(templates[i]));
     }
 
     MenuItem withoutFormatItem = new MenuItem("Sin formato", createIconItem((String) iconsMime.getOrDefault("inode/x-empty", "")));
@@ -231,7 +229,7 @@ public class Lib {
         if (!input.isEmpty())
           fileName = input;
 
-        createNewFile(new File(path + "/" + fileName));
+        createFile(new File(path + "/" + fileName));
       }
     });
 
@@ -239,7 +237,7 @@ public class Lib {
     menu.getItems().add(withoutFormatItem);
     return menu;
   }
-  private static MenuItem createNewTemplateFileItem(FileProperties template) {
+  private static MenuItem createTemplateFileItem(FileProperties template) {
     String name = template.getName();
     String extension = name.contains(".") && !template.isDirectory ? name.substring(name.lastIndexOf('.')+1) : null;
 
@@ -252,9 +250,15 @@ public class Lib {
       icon = iconsMime.getProperty("lock");
     }
 
+    TextInputDialog alert = new TextInputDialog();
+    TextField editor = alert.getEditor();
+
     MenuItem item = new MenuItem(template.getName(), createIconItem(icon));
     item.setOnAction(e -> {
-      Optional<String> result = showAlert(new TextInputDialog(), "Ingrese nombre del archivo", null);
+      editor.setText(name);
+      editor.selectAll();
+
+      Optional<String> result = showAlert(alert, "Ingrese nombre del archivo", null);
 
       if (result.isPresent()) {
         String fileName = "sin_nombre";
@@ -276,7 +280,7 @@ public class Lib {
     });
     return item;
   }
-  private static MenuItem createNewDirectoryItem(String icon) {
+  private static MenuItem createDirectoryItem(String icon) {
     MenuItem item = new MenuItem("Crear carpeta", createIconItem(icon));
     item.setOnAction(e -> {
       Optional<String> result = showAlert(new TextInputDialog(), "Ingrese nombre de la carpeta", null);
@@ -287,12 +291,12 @@ public class Lib {
         if (!input.isEmpty())
           directoryName = input;
 
-        createNewDirectory(new File(path + "/" + directoryName));
+        createDirectory(new File(path + "/" + directoryName));
       }
     });
     return item;
   }
-  private static MenuItem createNewLinkItem(String icon) {
+  private static MenuItem createLinkItem(String icon) {
     MenuItem item = new MenuItem("Crear enlace", createIconItem(icon));
     item.setOnAction(e -> createLink(centerPane.selectionModel.getSelectedItem().getFileProperties()));
     return item;
@@ -491,7 +495,7 @@ public class Lib {
     }
   }
 
-  public static void createNewFile(File file) {
+  public static void createFile(File file) {
     if (!path.startsWith(TRASH + "files")) {
       try {
         printExecute("Creando nuevo archivo '" + YELLOW + file.getAbsolutePath() + RESET + "'");
@@ -506,7 +510,7 @@ public class Lib {
       updateRight();
     }
   }
-  public static void createNewDirectory(File directory) {
+  public static void createDirectory(File directory) {
     if (!path.startsWith(TRASH + "files")) {
       try {
         printExecute("Creando nuevo directorio '" + YELLOW + directory + RESET + "'");
