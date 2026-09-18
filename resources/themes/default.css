@@ -312,7 +312,7 @@
     -fx-border-color: #232323FF;
     -fx-spacing: 10;
 }
-#CenterNode_boxB1:hover {
+#CenterNode_boxB1:hover, #CenterNode_boxB1:focused {
     -fx-background-color: gray;
     -fx-border-color: white;
 }
@@ -336,7 +336,7 @@
     -fx-border-color: #333333;
     -fx-spacing: 10;
 }
-#CenterNode_boxB2:hover {
+#CenterNode_boxB2:hover, #CenterNode_boxB2:focused {
     -fx-background-color: gray;
     -fx-border-color: white;
 }

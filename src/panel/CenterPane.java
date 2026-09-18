@@ -9,6 +9,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import main.Lib;
@@ -20,6 +22,7 @@ import java.util.stream.Stream;
 
 import static main.FileFX.*;
 import static main.Lib.*;
+import static panel.MainPane.centerPane;
 import static scene.Scene.addShowing;
 
 public class CenterPane extends ListView<CenterNode> {
@@ -100,6 +103,39 @@ public class CenterPane extends ListView<CenterNode> {
             }
 
             e.consume();
+        });
+
+        setOnDragOver(e -> {
+            if (e.getDragboard().hasFiles()) {
+                e.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                e.consume();
+            }
+        });
+
+        setOnDragDropped(e -> {
+            CenterNode.dropInternally = true;
+
+            List<File> files = e.getDragboard().getFiles();
+            String[] paths = files.stream()
+                    .map(f -> f.getAbsolutePath())
+                    .filter(s -> !s.equals(path))
+                    .toArray(String[]::new);
+
+            String[] comando = new String[paths.length+2];
+            comando[0] = "mv";
+            System.arraycopy(paths, 0, comando, 1, paths.length);
+            comando[paths.length+1] = path;
+
+            try {
+                printExecute("Moviendo archivos a '"+YELLOW+path+RESET+"'");
+                new ProcessBuilder(comando).start().waitFor();
+            } catch (Exception ex) {
+                printErrorAndShow("Error al mover los archivos a "+path, ex);
+            }
+
+            updateCenter();
+            centerPane.select(new ArrayList<>(files.stream().map(f -> f.getName()).toList()));
+            updateRight();
         });
     }
 
@@ -340,14 +376,13 @@ public class CenterPane extends ListView<CenterNode> {
             selectThis();
         }
     }
-    public boolean select(String name) {
+    public void select(String name) {
         for (CenterNode node : items) {
             if (node.getName().equals(name)) {
                 node.setSelected(true);
-                return true;
+                return;
             }
         }
-        return false;
     }
     public void select(ArrayList<String> names) {
         int size;

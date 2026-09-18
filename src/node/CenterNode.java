@@ -2,7 +2,7 @@ package node;
 
 import entity.FileProperties;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseButton;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import main.Lib;
@@ -10,13 +10,21 @@ import scene.Scene;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import static main.FileFX.*;
+import static main.Lib.RESET;
+import static main.Lib.YELLOW;
+import static main.Lib.printErrorAndShow;
+import static main.Lib.printExecute;
 import static main.Lib.printInfo;
+import static main.Lib.updateCenter;
 import static main.Lib.updateRight;
 import static panel.MainPane.*;
 
 public class CenterNode extends HBox {
+    public static boolean dropInternally = false;
+
     private FileProperties fileProperties;
     private final boolean isDirectory;
     private final String name;
@@ -64,8 +72,11 @@ public class CenterNode extends HBox {
         colorRGB = new double[]{color.getRed()*255, color.getGreen()*255, color.getBlue()*255};
         setColor(nameLabel);
 
-        // Evento
-        if (selectable) setOnMouseClicked(e -> {
+        // Eventos
+        if (!selectable) return;
+
+        // MouseClicked
+        setOnMouseClicked(e -> {
             if (Scene.isAnyShowing()) return;
 
             MouseButton button = e.getButton();
@@ -75,6 +86,76 @@ public class CenterNode extends HBox {
                 if (clickCount == 2) centerPane.openSelected();
             }
         });
+
+        // Drag Origen
+        setOnDragDetected(e -> {
+            Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+
+            ClipboardContent clipboard = new ClipboardContent();
+            clipboard.putFiles(centerPane.selectedItems.stream().map(n -> (File) n.getFileProperties()).toList());
+
+            dragboard.setContent(clipboard);
+            e.consume();
+        });
+
+        setOnDragDone(e -> {
+            System.out.println(dropInternally);
+
+            if (dropInternally) {
+                dropInternally = false;
+            } else if (e.isAccepted()) {
+                updateCenter();
+                centerPane.selectFirst();
+                updateRight();
+            }
+        });
+
+        // Drag Destino
+        setOnDragOver(e -> {
+            if (e.getDragboard().hasFiles()) {
+                e.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                e.consume();
+            }
+        });
+
+        setOnDragDropped(e -> {
+            CenterNode.dropInternally = true;
+
+            List<File> files = e.getDragboard().getFiles();
+            String destination = isDirectory ? fileProperties.getAbsolutePath() : path;
+            String[] paths = files.stream()
+                    .map(f -> f.getAbsolutePath())
+                    .filter(s -> !s.equals(destination))
+                    .toArray(String[]::new);
+
+            String[] comando = new String[paths.length+2];
+            comando[0] = "mv";
+            System.arraycopy(paths, 0, comando, 1, paths.length);
+            comando[paths.length+1] = destination;
+
+            try {
+                printExecute("Moviendo archivos a '"+YELLOW+destination+RESET+"'");
+                new ProcessBuilder(comando).start().waitFor();
+            } catch (Exception ex) {
+                printErrorAndShow("Error al mover los archivos a "+fileProperties.getAbsolutePath(), ex);
+            }
+
+            updateCenter();
+            if (isDirectory) {
+                if ((fileProperties.getAbsolutePath() + "/").equals(path))
+                    centerPane.select(new ArrayList<>(files.stream().map(f -> f.getName()).toList()));
+                else
+                    centerPane.select(fileProperties.getName());
+            } else
+                centerPane.select(new ArrayList<>(files.stream().map(f -> f.getName()).toList()));
+            updateRight();
+
+            e.setDropCompleted(true);
+            e.consume();
+        });
+
+        setOnDragEntered(e -> setFocused(true));
+        setOnDragExited(e -> setFocused(false));
     }
 
     public CenterNode(String text) {
