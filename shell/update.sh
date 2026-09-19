@@ -18,14 +18,15 @@ if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
 
   curl -L -s -o FileFX.zip $(grep '"browser_download_url"' github.rest | cut -d'"' -f4)
   unzip -q FileFX.zip -d FileFX
+  if [ -n "${1:-}" ] && kill -0 "$1" 2>/dev/null; then
+    kill "$1"
+  fi
   ./FileFX/shell/install.sh --use-pkexec
   rm -rf /tmp/filefx-build
   filefx
 
   echo -e "[ \e[32mOK\e[0m ]     \e[32mActualizado\e[0m"
   notify-send -i /usr/share/filefx/icon.png "Nueva actualizacion" "FileFX se actualizo a la version $LATEST_VERSION\nVea los cambios en github.com/FranciscoRatti/FileFX/releases/tag/v$LATEST_VERSION"
-
-  kill $1
 else
   echo -e "[ \e[32mOK\e[0m ]     \e[32mAplicacion en su ultima version\e[0m"
 fi

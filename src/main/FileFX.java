@@ -17,6 +17,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static main.Lib.*;
 import static panel.MainPane.*;
@@ -484,7 +485,13 @@ public class FileFX extends javafx.application.Application {
         try (FileInputStream input = new FileInputStream("/var/lib/filefx/metadata.properties")) {
             metadata.load(input);
             String[] values = ((String) metadata.getOrDefault("last_check", "2000-00-00")).split("-");
-            LocalDate lastCheck = LocalDate.of(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+            LocalDate lastCheck;
+            try {
+                lastCheck = LocalDate.of(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+            } catch (Exception e) {
+                printError("Error al parsear '"+RED+ String.join("-", values), e);
+                lastCheck = LocalDate.of(2000, 0, 0);
+            }
             LocalDate now = LocalDate.now();
 
             // Si hace mas de dos dias que no se chequea
