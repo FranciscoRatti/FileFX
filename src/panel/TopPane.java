@@ -48,11 +48,7 @@ public class TopPane extends HBox {
                         KeyCode key = e.getCode();
 
                         if (key.equals(KeyCode.ENTER)) {
-                            String text = search.getText();
-                            if (!text.endsWith("/")) text+="/";
-
-                            if (text.startsWith("~")) text = HOME+text.substring(1);
-                            else if (text.startsWith("trash")) text = Lib.TRASH+"files"+text.substring(5);
+                            String text = stringToPath(search.getText());
 
                             if (!new File(text).exists()) {
                                 printErrorAndShow("El archivo o directorio "+text+" no existe", null);
@@ -65,8 +61,8 @@ public class TopPane extends HBox {
                                 if (!centerPane.items.isEmpty()) {
                                     CenterNode first = centerPane.items.getFirst();
                                     first.setSelected(true);
-                                    first.requestFocus();
                                 }
+                                centerPane.requestFocus();
                                 updateRight();
                             }
                         }
@@ -83,13 +79,13 @@ public class TopPane extends HBox {
                                 // Eliminar
                                 try {
                                     printExecute("Limpiando la papelera");
-                                    new ProcessBuilder("rm", "-Rf", Lib.TRASH+"files", Lib.TRASH+"info").start().waitFor();
-                                    new ProcessBuilder("mkdir", Lib.TRASH+"files", Lib.TRASH+"info").start().waitFor();
+                                    new ProcessBuilder("rm", "-Rf", Lib.TRASH_PATH +"files", Lib.TRASH_PATH +"info").start().waitFor();
+                                    new ProcessBuilder("mkdir", Lib.TRASH_PATH +"files", Lib.TRASH_PATH +"info").start().waitFor();
                                 } catch (Exception ex) {
                                     printErrorAndShow("Error al eliminar archivo", ex);
                                 }
 
-                                path = Lib.TRASH+"files/";
+                                path = Lib.TRASH_PATH +"files/";
 
                                 updateTop();
                                 updateCenter();
@@ -121,11 +117,11 @@ public class TopPane extends HBox {
                 case SEARCH  -> {
                     children.add(search);
                     search.setText(
-                            path.startsWith(Lib.TRASH+"files") ? "trash"+path.substring(HOME.length()+25) :
+                            path.startsWith(Lib.TRASH_PATH +"files") ? "trash"+path.substring(HOME.length()+25) :
                             path.startsWith(HOME) ? "~"+ (path.length() <= HOME.length() ? "/" : path.substring(HOME.length())) :
                             path);
                 }
-                case CLEAN -> {if (path.startsWith(Lib.TRASH+"files")) children.add(clean);}
+                case CLEAN -> {if (path.startsWith(Lib.TRASH_PATH +"files")) children.add(clean);}
                 case RELOAD  -> children.add(reload);
             }
         }

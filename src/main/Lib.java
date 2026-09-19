@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import node.CenterNode;
 import panel.RightPane;
+import stage.GotoStage;
 import stage.OthersApplicationsStage;
 import stage.PasswordStage;
 import stage.PermissionsStage;
@@ -30,7 +31,7 @@ public class Lib {
   public static final String HOME = System.getenv("HOME");
   public static final String USER = System.getenv("USER");
 
-  public static final String TRASH = HOME + "/.local/share/Trash/";
+  public static final String TRASH_PATH = HOME + "/.local/share/Trash/";
   public static final String ABSOLUTE_PATH = "/usr/share/filefx/";
   //public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/resources/";
   public static final String CONFIG_PATH = HOME + "/.config/filefx/";
@@ -55,9 +56,10 @@ public class Lib {
   public static final LinkedList<String> forwardBuffer = new LinkedList<>();
   public static final Lock lock = new ReentrantLock();
 
+  public static PasswordStage passwordStage;
   public static OthersApplicationsStage othersApplicationsStage;
   public static PermissionsStage permissionsStage;
-  public static PasswordStage passwordStage;
+  public static GotoStage gotoStage;
 
   // METODOS -------------------------------------------------------------------------------------------------------------
 
@@ -435,6 +437,13 @@ public class Lib {
     return passwordStage.password.getText();
   }
 
+  public static String stringToPath(String text) {
+    String path = text.charAt(0) == '~' ? HOME+text.substring(1) :
+                  text.startsWith("trash") ? TRASH_PATH+"files"+text.substring(5) :
+                  text;
+    return path.endsWith("/") ? path : path+"/";
+  }
+
   // Acciones
   public static void backward() {
     if (!backBuffer.isEmpty()) {
@@ -495,7 +504,7 @@ public class Lib {
   }
 
   public static void createFile(File file) {
-    if (!path.startsWith(TRASH + "files")) {
+    if (!path.startsWith(TRASH_PATH + "files")) {
       try {
         printExecute("Creando nuevo archivo '" + YELLOW + file.getAbsolutePath() + RESET + "'");
         if (!file.createNewFile())
@@ -510,7 +519,7 @@ public class Lib {
     }
   }
   public static void createDirectory(File directory) {
-    if (!path.startsWith(TRASH + "files")) {
+    if (!path.startsWith(TRASH_PATH + "files")) {
       try {
         printExecute("Creando nuevo directorio '" + YELLOW + directory + RESET + "'");
         if (!directory.mkdir())
@@ -555,7 +564,7 @@ public class Lib {
 
         updateCenter();
         centerPane.select(newName);
-        centerPane.selectionModel.getSelectedItem().requestFocus();
+        centerPane.requestFocus();
         updateRight();
       } catch (Exception e) {
         printErrorAndShow("Error al renombrar '" + file.getAbsolutePath() + "'", e);
@@ -756,7 +765,7 @@ public class Lib {
   }
 
   public static void trashFiles(File[] files) {
-    if (files != null && !path.startsWith(TRASH + "files")) {
+    if (files != null && !path.startsWith(TRASH_PATH + "files")) {
       createTrashInfo(files);
       for (File file : files) {
         try {

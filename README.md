@@ -111,6 +111,11 @@ propiedades seguidas del valor predeterminado.
     - `save_bounds=true` : Si es true se guarda el tamaño de la ventana al cerrarse.
     - `save_path=true` : Si es true guarda la ultima ubicación.
     - `save_selection=true` : Si es true guarda el ultimo item seleccionado.
+    - `goto_places=[{~;h},{~/Documents;d},{trash;t},{/;r}]` : Define los lugares y las combinaciones
+      de teclado que aparecen en la ventana goto, su sintaxis es
+      [{lugar;combinacion},{lugar;combinacion},...], puede estar vacio. Al igual que en el archivo
+      "key_binding.properties" las combinaciones  no distingue mayusculas ni minusculas. Los nombre
+      de cada tecla son los mismos que aparecen en la [API de JavaFX](https://docs.oracle.com/en/java/java-components/javafx/21/docs/javafx.graphics/javafx/scene/input/KeyCode.html).
   - **Top Pane :**
     - `top_buttons=[{BACKWARD;},{FORWARD;},{PARENT;󰙅},{SEARCH},{CLEAN;󰃢},{RELOAD;}]` : Define
       los botones que aparecerán en el TopPane. La sintaxis es [{boton;icono},{boton;icono},...].
@@ -135,7 +140,7 @@ propiedades seguidas del valor predeterminado.
   - **Left Pane :**
     - `save_left_width=false` : Si es true se guarda el tamaño del panel izquierdo.
     - `show_places=true` : Define si se muestran los _Lugares_ en el LeftPane.
-    - `places=[{Home;;~/},{Descargas;;~/Downloads/},{Documentos;󱔗;~/Documents/},{Imagenes;;~/Images/},{Papelera;;~/.local/share/Trash/files/},{Config;;~/.config/filefx/}]` :
+    - `places=[{Home;;~/},{Descargas;;~/Downloads/},{Documentos;󱔗;~/Documents/},{Imagenes;;~/Images/},{Papelera;;trash/},{Config;;~/.config/filefx/}]` :
       Define ubicaciones personalizadas que aparecerán en Lugares en el LeftPane. Su sintaxis es
       _[{nombre;icono;dirección},{nombre;icono;dirección},...]_.
     - `show_devices=true` : Si es true aparecerán los discos y particiones en el LeftPane.
@@ -205,22 +210,23 @@ propiedades seguidas del valor predeterminado.
   - `select_first=shift+home` : Seleccionar hasta el primero.
   - `select_last=shift+end` : Seleccionar hasta el ultimo.
   - `deselect_all=esc` : Deseleccionar todo.
+  - `close=esc,q` : Cerrar ventana.
+  - `goto=g` : Muestra la ventana goto
   - `backward=ctrl+z` : Deshacer.
   - `forward=ctrl+y` : Rehacer.
+  - `open_shell=ctrl+t` : Abrir una terminal aquí.
   - `show_menu=context menu,ctrl+space` : Mostrar menu contextual, equivalente a hacer click derecho.
   - `show_menu_create=n` : Crear archivo o directorio.
-  - `change_show_right_pane=space` : Mostrar o esconder RightPane.
-  - `change_show_hidden=h` : Cambiar mostrar archivos ocultos.
-  - `change_permissions=p` : Cambiar permisos.
-  - `update_all=f5` : Actualizar todo.
-  - `close=esc,q` : Cerrar ventana.
   - `focus_path=s` : Pasarle el foco a la barra de busqueda.
   - `focus_filter=f` : Pasarle el foco a la barra de filtro.
   - `focus_inside=i` : Si _show_inside_files_ es true, le pasa el foco al interior del archivo
     seleccionado.
   - `save_inside=ctrl+s` : Si _show_inside_files_ es true, guarda los cambios del interior del archivo
-    seleccionado.
-  - `open_shell=ctrl+t` : Abrir una terminal aquí.
+      seleccionado.
+  - `update_all=f5` : Actualizar todo.
+  - `change_show_right_pane=space` : Mostrar o esconder RightPane.
+  - `change_show_hidden=h` : Cambiar mostrar archivos ocultos.
+  - `change_permissions=p` : Cambiar permisos.
 
 - **_colors_binding.properties_**, **_icons_binding.properties_**: Define los iconos y los colores
   que aparecerán al lado de cada archivo o directorio. Para definir que icono y color asignarle a

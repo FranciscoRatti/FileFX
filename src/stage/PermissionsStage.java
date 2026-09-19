@@ -18,8 +18,10 @@ public class PermissionsStage extends Stage {
     private final Button[] octetValues;
 
     public PermissionsStage() {
+        super("Permisos");
+
         VBox pane = new VBox();
-        pane.setId("PermissionsPane_pane");
+        pane.setId("PermissionsStage_pane");
         getChildren().add(pane);
 
         // Caracteres
@@ -175,15 +177,6 @@ public class PermissionsStage extends Stage {
 
         // Panel
         pane.getChildren().addAll(charsBox, octetBox, buttonsBox);
-        setId("PermissionsPane");
-        setOnKeyPressed(e -> {
-            KeyCombination key = Scene.getKeyCombination(e);
-            for (KeyCombination keyCombination : CLOSE)
-                if (keyCombination.equals(key)) {
-                    close();
-                    break;
-                }
-        });
     }
     
     public void update() {
@@ -209,6 +202,7 @@ public class PermissionsStage extends Stage {
         charsButtons[4].requestFocus();
         update();
     }
+    public void beforeClose() {}
 
     private void setOwner(String value) {octetValues[0].setText(String.valueOf(charsToOctet(value)));}
     private void setOwner(int value) {setCharacters(octetToChars(value), 0);}

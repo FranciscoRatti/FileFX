@@ -392,20 +392,29 @@
 
 #MainPane {-fx-background-color: #232323FF;}
 
-#OtherPane {
+#Stage_pane {
     -fx-background-color: #232323FF;
     -fx-background-radius: 4;
     -fx-border-style: solid;
     -fx-border-width: 1;
     -fx-border-radius: 4;
     -fx-border-color: white;
-    -fx-max-width: 300;
-    -fx-max-height: 1000;
+}
+#Stage_title {
+     -fx-text-fill: white;
+     -fx-font-family: "Noto Sans Mono";
+     -fx-font-size: 13;
+     -fx-background-color: #232323FF;
+     -fx-background-radius: 4;
+     -fx-border-style: solid;
+     -fx-border-width: 1;
+     -fx-border-radius: 4;
+     -fx-border-color: white;
+     -fx-padding: 1 5 1 5;
+     -fx-translate-y: -12;
 }
 
-#OtherPane_pane {
-    -fx-background-color: #404040FF;
-}
+
 
 #OtherNode {
     -fx-text-fill: white;
@@ -426,20 +435,10 @@
 }
 
 
-#PartitionPane {
-    -fx-background-color: #232323FF;
-    -fx-background-radius: 4;
-    -fx-border-style: solid;
-    -fx-border-width: 1;
-    -fx-border-radius: 4;
-    -fx-border-color: white;
-    -fx-max-width: 320;
-    -fx-max-height: 120;
-}
-
 #PartitionColumn {
     -fx-background-color: #232323FF;
-    -fx-padding: 10;
+    -fx-background-radius: 4;
+    -fx-padding: 15 10 10 10;
     -fx-spacing: 3;
 }
 
@@ -480,19 +479,8 @@
 }
 
 
-#PermissionsPane {
-    -fx-background-color: #232323FF;
-    -fx-background-radius: 4;
-    -fx-border-style: solid;
-    -fx-border-width: 1;
-    -fx-border-radius: 4;
-    -fx-border-color: white;
-    -fx-padding: 10;
-    -fx-max-width: 200;
-    -fx-max-height: 120;
-}
-
-#PermissionsPane_pane {
+#PermissionsStage_pane {
+    -fx-padding: 15 10 10 10;
     -fx-spacing: 8;
     -fx-alignment: CENTER;
 }
@@ -640,6 +628,27 @@
 }
 #Password_button:focused {
     -fx-border-color: white;
+}
+
+
+#GotoStage_pane {
+    -fx-padding: 12 10 10 10;
+    -fx-alignment: CENTER;
+    -fx-hgap: 30;
+    -fx-vgap: 10;
+}
+
+#GotoNode_path {
+    -fx-text-fill: lightgray;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 14;
+}
+
+#GotoNode_key {
+    -fx-text-fill: lime;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 15;
+    -fx-alignment: CENTER-RIGHT;
 }
 
 

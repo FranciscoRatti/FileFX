@@ -54,7 +54,7 @@ public class BottomPane extends HBox {
 
                         ArrayList<CenterNode> preSelectedList = new ArrayList<>(List.copyOf(centerPane.selectedItems));
                         updateCenter();
-                        if (!centerPane.items.isEmpty()) centerPane.items.getFirst().requestFocus();
+                        centerPane.requestFocus();
                         for (CenterNode centerNode : centerPane.items) {
                             for (CenterNode preSelected : preSelectedList) {
                                 if (preSelected.getName().equals(centerNode.getName())) {
@@ -65,8 +65,8 @@ public class BottomPane extends HBox {
                             }
                             if (preSelectedList.isEmpty()) break;
                         }
-                        if (centerPane.getSelectionModel().getSelectedItem() == null && centerPane.selectedItems.isEmpty()) centerPane.selectFirst();
-                        //Platform.runLater(() -> centerPane.setSelectedOnCenter());
+                        if (centerPane.getSelectionModel().getSelectedItem() == null && centerPane.selectedItems.isEmpty())
+                            centerPane.selectFirst();
                         updateRight();
                     }
                 });
@@ -77,7 +77,6 @@ public class BottomPane extends HBox {
     }
 
     public static void focusFilter() {filter.requestFocus();}
-    public static boolean isFilterFocus() {return filter.isFocused();}
 
     public void changeOrder(ORDER order) {
         switch (order) {

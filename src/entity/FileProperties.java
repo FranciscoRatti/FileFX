@@ -44,8 +44,8 @@ public class FileProperties extends File{
             }
 
             // Trash Path
-            if (path.startsWith(TRASH+"files")) {
-                File infoDir = new File(TRASH+"info");
+            if (path.startsWith(TRASH_PATH +"files")) {
+                File infoDir = new File(TRASH_PATH +"info");
                 if (!infoDir.exists()) infoDir.mkdir();
 
                 for (File trashInfo : infoDir.listFiles()) {

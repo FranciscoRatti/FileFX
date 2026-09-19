@@ -59,6 +59,7 @@ public class Scene extends javafx.scene.Scene {
                         updateRight();
                     })) return;
 
+                    if (setKeyBindAction(GOTO, () -> gotoStage.show())) return;
                     if (setKeyBindAction(BACKWARD, () -> backward())) return;
                     if (setKeyBindAction(FORWARD, () -> forward())) return;
 
@@ -80,16 +81,18 @@ public class Scene extends javafx.scene.Scene {
 
                     setKeyBindAction(OPEN_SHELL, () -> openShell());
                 } catch (IllegalArgumentException ignored) {}
+            } else if (isAnyFocus()) {
+                try {
+                    setKeyBindAction(CLOSE, () -> centerPane.requestFocus());
+                } catch (IllegalArgumentException ignored) {}
             } else {
                 try {
-                    setKeyBindAction(DESELECT_ALL, () -> {
-                        centerPane.selectionModel.getSelectedItem().requestFocus();
-                        if (leftPane.isAnyShowing()) {
-                            for (PartitionStage stage : leftPane.partitionStages)
-                                if (stage.isShowing()) stage.close();
-                        } else if (othersApplicationsStage.isShowing()) {
-                            othersApplicationsStage.close();
-                        }
+                    setKeyBindAction(CLOSE, () -> {
+                        if (othersApplicationsStage.isShowing()) othersApplicationsStage.close();
+                        if (permissionsStage.isShowing()) permissionsStage.close();
+                        if (gotoStage.isShowing()) gotoStage.close();
+                        for (PartitionStage partitionStage : leftPane.partitionStages)
+                            if (partitionStage.isShowing()) partitionStage.close();
                     });
                 } catch (IllegalArgumentException ignored) {}
             }

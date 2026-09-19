@@ -9,6 +9,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import panel.MainPane;
 import scene.Scene;
+import stage.GotoStage;
 import stage.OthersApplicationsStage;
 import stage.PasswordStage;
 import stage.PermissionsStage;
@@ -107,11 +108,12 @@ public class FileFX extends javafx.application.Application {
                 printInfo("Tema: "+BLUE+THEME.substring(THEME.lastIndexOf('/')+1)+RESET);
 
                 TERMINAL = (String) config.getOrDefault("terminal", "xterm");
+                TEMPLATES_DIR = (String) config.getOrDefault("templates_dir", HOME + "/Templates");
+                if (TEMPLATES_DIR.charAt(0) == '~') TEMPLATES_DIR = HOME + TEMPLATES_DIR.substring(1);
                 SAVE_BOUNDS = Boolean.parseBoolean((String) config.getOrDefault("save_bounds", "false"));
                 SAVE_PATH = Boolean.parseBoolean((String) config.getOrDefault("save_path", "false"));
                 SAVE_SELECTION = Boolean.parseBoolean((String) config.getOrDefault("save_selection", "false"));
-                TEMPLATES_DIR = (String) config.getOrDefault("templates_dir", HOME + "/Templates");
-                if (TEMPLATES_DIR.charAt(0) == '~') TEMPLATES_DIR = HOME + TEMPLATES_DIR.substring(1);
+                GOTO_PLACES = splitTwoTimes((String) config.getOrDefault("goto_places", "[{~;h},{~/Documents;d},{trash;t},{/;r}]"));
 
                 TOP_BUTTONS = splitTwoTimes((String) config.getOrDefault("top_buttons", "[{BACKWARD;\uF177},{FORWARD;\uF178},{PARENT;\uDB81\uDE45},{SEARCH},{CLEAN;\uDB80\uDCE2},{RELOAD;\uF2F1}]"));
 
@@ -230,7 +232,9 @@ public class FileFX extends javafx.application.Application {
                 SELECT_FIRST = getKeyCombination("select_first", "shift+home");
                 SELECT_LAST = getKeyCombination("select_last", "shift+end");
                 DESELECT_ALL = getKeyCombination("deselect_all", "esc");
+                CLOSE = getKeyCombination("close", "esc,q");
 
+                GOTO = getKeyCombination("goto", "g");
                 BACKWARD = getKeyCombination("backward", "ctrl+z");
                 FORWARD = getKeyCombination("forward", "ctrl+y");
 
@@ -240,7 +244,6 @@ public class FileFX extends javafx.application.Application {
                 CHANGE_SHOW_HIDDEN = getKeyCombination("change_show_hidden", "h");
                 CHANGE_PERMISSIONS = getKeyCombination("change_permissions", "p");
                 UPDATE_ALL = getKeyCombination("update_all", "f5");
-                CLOSE = getKeyCombination("close", "esc,q");
 
                 FOCUS_PATH = getKeyCombination("focus_path", "s");
                 FOCUS_FILTER = getKeyCombination("focus_filter", "f");
@@ -277,7 +280,9 @@ public class FileFX extends javafx.application.Application {
             SELECT_FIRST = new KeyCombination[]{new KeyCodeCombination(KeyCode.HOME, KeyCombination.SHIFT_DOWN)};
             SELECT_LAST = new KeyCombination[]{new KeyCodeCombination(KeyCode.END, KeyCombination.SHIFT_DOWN)};
             DESELECT_ALL = new KeyCombination[]{new KeyCodeCombination(KeyCode.ESCAPE)};
+            CLOSE = new KeyCombination[]{new KeyCodeCombination(KeyCode.ESCAPE), new KeyCodeCombination(KeyCode.Q)};
 
+            GOTO = new KeyCombination[]{new KeyCodeCombination(KeyCode.G)};
             BACKWARD = new KeyCombination[]{new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN)};
             FORWARD = new KeyCombination[]{new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN)};
 
@@ -287,7 +292,6 @@ public class FileFX extends javafx.application.Application {
             CHANGE_SHOW_HIDDEN = new KeyCombination[]{new KeyCodeCombination(KeyCode.H)};
             CHANGE_PERMISSIONS = new KeyCombination[]{new KeyCodeCombination(KeyCode.P)};
             UPDATE_ALL = new KeyCombination[]{new KeyCodeCombination(KeyCode.F5)};
-            CLOSE = new KeyCombination[]{new KeyCodeCombination(KeyCode.ESCAPE), new KeyCodeCombination(KeyCode.Q)};
 
             FOCUS_PATH = new KeyCombination[]{new KeyCodeCombination(KeyCode.S)};
             FOCUS_FILTER = new KeyCombination[]{new KeyCodeCombination(KeyCode.F)};
@@ -419,7 +423,7 @@ public class FileFX extends javafx.application.Application {
         printInfo("Cargando escenario principal");
         stage=s;
         stage.getIcons().add(new Image("file://"+ABSOLUTE_PATH+"icon.png"));
-        stage.setTitle("Explorador de archivos");
+        stage.setTitle("FileFX");
 
         stage.setScene(scene);
         printInfo("Mostrando escenario");
@@ -432,9 +436,10 @@ public class FileFX extends javafx.application.Application {
         printOk("Aplicacion iniciada con exito");
 
         printInfo("Cargando applicaciones para abrir con");
+        passwordStage = new PasswordStage();
         othersApplicationsStage = new OthersApplicationsStage();
         permissionsStage = new PermissionsStage();
-        passwordStage = new PasswordStage();
+        gotoStage = new GotoStage();
 
         stage.setOnCloseRequest(e -> {
             printExecute("Cerrando ventana");
@@ -525,6 +530,8 @@ public class FileFX extends javafx.application.Application {
         else return text.substring(1, text.length()-1).split(",");
     }
     private String[][] splitTwoTimes(String text) {
+        if (text.isEmpty()) return null;
+
         String[] split = text.substring(1, text.length()-1).split(",");
         String[][] result = new String[split.length][];
         for (int i = 0; i < split.length; i++) {
@@ -553,10 +560,11 @@ public class FileFX extends javafx.application.Application {
 
     // Configuracion
     public static String TERMINAL;
+    public static String TEMPLATES_DIR;
     public static boolean SAVE_BOUNDS;
     public static boolean SAVE_PATH;
     public static boolean SAVE_SELECTION;
-    public static String TEMPLATES_DIR;
+    public static String[][] GOTO_PLACES;
 
     public static String[][] TOP_BUTTONS;
 
@@ -616,7 +624,9 @@ public class FileFX extends javafx.application.Application {
     public static KeyCombination[] SELECT_FIRST;
     public static KeyCombination[] SELECT_LAST;
     public static KeyCombination[] DESELECT_ALL;
+    public static KeyCombination[] CLOSE;
 
+    public static KeyCombination[] GOTO;
     public static KeyCombination[] BACKWARD;
     public static KeyCombination[] FORWARD;
 
@@ -626,7 +636,6 @@ public class FileFX extends javafx.application.Application {
     public static KeyCombination[] CHANGE_SHOW_HIDDEN;
     public static KeyCombination[] CHANGE_PERMISSIONS;
     public static KeyCombination[] UPDATE_ALL;
-    public static KeyCombination[] CLOSE;
 
     public static KeyCombination[] FOCUS_PATH;
     public static KeyCombination[] FOCUS_FILTER;

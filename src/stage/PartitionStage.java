@@ -13,6 +13,10 @@ public class PartitionStage extends Stage {
     private final PartitionNode uuidNode;
 
     public PartitionStage(PartitionProperties properties) {
+        super(properties.type == PartitionProperties.TYPE.PART ? "Particion" :
+                properties.type == PartitionProperties.TYPE.DISK ? "Disco" :
+                "Desconocido");
+
         HBox pane = new HBox();
         pane.setAlignment(Pos.CENTER);
         getChildren().add(pane);
@@ -70,15 +74,6 @@ public class PartitionStage extends Stage {
         valuesPane.setMaxWidth(Double.MAX_VALUE);
 
         pane.getChildren().addAll(titlesPane, valuesPane);
-        setId("PartitionPane");
-        setOnKeyPressed(e -> {
-            KeyCombination key = Scene.getKeyCombination(e);
-            for (KeyCombination keyCombination : CLOSE)
-                if (keyCombination.equals(key)) {
-                    close();
-                    break;
-                }
-        });
     }
 
     public void afterShow() {
@@ -87,4 +82,5 @@ public class PartitionStage extends Stage {
     public void afterClose() {
 
     }
+    public void beforeClose() {}
 }

@@ -81,7 +81,7 @@ public class RightPane extends ScrollPane {
         insidePane.setMaxSize(RIGHT_WIDTH, RIGHT_WIDTH);
 
         // Propiedades
-        nameNode = new RightNode("Nombre :", !path.startsWith(Lib.TRASH+"files"));
+        nameNode = new RightNode("Nombre :", !path.startsWith(Lib.TRASH_PATH +"files"));
         nameNode.value.focusedProperty().addListener((obs, before, now) -> {
             if (now) addFocused();
             else minusFocused();
@@ -240,6 +240,10 @@ public class RightPane extends ScrollPane {
 
                     textNode = new TextArea(result.toString());
                     textNode.setId("Right_miniatura_text");
+                    textNode.focusedProperty().addListener((obs, before, now) -> {
+                        if (now) addFocused();
+                        else minusFocused();
+                    });
                     textNode.setOnKeyPressed(e -> {
                         KeyCombination key = Scene.getKeyCombination(e);
                         if (key != null) for (KeyCombination keyCombination : SAVE_INSIDE) {

@@ -19,6 +19,7 @@ import static main.FileFX.*;
 import static main.Lib.*;
 
 public class LeftPane extends VBox {
+    public final LeftNode[] placesNodes;
     private VBox devicesBox;
     private Label devicesTitle = new Label("Dispositivos");
     public final ArrayList<PartitionStage> partitionStages;
@@ -36,15 +37,17 @@ public class LeftPane extends VBox {
             title.setId("Left_title");
             placesChildren.add(title);
 
-            for (String[] place : PLACES) {
-                placesChildren.add(new LeftNode(
-                        place[0], place[1],
-                        place[2].charAt(0) == '~' ? Lib.HOME+place[2].substring(1) : place[2]
-                ));
+            placesNodes = new LeftNode[PLACES.length];
+            for (int i = 0; i < PLACES.length; i++) {
+                String[] place = PLACES[i];
+                placesNodes[i] = new LeftNode(place[0], place[1], stringToPath(place[2]));
+                placesChildren.add(placesNodes[i]);
             }
 
             placesBox.getChildren().add(new node.Separator(20, Orientation.HORIZONTAL));
             getChildren().add(placesBox);
+        } else {
+            placesNodes = null;
         }
 
         if (SHOW_DEVICES) {

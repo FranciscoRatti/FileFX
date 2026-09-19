@@ -10,7 +10,6 @@ import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import main.Lib;
@@ -170,7 +169,7 @@ public class CenterPane extends ListView<CenterNode> {
             for (String[] customOrder : CUSTOM_ORDER) {
                 if (path.equals(
                         customOrder[0].charAt(0) == '~' ? HOME+(customOrder[0].substring(1)) :
-                                customOrder[0].startsWith("trash") ? Lib.TRASH+"files"+(customOrder[0].substring(5)) :
+                                customOrder[0].startsWith("trash") ? Lib.TRASH_PATH +"files"+(customOrder[0].substring(5)) :
                                         customOrder[0])) {
                     order = ORDER.valueOf(customOrder[1]);
                     break;
@@ -281,7 +280,7 @@ public class CenterPane extends ListView<CenterNode> {
         hideAll();
         addShowing();
 
-        if (path.startsWith(Lib.TRASH+"files")) {
+        if (path.startsWith(Lib.TRASH_PATH +"files")) {
             menuTrash.show(anchor, x, y);
         } else if (selectionModel.getSelectedItem().getFileProperties().isDirectory()) {
             menuDirectory.show(anchor, x, y);
@@ -293,7 +292,7 @@ public class CenterPane extends ListView<CenterNode> {
         hideAll();
         addShowing();
 
-        if (path.startsWith(Lib.TRASH+"files")) {
+        if (path.startsWith(Lib.TRASH_PATH +"files")) {
             menuTrash.show(Window.getWindows().getFirst());
         } else if (selectedItems.getFirst().getFileProperties().isDirectory()) {
             menuDirectory.show(Window.getWindows().getFirst());

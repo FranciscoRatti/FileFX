@@ -24,8 +24,10 @@ public class OthersApplicationsStage extends Stage {
     private final ArrayList<Button> desktopButtons;
 
     public OthersApplicationsStage() {
+        super("Abrir con");
+
         VBox pane = new VBox();
-        pane.setId("OtherPane_pane");
+        pane.setId("OtherStage_pane");
 
         ScrollPane scrollPane = new ScrollPane(pane);
         scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
@@ -101,19 +103,11 @@ public class OthersApplicationsStage extends Stage {
         new Thread(task).start();
 
         getChildren().add(scrollPane);
-        setId("OtherPane");
-        StackPane.setMargin(this, new Insets(10, 0, 10, 0));
-        setOnKeyPressed(e -> {
-            KeyCombination key = Scene.getKeyCombination(e);
-            for (KeyCombination keyCombination : CLOSE)
-                if (keyCombination.equals(key)) {
-                    close();
-                    break;
-                }
-        });
+        StackPane.setMargin(this, new Insets(12, 0, 10, 0));
     }
 
     public void afterShow() {
         desktopButtons.getFirst().requestFocus();
     }
+    public void beforeClose() {}
 }

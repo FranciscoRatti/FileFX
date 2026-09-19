@@ -10,30 +10,21 @@ import static main.Lib.*;
 import static panel.MainPane.*;
 
 public class LeftNode extends Label {
-    private final Label label;
+    private final Label iconLabel;
+    private final String path;
     public LeftNode(String name, String icon, String path) {
         super(name);
+        this.path=path;
 
-        label = new Label(icon);
-        label.setFont(nerdFont);
-        label.setId("LeftNode_icon");
-        setGraphic(label);
+        iconLabel = new Label(icon);
+        iconLabel.setFont(nerdFont);
+        iconLabel.setId("LeftNode_icon");
+        setGraphic(iconLabel);
 
         if (path != null) {
             setOnMouseClicked(e -> {
                 if (isAnyShowing()) return;
-                if (e.getButton().equals(MouseButton.PRIMARY)) {
-                    printExecute("Yendo a '"+BLUE+path+RESET+"'");
-
-                    forwardBuffer.clear();
-                    backBuffer.add(FileFX.path);
-                    FileFX.path = path;
-
-                    updateTop();
-                    updateCenter();
-                    centerPane.selectFirst();
-                    updateRight();
-                }
+                if (e.getButton().equals(MouseButton.PRIMARY)) open();
             });
         }
 
@@ -42,12 +33,29 @@ public class LeftNode extends Label {
         setTooltip(new Tooltip(path));
     }
 
-    public void setIcon(String icon) {
-        label.setText(icon);
+    public void open() {
+        printExecute("Yendo a '"+BLUE+path+RESET+"'");
+
+        forwardBuffer.clear();
+        backBuffer.add(FileFX.path);
+        FileFX.path = this.path;
+
+        updateTop();
+        updateCenter();
+        centerPane.selectFirst();
+        updateRight();
     }
+
+    public void setIcon(String icon) {
+        iconLabel.setText(icon);
+    }
+    public String getIcon() {return iconLabel.getText();}
+    public void setIconId(String id) {
+        iconLabel.setId(id);}
+
     public void setColor(Color color) {
         String css = "-fx-text-fill: rgb("+color.getRed()*255+","+color.getGreen()*255+","+color.getBlue()*255+");";
         setStyle(css);
-        label.setStyle(css);
+        iconLabel.setStyle(css);
     }
 }
