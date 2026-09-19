@@ -15,8 +15,6 @@ import java.util.Optional;
 import static main.FileFX.*;
 import static main.Lib.*;
 import static panel.MainPane.*;
-import static scene.Scene.addFocused;
-import static scene.Scene.minusFocused;
 
 public class TopPane extends HBox {
     private static Button back;

@@ -22,8 +22,7 @@ import java.util.stream.Stream;
 
 import static main.FileFX.*;
 import static main.Lib.*;
-import static panel.MainPane.centerPane;
-import static scene.Scene.addShowing;
+import static panel.MainPane.*;
 
 public class CenterPane extends ListView<CenterNode> {
     public String filter = null;

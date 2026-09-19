@@ -5,10 +5,14 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import main.FileFX;
+import main.Lib;
 import node.Separator;
+import stage.PartitionStage;
 
 import static main.FileFX.LEFT_WIDTH;
 import static main.FileFX.RIGHT_WIDTH;
+import static main.Lib.othersApplicationsStage;
+import static main.Lib.permissionsStage;
 
 public class MainPane extends StackPane {
     public final BorderPane borderPane;
@@ -55,5 +59,21 @@ public class MainPane extends StackPane {
         );
         borderPane.setId("MainPane");
         getChildren().add(borderPane);
+    }
+
+    private static int focused = 0;
+    public static void addFocused() {focused++;}
+    public static void minusFocused() {if (focused > 0) focused--;}
+    public static boolean isAnyFocus() {return focused != 0;}
+
+    private static int showing = 0;
+    public static void addShowing() {showing++;}
+    public static void minusShowing() {if (showing > 0) showing--;}
+    public static boolean isAnyShowing() {return showing != 0;}
+    public static void closeAll() {
+        if (othersApplicationsStage.isShowing()) othersApplicationsStage.close();
+        if (permissionsStage.isShowing()) permissionsStage.close();
+        for (PartitionStage partitionStage : leftPane.partitionStages)
+            if (partitionStage.isShowing()) partitionStage.close();
     }
 }

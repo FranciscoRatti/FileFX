@@ -8,7 +8,6 @@ import main.FileFX;
 import static main.FileFX.*;
 import static main.Lib.*;
 import static panel.MainPane.*;
-import static scene.Scene.isAnyShowing;
 
 public class LeftNode extends Label {
     private final Label label;

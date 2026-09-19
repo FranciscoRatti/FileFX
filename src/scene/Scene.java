@@ -17,20 +17,10 @@ public class Scene extends javafx.scene.Scene {
         super(mainPane, Double.parseDouble(initValues.getProperty("width")), Double.parseDouble(initValues.getProperty("height")));
 
         printInfo("Cargando hoja de estilos");
-        getStylesheets().add("file://"+ THEME);
+        getStylesheets().add("file://" + THEME);
 
         updateKeyBinding();
     }
-
-    private static int focused = 0;
-    public static void addFocused() {focused++;}
-    public static void minusFocused() {if (focused > 0) focused--;}
-    public static boolean isAnyFocus() {return focused != 0;}
-
-    private static int showing = 0;
-    public static void addShowing() {showing++;}
-    public static void minusShowing() {if (showing > 0) showing--;}
-    public static boolean isAnyShowing() {return showing != 0;}
 
     private KeyCombination key;
     public void updateKeyBinding() {
@@ -38,7 +28,7 @@ public class Scene extends javafx.scene.Scene {
             key = getKeyCombination(e);
             if (key == null) return;
 
-            if (focused == 0 && showing == 0) {
+            if (!MainPane.isAnyFocus() && !MainPane.isAnyShowing()) {
                 e.consume();
                 try {
                     if (setKeyBindAction(CUT, () -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), true))) return;

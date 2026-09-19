@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
+import panel.MainPane;
 import scene.Scene;
 
 import java.io.File;
@@ -17,17 +18,12 @@ import java.util.*;
 import static main.FileFX.*;
 import static main.Lib.*;
 import static panel.MainPane.*;
-import static scene.Scene.addShowing;
-import static scene.Scene.minusShowing;
 
-public class OthersApplicationsStage extends StackPane {
+public class OthersApplicationsStage extends Stage {
     public final ArrayList<DesktopApplication> desktopApplications;
     private final ArrayList<Button> desktopButtons;
-    private boolean isShowing;
 
     public OthersApplicationsStage() {
-        isShowing = false;
-
         VBox pane = new VBox();
         pane.setId("OtherPane_pane");
 
@@ -117,22 +113,7 @@ public class OthersApplicationsStage extends StackPane {
         });
     }
 
-    public void show() {
-        centerPane.hideAll();
-
-        isShowing = true;
-        addShowing();
-
-        mainPane.getChildren().add(this);
+    public void afterShow() {
         desktopButtons.getFirst().requestFocus();
-    }
-    public void close() {
-        isShowing = false;
-        minusShowing();
-
-        mainPane.getChildren().remove(this);
-    }
-    public boolean isShowing() {
-        return isShowing;
     }
 }

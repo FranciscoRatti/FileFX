@@ -12,8 +12,6 @@ import java.util.*;
 import static main.Lib.*;
 import static main.FileFX.*;
 import static panel.MainPane.*;
-import static scene.Scene.addFocused;
-import static scene.Scene.minusFocused;
 
 public class BottomPane extends HBox {
     private static TextField filter;

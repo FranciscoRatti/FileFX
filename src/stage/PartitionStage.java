@@ -8,18 +8,14 @@ import node.PartitionNode;
 import scene.Scene;
 
 import static main.FileFX.CLOSE;
-import static main.FileFX.mainPane;
-import static panel.MainPane.centerPane;
-import static scene.Scene.addShowing;
-import static scene.Scene.minusShowing;
 
-public class PartitionStage extends HBox {
-    private boolean isShowing;
+public class PartitionStage extends Stage {
     private final PartitionNode uuidNode;
 
     public PartitionStage(PartitionProperties properties) {
-        isShowing = false;
-        setAlignment(Pos.CENTER);
+        HBox pane = new HBox();
+        pane.setAlignment(Pos.CENTER);
+        getChildren().add(pane);
 
         VBox titlesPane, valuesPane;
 
@@ -73,7 +69,7 @@ public class PartitionStage extends HBox {
         valuesPane.setAlignment(Pos.CENTER_LEFT);
         valuesPane.setMaxWidth(Double.MAX_VALUE);
 
-        getChildren().addAll(titlesPane, valuesPane);
+        pane.getChildren().addAll(titlesPane, valuesPane);
         setId("PartitionPane");
         setOnKeyPressed(e -> {
             KeyCombination key = Scene.getKeyCombination(e);
@@ -85,22 +81,10 @@ public class PartitionStage extends HBox {
         });
     }
 
-    public void show() {
-        centerPane.hideAll();
-
-        isShowing = true;
-        addShowing();
-
-        mainPane.getChildren().add(this);
+    public void afterShow() {
         uuidNode.value.requestFocus();
     }
-    public void close() {
-        isShowing = false;
-        minusShowing();
+    public void afterClose() {
 
-        mainPane.getChildren().remove(this);
-    }
-    public boolean isShowing() {
-        return isShowing;
     }
 }

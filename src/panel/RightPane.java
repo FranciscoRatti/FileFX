@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import static main.FileFX.*;
 import static main.Lib.*;
 import static panel.MainPane.*;
-import static scene.Scene.addFocused;
-import static scene.Scene.minusFocused;
 
 public class RightPane extends ScrollPane {
     private static StackPane miniaturaPane;

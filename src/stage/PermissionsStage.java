@@ -12,16 +12,15 @@ import static main.FileFX.CLOSE;
 import static main.FileFX.mainPane;
 import static main.Lib.*;
 import static panel.MainPane.*;
-import static scene.Scene.addShowing;
-import static scene.Scene.minusShowing;
 
-public class PermissionsStage extends VBox {
+public class PermissionsStage extends Stage {
     private final Button[] charsButtons;
     private final Button[] octetValues;
-    private boolean isShowing;
 
     public PermissionsStage() {
-        isShowing = false;
+        VBox pane = new VBox();
+        pane.setId("PermissionsPane_pane");
+        getChildren().add(pane);
 
         // Caracteres
         HBox charsBox = new HBox();
@@ -175,7 +174,7 @@ public class PermissionsStage extends VBox {
         buttonsBox.getChildren().addAll(applyButton, cancelButton);
 
         // Panel
-        getChildren().addAll(charsBox, octetBox, buttonsBox);
+        pane.getChildren().addAll(charsBox, octetBox, buttonsBox);
         setId("PermissionsPane");
         setOnKeyPressed(e -> {
             KeyCombination key = Scene.getKeyCombination(e);
@@ -206,23 +205,10 @@ public class PermissionsStage extends VBox {
         }
     }
 
-    public void show() {
-        centerPane.hideAll();
-
-        isShowing = true;
-        addShowing();
-
-        update();
-        mainPane.getChildren().add(this);
+    public void afterShow() {
         charsButtons[4].requestFocus();
+        update();
     }
-    public void close() {
-        isShowing = false;
-        minusShowing();
-
-        mainPane.getChildren().remove(this);
-    }
-    public boolean isShowing() {return isShowing;}
 
     private void setOwner(String value) {octetValues[0].setText(String.valueOf(charsToOctet(value)));}
     private void setOwner(int value) {setCharacters(octetToChars(value), 0);}

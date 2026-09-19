@@ -77,7 +77,7 @@ public class CenterNode extends HBox {
 
         // MouseClicked
         setOnMouseClicked(e -> {
-            if (Scene.isAnyShowing()) return;
+            if (isAnyShowing()) return;
 
             MouseButton button = e.getButton();
             int clickCount = e.getClickCount();
