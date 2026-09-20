@@ -2,25 +2,24 @@ package node;
 
 import entity.FileProperties;
 import javafx.scene.control.Label;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import main.Lib;
-import scene.Scene;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import static main.FileFX.*;
-import static main.Lib.RESET;
-import static main.Lib.YELLOW;
-import static main.Lib.printErrorAndShow;
-import static main.Lib.printExecute;
-import static main.Lib.printInfo;
-import static main.Lib.updateCenter;
-import static main.Lib.updateRight;
-import static panel.MainPane.*;
+import static main.FileFX.COLUMNS;
+import static main.Lib.*;
+import static panel.MainPane.centerPane;
+import static panel.MainPane.isAnyShowing;
 
 public class CenterNode extends HBox {
     public static boolean dropInternally = false;
@@ -99,11 +98,10 @@ public class CenterNode extends HBox {
         });
 
         setOnDragDone(e -> {
-            System.out.println(dropInternally);
-
             if (dropInternally) {
                 dropInternally = false;
             } else if (e.isAccepted()) {
+                printInfo("Drop finalizado");
                 updateCenter();
                 centerPane.selectFirst();
                 updateRight();
@@ -119,6 +117,8 @@ public class CenterNode extends HBox {
         });
 
         setOnDragDropped(e -> {
+            printInfo("Drop recibido");
+
             CenterNode.dropInternally = true;
 
             List<File> files = e.getDragboard().getFiles();

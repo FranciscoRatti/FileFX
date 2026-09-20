@@ -6,10 +6,11 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import main.Lib;
-import node.*;
+import node.Button;
+import node.LeftNode;
 import stage.PartitionStage;
 
 import java.io.InputStream;

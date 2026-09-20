@@ -1,16 +1,22 @@
 package scene;
 
 import javafx.application.Platform;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import main.FileFX;
-import panel.*;
+import panel.BottomPane;
+import panel.MainPane;
+import panel.RightPane;
+import panel.TopPane;
 import stage.PartitionStage;
 
 import static main.FileFX.*;
 import static main.Lib.*;
-import static panel.CenterPane.*;
+import static panel.CenterPane.parseCenterNodesToFiles;
 import static panel.MainPane.*;
-import static panel.RightPane.*;
+import static panel.RightPane.changeShow;
 
 public class Scene extends javafx.scene.Scene {
     public Scene() {
@@ -88,11 +94,14 @@ public class Scene extends javafx.scene.Scene {
             } else {
                 try {
                     setKeyBindAction(CLOSE, () -> {
-                        if (othersApplicationsStage.isShowing()) othersApplicationsStage.close();
-                        if (permissionsStage.isShowing()) permissionsStage.close();
-                        if (gotoStage.isShowing()) gotoStage.close();
-                        for (PartitionStage partitionStage : leftPane.partitionStages)
-                            if (partitionStage.isShowing()) partitionStage.close();
+                        if (passwordStage.isShowing()) passwordStage.close();
+                        else {
+                            if (othersApplicationsStage.isShowing()) othersApplicationsStage.close();
+                            if (permissionsStage.isShowing()) permissionsStage.close();
+                            if (gotoStage.isShowing()) gotoStage.close();
+                            for (PartitionStage partitionStage : leftPane.partitionStages)
+                                if (partitionStage.isShowing()) partitionStage.close();
+                        }
                     });
                 } catch (IllegalArgumentException ignored) {}
             }

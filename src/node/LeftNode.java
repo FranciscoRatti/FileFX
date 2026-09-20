@@ -1,13 +1,15 @@
 package node;
 
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import main.FileFX;
 
-import static main.FileFX.*;
+import static main.FileFX.nerdFont;
 import static main.Lib.*;
-import static panel.MainPane.*;
+import static panel.MainPane.centerPane;
+import static panel.MainPane.isAnyShowing;
 
 public class LeftNode extends Label {
     private final Label iconLabel;

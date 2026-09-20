@@ -4,13 +4,16 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.*;
-import node.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import node.Button;
+import node.CenterNode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import static main.Lib.*;
 import static main.FileFX.*;
+import static main.Lib.*;
 import static panel.MainPane.*;
 
 public class BottomPane extends HBox {

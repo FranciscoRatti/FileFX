@@ -4,20 +4,21 @@ import entity.DesktopApplication;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
-import javafx.scene.*;
-import javafx.scene.control.*;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.*;
-import panel.MainPane;
-import scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Objects;
 
-import static main.FileFX.*;
 import static main.Lib.*;
-import static panel.MainPane.*;
+import static panel.MainPane.centerPane;
 
 public class OthersApplicationsStage extends Stage {
     public final ArrayList<DesktopApplication> desktopApplications;
@@ -109,5 +110,5 @@ public class OthersApplicationsStage extends Stage {
     public void afterShow() {
         desktopButtons.getFirst().requestFocus();
     }
-    public void beforeClose() {}
+    public void afterClose() {}
 }

@@ -3,18 +3,19 @@ package stage;
 import entity.FileProperties;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import node.CenterNode;
-import scene.Scene;
 
-import static main.FileFX.CLOSE;
-import static main.FileFX.mainPane;
 import static main.Lib.*;
-import static panel.MainPane.*;
+import static panel.MainPane.centerPane;
 
 public class PermissionsStage extends Stage {
     private final Button[] charsButtons;
+    private final Button[][] octetButtons;
+    private final Button applyButton;
+    private final Button cancelButton;
+
     private final Button[] octetValues;
 
     public PermissionsStage() {
@@ -87,7 +88,7 @@ public class PermissionsStage extends Stage {
         HBox octetBox = new HBox();
         octetBox.setId("PermissionsOctet_pane");
 
-        Button[][] octetButtons = new Button[][]{
+        octetButtons = new Button[][]{
                 {new Button("▲"),new Button("0"),new Button("▼")},
                 {new Button("▲"),new Button("0"),new Button("▼")},
                 {new Button("▲"),new Button("0"),new Button("▼")}
@@ -157,19 +158,20 @@ public class PermissionsStage extends Stage {
         HBox buttonsBox = new HBox();
         buttonsBox.setId("PermissionsButtons_pane");
 
-        Button applyButton = new Button("Aplicar");
+        applyButton = new Button("Aplicar");
         applyButton.setId("PermissionsButtons_button");
         applyButton.setOnAction(e -> {
-            int exitValue = changePermission(octetValues[0].getText()+octetValues[1].getText()+octetValues[2].getText());
-            if (exitValue == 0) close();
+            changePermission(octetValues[0].getText()+octetValues[1].getText()+octetValues[2].getText(), () -> {
+                close();
 
-            String name = centerPane.selectionModel.getSelectedItem().getName();
-            updateCenter();
-            centerPane.select(name);
-            updateRight();
+                String name = centerPane.selectionModel.getSelectedItem().getName();
+                updateCenter();
+                centerPane.select(name);
+                updateRight();
+            });
         });
 
-        Button cancelButton = new Button("Cancelar");
+        cancelButton = new Button("Cancelar");
         cancelButton.setId("PermissionsButtons_button");
         cancelButton.setOnAction(e -> close());
 
@@ -202,7 +204,14 @@ public class PermissionsStage extends Stage {
         charsButtons[4].requestFocus();
         update();
     }
-    public void beforeClose() {}
+    public void afterClose() {}
+
+    public void changeTraversable(boolean traversable) {
+        for (Button button : charsButtons) button.setFocusTraversable(traversable);
+        for (Button[] buttons : octetButtons) for (Button button : buttons) button.setFocusTraversable(traversable);
+        applyButton.setFocusTraversable(traversable);
+        cancelButton.setFocusTraversable(traversable);
+    }
 
     private void setOwner(String value) {octetValues[0].setText(String.valueOf(charsToOctet(value)));}
     private void setOwner(int value) {setCharacters(octetToChars(value), 0);}

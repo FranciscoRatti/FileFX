@@ -2,12 +2,9 @@ package stage;
 
 import entity.PartitionProperties;
 import javafx.geometry.Pos;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import node.PartitionNode;
-import scene.Scene;
-
-import static main.FileFX.CLOSE;
 
 public class PartitionStage extends Stage {
     private final PartitionNode uuidNode;
@@ -79,8 +76,5 @@ public class PartitionStage extends Stage {
     public void afterShow() {
         uuidNode.value.requestFocus();
     }
-    public void afterClose() {
-
-    }
-    public void beforeClose() {}
+    public void afterClose() {}
 }

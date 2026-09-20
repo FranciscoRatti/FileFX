@@ -6,11 +6,15 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import panel.MainPane;
 
+import java.util.concurrent.CompletableFuture;
+
 import static main.FileFX.mainPane;
 import static panel.MainPane.*;
 
 public abstract class Stage extends StackPane {
     private final Label titleLabel;
+    private boolean isShowing = false;
+    private CompletableFuture<String> waitFuture;
 
     public Stage(String title) {
         setId("Stage_pane");
@@ -22,11 +26,16 @@ public abstract class Stage extends StackPane {
         getChildren().add(titleLabel);
     }
 
-    private boolean isShowing = false;
+    public final CompletableFuture<String> showAndWait() {
+        show(false);
+        waitFuture = new CompletableFuture<>();
+        return waitFuture;
+    }
+    protected final CompletableFuture<String> getCompletable() {return waitFuture;}
 
-    public final void show() {
+    private void show(boolean closeAll) {
         centerPane.hideAll();
-        MainPane.closeAll();
+        if (closeAll) MainPane.closeAll();
 
         isShowing = true;
         addShowing();
@@ -35,16 +44,17 @@ public abstract class Stage extends StackPane {
         afterShow();
         titleLabel.toFront();
     }
+    public final void show() {show(true);}
     public abstract void afterShow();
 
-    public abstract void beforeClose();
     public final void close() {
-        beforeClose();
-
         isShowing = false;
         minusShowing();
         mainPane.getChildren().remove(this);
+
+        afterClose();
     }
+    public abstract void afterClose();
 
     public final boolean isShowing() {return isShowing;}
 }

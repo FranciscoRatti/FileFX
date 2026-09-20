@@ -1,9 +1,10 @@
 package main;
 
-import entity.DesktopApplication;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -17,12 +18,11 @@ import stage.PermissionsStage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Properties;
 
 import static main.Lib.*;
-import static panel.MainPane.*;
-import static panel.RightPane.*;
+import static panel.MainPane.centerPane;
+import static panel.RightPane.changeShow;
 
 public class FileFX extends javafx.application.Application {
     public static Properties config;
@@ -161,6 +161,8 @@ public class FileFX extends javafx.application.Application {
             }
         } else {
             config = new Properties();
+
+            THEME = ABSOLUTE_PATH+ "default.css";
 
             TERMINAL = "xterm";
             SAVE_BOUNDS = false;

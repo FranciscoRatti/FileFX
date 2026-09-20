@@ -2,10 +2,11 @@ package panel;
 
 import javafx.geometry.Orientation;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import main.FileFX;
-import main.Lib;
 import node.Separator;
 import stage.PartitionStage;
 

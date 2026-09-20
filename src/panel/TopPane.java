@@ -2,17 +2,21 @@ package panel;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import main.Lib;
-import node.CenterNode;
 import node.Button;
+import node.CenterNode;
 
 import java.io.File;
 import java.util.Optional;
 
-import static main.FileFX.*;
+import static main.FileFX.TOP_BUTTONS;
+import static main.FileFX.path;
 import static main.Lib.*;
 import static panel.MainPane.*;
 

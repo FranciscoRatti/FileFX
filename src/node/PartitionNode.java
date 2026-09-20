@@ -1,6 +1,7 @@
 package node;
 
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 
 public class PartitionNode {
     public Label title;

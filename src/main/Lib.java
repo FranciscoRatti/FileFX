@@ -1,6 +1,7 @@
 package main;
 
-import entity.*;
+import entity.DesktopApplication;
+import entity.FileProperties;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
@@ -17,10 +18,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.locks.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static main.FileFX.*;
-import static panel.CenterPane.*;
+import static panel.CenterPane.parseCenterNodesToFiles;
 import static panel.MainPane.*;
 
 public class Lib {
@@ -431,10 +434,17 @@ public class Lib {
   public static void printExecute(String message) {
     System.out.println("[" + YELLOW + "EXEC" + RESET + "]     " + message);
   }
-  public static String showPasswordStage(String comand) {
-    passwordStage.command.setText(comand);
-    passwordStage.showAndWait();
-    return passwordStage.password.getText();
+
+  public static CompletableFuture<String> showPasswordStage(String comand) {
+    passwordStage.setCommand(comand);
+      try {
+          return passwordStage.showAndWait().handle((password, e) -> {
+            if (e != null) return "";
+            return password;
+          });
+      } catch (Exception e) {
+          return null;
+      }
   }
 
   public static String stringToPath(String text) {
@@ -571,38 +581,47 @@ public class Lib {
       }
     }
   }
-  public static int changePermission(String value) {
+  public static void changePermission(String value, Runnable afterChange) {
     CenterNode selectedItem = centerPane.selectionModel.getSelectedItem();
-    if (selectedItem == null) return 1;
+    if (selectedItem == null) return;
     FileProperties properties = selectedItem.getFileProperties();
 
-    try {
-      printExecute("Cambiando permisos de '"+YELLOW+properties.getOctetPermissions()+RESET+"' a '"+YELLOW+value+RESET+"'");
-      if (properties.getOwner().equals(USER)) {
-        return new ProcessBuilder("chmod", value, properties.getAbsolutePath())
+    if (properties.getOwner().equals(USER)) {
+      try {
+        printExecute("Cambiando permisos de '"+YELLOW+properties.getOctetPermissions()+RESET+"' a '"+YELLOW+value+RESET+"'");
+        new ProcessBuilder("chmod", value, properties.getAbsolutePath())
                 .start()
                 .waitFor();
-      } else {
-        String password = showPasswordStage("sudo chmod "+value+" "+properties.getName());
-        if (password.isEmpty()) return 1;
-        password += "\n";
-
-        Process process = new ProcessBuilder("sudo", "-k", "-S", "chmod", value, properties.getAbsolutePath())
-                .start();
-
-        try (OutputStream output = process.getOutputStream()) {
-          output.write(password.getBytes());
-          output.flush();
-        }
-
-        int exitCode = process.waitFor();
-        if (exitCode != 0)
-          printErrorAndShow("Contraseña incorrecta", null);
-        return exitCode;
+        afterChange.run();
+      } catch (Exception e) {
+        printErrorAndShow("Error al cambiar permisos de '"+selectedItem.getName()+"'", e);
       }
-    } catch (Exception e) {
-      printErrorAndShow("Error al cambiar permisos de '"+selectedItem.getName()+"'", e);
-      return 1;
+    } else {
+      CompletableFuture<String> waitFuture = showPasswordStage("sudo chmod "+value+" "+properties.getName());
+      if (waitFuture != null) waitFuture.thenAccept(password -> {
+        try {
+          printExecute("Cambiando permisos de '"+YELLOW+properties.getOctetPermissions()+RESET+"' a '"+YELLOW+value+RESET+"'");
+          if (password.isEmpty()) return;
+          password += "\n";
+
+          Process process = new ProcessBuilder("sudo", "-k", "-S", "chmod", value, properties.getAbsolutePath())
+                  .start();
+
+          try (OutputStream output = process.getOutputStream()) {
+            output.write(password.getBytes());
+            output.flush();
+          }
+
+          int exitCode = process.waitFor();
+          if (exitCode != 0) {
+            printErrorAndShow("Contraseña incorrecta", null);
+            return;
+          }
+          afterChange.run();
+        } catch (Exception e) {
+          printErrorAndShow("Error al cambiar permisos de '"+selectedItem.getName()+"'", e);
+        }
+      });
     }
   }
 
@@ -927,22 +946,24 @@ public class Lib {
     }
   }
   public static void openWithAdmin() {
-    String password = showPasswordStage("sudo filefx");
-    if (password.isEmpty()) return;
-    password += "\n";
+    CompletableFuture<String> waitFuture = showPasswordStage("sudo filefx");
+    if (waitFuture != null) waitFuture.thenAccept(password -> {
+      if (password.isEmpty()) return;
+      password += "\n";
 
-    try {
-      Process process = new ProcessBuilder("sudo", "-k", "-S", "filefx").start();
+      try {
+        Process process = new ProcessBuilder("sudo", "-k", "-S", "filefx").start();
 
-      try (OutputStream output = process.getOutputStream()) {
-        output.write(password.getBytes());
-        output.flush();
+        try (OutputStream output = process.getOutputStream()) {
+          output.write(password.getBytes());
+          output.flush();
+        }
+
+        if (process.waitFor() != 0)
+          printErrorAndShow("Contraseña incorrecta", null);
+      } catch (Exception e) {
+        printErrorAndShow("Error al abrir como administrador", e);
       }
-
-      if (process.waitFor() != 0)
-        printErrorAndShow("Contraseña incorrecta", null);
-    } catch (Exception e) {
-      printErrorAndShow("Error al abrir como administrador", e);
-    }
+    });
   }
 }

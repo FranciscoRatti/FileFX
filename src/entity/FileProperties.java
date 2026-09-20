@@ -1,12 +1,19 @@
 package entity;
 
-import java.io.*;
-import java.nio.file.*;
-import java.nio.file.attribute.*;
-import java.time.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.Properties;
 
-import static main.Lib.*;
+import static main.Lib.TRASH_PATH;
+import static main.Lib.printErrorAndShow;
 
 public class FileProperties extends File{
     public FileProperties(File file) {

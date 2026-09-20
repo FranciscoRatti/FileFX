@@ -4,10 +4,15 @@ import entity.FileProperties;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.image.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import main.Lib;
 import node.CenterNode;
@@ -240,6 +245,7 @@ public class RightPane extends ScrollPane {
 
                     textNode = new TextArea(result.toString());
                     textNode.setId("Right_miniatura_text");
+                    textNode.setFocusTraversable(false);
                     textNode.focusedProperty().addListener((obs, before, now) -> {
                         if (now) addFocused();
                         else minusFocused();

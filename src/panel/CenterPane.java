@@ -15,13 +15,15 @@ import javafx.stage.Window;
 import main.Lib;
 import node.CenterNode;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Stream;
 
 import static main.FileFX.*;
 import static main.Lib.*;
-import static panel.MainPane.*;
+import static panel.MainPane.addShowing;
+import static panel.MainPane.centerPane;
 
 public class CenterPane extends ListView<CenterNode> {
     public String filter = null;

@@ -1,6 +1,7 @@
 package entity;
 
-import static main.FileFX.*;
+import static main.FileFX.PARTITION_LABELS;
+import static main.FileFX.iconsMime;
 
 public class PartitionProperties {
     public PartitionProperties(String[] properties) {
