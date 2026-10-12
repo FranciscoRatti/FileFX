@@ -96,6 +96,10 @@ public class Scene extends javafx.scene.Scene {
                     setKeyBindAction(CLOSE, () -> {
                         if (passwordStage.isShowing()) passwordStage.close();
                         else {
+                            if (infoPopup.isShowing()) infoPopup.close();
+                            if (inputPopup.isShowing()) inputPopup.close();
+                            if (errorPopup.isShowing()) errorPopup.close();
+                            if (warningPopup.isShowing()) warningPopup.close();
                             if (othersApplicationsStage.isShowing()) othersApplicationsStage.close();
                             if (permissionsStage.isShowing()) permissionsStage.close();
                             if (gotoStage.isShowing()) gotoStage.close();

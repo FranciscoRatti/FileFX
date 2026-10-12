@@ -62,7 +62,7 @@ cp --update=none $DIR/resources/config.properties ~/.config/filefx/config.proper
 echo -e "$EXEC Copiando \e[33mkey_binding.properties0m a \e[34m~/.config/filefx/\e[0m"
 cp --update=none $DIR/resources/key_binding.properties ~/.config/filefx/key_binding.properties
 echo -e "$EXEC Copiando \e[33minit_values.properties\e[0m a \e[34m~/.config/filefx/\e[0m"
-cp --update=non -ee $DIR/resources/init_values.properties ~/.config/filefx/init_values.properties
+cp --update=none $DIR/resources/init_values.properties ~/.config/filefx/init_values.properties
 echo -e "$EXEC Copiando \e[33micons_binding.properties\e[0m a \e[34m~/.config/filefx/\e[0m"
 cp --update=none $DIR/resources/icons_binding.properties ~/.config/filefx/icons_binding.properties
 echo -e "$EXEC Copiando \e[33mcolors_binding.properties\e[0m a \e[34m~/.config/filefx/\e[0m"

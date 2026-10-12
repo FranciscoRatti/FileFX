@@ -20,7 +20,7 @@ import java.util.Objects;
 import static main.Lib.*;
 import static panel.MainPane.centerPane;
 
-public class OthersApplicationsStage extends Stage {
+public class OthersApplicationsStage extends Stage<Void> {
     public final ArrayList<DesktopApplication> desktopApplications;
     private final ArrayList<Button> desktopButtons;
 

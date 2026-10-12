@@ -400,8 +400,7 @@
     -fx-border-radius: 4;
     -fx-border-color: white;
 }
-#Stage_title {
-     -fx-text-fill: white;
+#Stage_title, #Popup_title_info, #Popup_title_input, #Popup_title_error, #Popup_title_warning {
      -fx-font-family: "Noto Sans Mono";
      -fx-font-size: 13;
      -fx-background-color: #232323FF;
@@ -413,7 +412,9 @@
      -fx-padding: 1 5 1 5;
      -fx-translate-y: -12;
 }
-
+#Stage_title {
+     -fx-text-fill: white;
+}
 
 
 #OtherNode {
@@ -647,6 +648,76 @@
     -fx-alignment: CENTER-RIGHT;
 }
 
+
+#Popup_pane {
+    -fx-background-color: #232323FF;
+    -fx-background-radius: 4;
+    -fx-spacing: 8;
+    -fx-alignment: CENTER;
+    -fx-padding: 10;
+}
+
+#Popup_title_info {
+     -fx-text-fill: #41aeff;
+}
+#Popup_title_input {
+     -fx-text-fill: lime;
+}
+#Popup_title_error {
+     -fx-text-fill: red;
+}
+#Popup_title_warning {
+     -fx-text-fill: yellow;
+}
+
+#Popup_message_info, #Popup_message_input, #Popup_message_error, #Popup_message_warning {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 13;
+    -fx-padding: 5 0 0 0;
+    -fx-text-alignment: center;
+}
+
+#Popup_input {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 12;
+    -fx-background-color: #373737;
+    -fx-border-style: solid;
+    -fx-border-radius: 2;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+}
+#Popup_input:hover {
+    -fx-border-color: white;
+}
+#Popup_input:focused {
+    -fx-border-color: white;
+}
+
+#Popup_buttons_pane {
+    -fx-alignment: CENTER;
+    -fx-spacing: 10;
+}
+
+#Popup_cancel, #Popup_done, #Popup_close {
+    -fx-text-fill: white;
+    -fx-font-family: "Noto Sans Mono";
+    -fx-font-size: 12;
+    -fx-background-color: #373737;
+    -fx-border-style: solid;
+    -fx-border-radius: 2;
+    -fx-border-width: 1;
+    -fx-border-color: #333333;
+}
+
+#Popup_cancel:hover, #Popup_done:hover, #Popup_close:hover {
+    -fx-border-color: white;
+}
+
+#Popup_cancel:focused, #Popup_done:focused, #Popup_close:focused {
+    -fx-border-color: white;
+}
 
 /* CLASES ----------------------------------------------------------------------------------------------------------- */
 

@@ -2,18 +2,15 @@ package panel;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import main.Lib;
 import node.Button;
 import node.CenterNode;
+import stage.PopupStage;
 
 import java.io.File;
-import java.util.Optional;
 
 import static main.FileFX.TOP_BUTTONS;
 import static main.FileFX.path;
@@ -75,28 +72,25 @@ public class TopPane extends HBox {
                 case CLEAN -> {
                     clean = new Button(button[1], "Limpiar papelera", "TopNode", e -> restoreSelected());
                     clean.setOnAction(e -> {
-                        Optional<ButtonType> result = showAlert(new Alert(Alert.AlertType.CONFIRMATION), "Todos los archivos de papelera\nseran eliminados permanentemente", "ADVERTENCIA");
-                        if (result.isPresent()) {
-                            ButtonBar.ButtonData option = result.get().getButtonData();
-                            if (option.equals(ButtonBar.ButtonData.OK_DONE)) {
+                        showWarning("Todos los archivos de la papelera\nseran eliminados permanentemente").thenAccept(entry -> {
+                            if (entry.getValue() != PopupStage.OPTION.DONE) return;
 
-                                // Eliminar
-                                try {
-                                    printExecute("Limpiando la papelera");
-                                    new ProcessBuilder("rm", "-Rf", Lib.TRASH_PATH +"files", Lib.TRASH_PATH +"info").start().waitFor();
-                                    new ProcessBuilder("mkdir", Lib.TRASH_PATH +"files", Lib.TRASH_PATH +"info").start().waitFor();
-                                } catch (Exception ex) {
-                                    printErrorAndShow("Error al eliminar archivo", ex);
-                                }
-
-                                path = Lib.TRASH_PATH +"files/";
-
-                                updateTop();
-                                updateCenter();
-                                centerPane.selectFirst();
-                                updateRight();
+                            // Eliminar
+                            try {
+                                printExecute("Limpiando la papelera");
+                                new ProcessBuilder("rm", "-Rf", Lib.TRASH_PATH +"files", Lib.TRASH_PATH +"info").start().waitFor();
+                                new ProcessBuilder("mkdir", Lib.TRASH_PATH +"files", Lib.TRASH_PATH +"info").start().waitFor();
+                            } catch (Exception ex) {
+                                printErrorAndShow("Error al eliminar archivo", ex);
                             }
-                        }
+
+                            path = Lib.TRASH_PATH +"files/";
+
+                            updateTop();
+                            updateCenter();
+                            centerPane.selectFirst();
+                            updateRight();
+                        });
                     });
                 }
                 case RELOAD -> reload = new Button(button[1], "Recargar", "TopNode", e -> updateAll());

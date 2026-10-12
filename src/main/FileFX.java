@@ -10,10 +10,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import panel.MainPane;
 import scene.Scene;
-import stage.GotoStage;
-import stage.OthersApplicationsStage;
-import stage.PasswordStage;
-import stage.PermissionsStage;
+import stage.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -66,6 +63,10 @@ public class FileFX extends javafx.application.Application {
 
     public void start(Stage s) {
         nerdFont = Font.loadFont("file://" + ABSOLUTE_PATH + "0xProtoNerdFontMono-Regular.ttf", 16);
+        infoPopup = new PopupStage(PopupStage.TYPE.INFO);
+        inputPopup = new PopupStage(PopupStage.TYPE.INPUT);
+        errorPopup = new PopupStage(PopupStage.TYPE.ERROR);
+        warningPopup = new PopupStage(PopupStage.TYPE.WARNING);
 
         printInfo("Cargando archivo de valores iniciales");
         if (new File(CONFIG_PATH+"init_values.properties").exists()) {
@@ -419,6 +420,11 @@ public class FileFX extends javafx.application.Application {
         mainPane = new MainPane();
         changeShow(SHOW_RIGHT_PANE);
 
+        printInfo("Cargando Stages");
+        passwordStage = new PasswordStage();
+        permissionsStage = new PermissionsStage();
+        gotoStage = new GotoStage();
+
         printInfo("Cargando escena principal");
         scene = new Scene();
 
@@ -438,11 +444,9 @@ public class FileFX extends javafx.application.Application {
         printOk("Aplicacion iniciada con exito");
 
         printInfo("Cargando applicaciones para abrir con");
-        passwordStage = new PasswordStage();
         othersApplicationsStage = new OthersApplicationsStage();
-        permissionsStage = new PermissionsStage();
-        gotoStage = new GotoStage();
 
+        // Cerrar
         stage.setOnCloseRequest(e -> {
             printExecute("Cerrando ventana");
             if (SAVE_BOUNDS || SAVE_PATH || SAVE_SELECTION || SAVE_RIGHT_WIDTH || SAVE_LEFT_WIDTH) {

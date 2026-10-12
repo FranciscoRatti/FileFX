@@ -10,7 +10,7 @@ import node.CenterNode;
 import static main.Lib.*;
 import static panel.MainPane.centerPane;
 
-public class PermissionsStage extends Stage {
+public class PermissionsStage extends Stage<Void> {
     private final Button[] charsButtons;
     private final Button[][] octetButtons;
     private final Button applyButton;

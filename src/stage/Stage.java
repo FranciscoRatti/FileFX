@@ -11,10 +11,10 @@ import java.util.concurrent.CompletableFuture;
 import static main.FileFX.mainPane;
 import static panel.MainPane.*;
 
-public abstract class Stage extends StackPane {
+public abstract class Stage <T> extends StackPane {
     private final Label titleLabel;
     private boolean isShowing = false;
-    private CompletableFuture<String> waitFuture;
+    private CompletableFuture<T> waitFuture;
 
     public Stage(String title) {
         setId("Stage_pane");
@@ -26,12 +26,16 @@ public abstract class Stage extends StackPane {
         getChildren().add(titleLabel);
     }
 
-    public final CompletableFuture<String> showAndWait() {
+    protected void setTitleId(String id) {
+        titleLabel.setId(id);
+    }
+
+    public final CompletableFuture<T> showAndWait() {
         show(false);
         waitFuture = new CompletableFuture<>();
         return waitFuture;
     }
-    protected final CompletableFuture<String> getCompletable() {return waitFuture;}
+    protected final CompletableFuture<T> getCompletable() {return waitFuture;}
 
     private void show(boolean closeAll) {
         centerPane.hideAll();

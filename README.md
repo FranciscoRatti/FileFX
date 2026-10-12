@@ -1,6 +1,6 @@
 # File FX
 
-Explorador de archivo desarrollado en Java 21 utilizando el framework **JavaFX** y compilado con a
+Explorador de archivo desarrollado en Java 21 utilizando el framework **JavaFX** y compilado a
 imagen nativa con **Liberica NIK** (Basado en GraalVM), disponible solo en Linux.
 
 ![vista-previa.png](images/vista-previa.png)
@@ -98,13 +98,13 @@ Si queres que quede todo limpio tambien podes borrar la configuracion ejecutando
 ## Configuración
 
 Todo se configura a traves de cinco archivos de configuracion en **~/.config/filefx/**. Todos los
-archivos comparten la sintaxis de "**nombre**=**valor**", a continuacion se muestran las posibles
+archivos comparten la sintaxis de "**clave**=**valor**", a continuacion se muestran las posibles
 propiedades seguidas del valor predeterminado.
 
 - **_config.properties_**: Configuraciones principales.
   - **General :**
     - `theme=theme_default` : Tema, debe coincidir con el nombre del archivo .css en
-      _~/.config/filefx/_ 
+      _~/.config/filefx/themes/_
     - `terminal=xterm` : Comando a ejecutar al abrir una terminal.
     - `templates_dir=~/Templates` : Ubicación donde se guardan las plantillas de archivos que se
       usan al crear un nuevo archivo.
@@ -114,7 +114,7 @@ propiedades seguidas del valor predeterminado.
     - `goto_places=[{~;h},{~/Documents;d},{trash;t},{/;r}]` : Define los lugares y las combinaciones
       de teclado que aparecen en la ventana goto, su sintaxis es
       [{lugar;combinacion},{lugar;combinacion},...], puede estar vacio. Al igual que en el archivo
-      "key_binding.properties" las combinaciones  no distingue mayusculas ni minusculas. Los nombre
+      _key_binding.properties_ las combinaciones no distingue mayusculas ni minusculas. Los nombre
       de cada tecla son los mismos que aparecen en la [API de JavaFX](https://docs.oracle.com/en/java/java-components/javafx/21/docs/javafx.graphics/javafx/scene/input/KeyCode.html).
   - **Top Pane :**
     - `top_buttons=[{BACKWARD;},{FORWARD;},{PARENT;󰙅},{SEARCH},{CLEAN;󰃢},{RELOAD;}]` : Define
@@ -222,7 +222,7 @@ propiedades seguidas del valor predeterminado.
   - `focus_inside=i` : Si _show_inside_files_ es true, le pasa el foco al interior del archivo
     seleccionado.
   - `save_inside=ctrl+s` : Si _show_inside_files_ es true, guarda los cambios del interior del archivo
-      seleccionado.
+    seleccionado.
   - `update_all=f5` : Actualizar todo.
   - `change_show_right_pane=space` : Mostrar o esconder RightPane.
   - `change_show_hidden=h` : Cambiar mostrar archivos ocultos.
@@ -244,12 +244,12 @@ propiedades seguidas del valor predeterminado.
 
 ## Tema
 
-Dentro del directorio de configuración **~/.config/filefx/** se encuentra un archivo llamado
-**_theme.css_**, aquí se especifica el estilo de los componentes en formato css. Las posibles
-propiedades están definidas en la [Guía de referencias CSS](https://docs.oracle.com/en/java/java-components/javafx/21/docs/javafx.graphics/javafx/scene/doc-files/cssref.html) y los colores en la [Api de JavaFX](https://docs.oracle.com/en/java/java-components/javafx/21/docs/javafx.graphics/javafx/scene/paint/Color.html)
+Dentro del directorio de configuración **~/.config/filefx/themes/** se encuentra un archivo llamado
+**_default.css_**, aquí se especifica el estilo de los componentes en formato css, podes crear el
+tuyo y en **_config.properties_** referenciarlo en la propiedad _theme_. Las posibles propiedades
+están definidas en la [Guía de referencias CSS](https://docs.oracle.com/en/java/java-components/javafx/21/docs/javafx.graphics/javafx/scene/doc-files/cssref.html) y los colores en la [Api de JavaFX](https://docs.oracle.com/en/java/java-components/javafx/21/docs/javafx.graphics/javafx/scene/paint/Color.html)
 son soportados. <br/>
 Si no sabes css o no querés revisar la guía, la inteligencia artificial es muy util. A continuación
-se puede ver la etiqueta de cada componente y de que clase es:
+se puede ver el id y clase de cada nodo:
 
 ![componentes.png](images/componentes.png)
-

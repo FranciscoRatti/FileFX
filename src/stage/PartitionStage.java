@@ -6,7 +6,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import node.PartitionNode;
 
-public class PartitionStage extends Stage {
+public class PartitionStage extends Stage<Void> {
     private final PartitionNode uuidNode;
 
     public PartitionStage(PartitionProperties properties) {

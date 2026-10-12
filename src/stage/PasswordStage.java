@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static main.Lib.permissionsStage;
 
-public class PasswordStage extends Stage {
+public class PasswordStage extends Stage<String> {
     private final Label command;
     private final PasswordField password;
     private boolean done;

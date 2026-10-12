@@ -8,10 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import node.CenterNode;
 import panel.RightPane;
-import stage.GotoStage;
-import stage.OthersApplicationsStage;
-import stage.PasswordStage;
-import stage.PermissionsStage;
+import stage.*;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -60,6 +57,10 @@ public class Lib {
   public static final Lock lock = new ReentrantLock();
 
   public static PasswordStage passwordStage;
+  public static PopupStage infoPopup;
+  public static PopupStage inputPopup;
+  public static PopupStage errorPopup;
+  public static PopupStage warningPopup;
   public static OthersApplicationsStage othersApplicationsStage;
   public static PermissionsStage permissionsStage;
   public static GotoStage gotoStage;
@@ -67,13 +68,6 @@ public class Lib {
   // METODOS -------------------------------------------------------------------------------------------------------------
 
   // Crear componentes
-  public static <R> Optional<R> showAlert(Dialog<R> dialog, String message, String title) {
-    dialog.setTitle(title);
-    dialog.setHeaderText(null);
-    dialog.setContentText(message);
-    return dialog.showAndWait();
-  }
-
   public static ContextMenu createContextMenu(
         int backward, int forward,
         int open, int openWith, int createFile, int createDir, int createLink,
@@ -225,16 +219,15 @@ public class Lib {
 
     MenuItem withoutFormatItem = new MenuItem("Sin formato", createIconItem((String) iconsMime.getOrDefault("inode/x-empty", "")));
     withoutFormatItem.setOnAction(e -> {
-      Optional<String> result = showAlert(new TextInputDialog(), "Ingrese nombre del archivo", null);
-      if (result.isPresent()) {
+      showInput("Ingrese nombre del archivo").thenAccept(entry -> {
+        if (entry.getValue() != PopupStage.OPTION.DONE) return;
+
         String fileName = "sin_nombre";
-        String input = result.get();
-
-        if (!input.isEmpty())
-          fileName = input;
-
+        if (!entry.getKey().isEmpty()) {
+          fileName = entry.getKey();
+        }
         createFile(new File(path + "/" + fileName));
-      }
+      });
     });
 
     Menu menu = new Menu("Crear archivo", createIconItem(icon), templatesItems);
@@ -254,20 +247,19 @@ public class Lib {
       icon = iconsMime.getProperty("lock");
     }
 
-    TextInputDialog alert = new TextInputDialog();
-    TextField editor = alert.getEditor();
+    TextField editor = inputPopup.getTextField();
 
     MenuItem item = new MenuItem(template.getName(), createIconItem(icon));
     item.setOnAction(e -> {
       editor.setText(name);
       editor.selectAll();
+      showInput("Ingrese nombre del archvio").thenAccept(entry -> {
+        if (entry.getValue() != PopupStage.OPTION.DONE) return;
 
-      Optional<String> result = showAlert(alert, "Ingrese nombre del archivo", null);
-
-      if (result.isPresent()) {
         String fileName = "sin_nombre";
-        String input = result.get();
-        if (!input.isEmpty()) fileName = input;
+        if (!entry.getKey().isEmpty()) {
+          fileName = entry.getKey();
+        }
 
         try {
           printExecute("Creando nuevo archivo a partir de una plantilla '" + YELLOW + template.getAbsolutePath() + RESET + "'");
@@ -278,25 +270,25 @@ public class Lib {
           centerPane.select(template.getName());
           updateRight();
         } catch (Exception ex) {
-          printErrorAndShow("Error al crear archivo '"+result.get()+"'", ex);
+          printErrorAndShow("Error al crear archivo '"+entry.getKey()+"'", ex);
         }
-      }
+      });
     });
     return item;
   }
   private static MenuItem createDirectoryItem(String icon) {
     MenuItem item = new MenuItem("Crear carpeta", createIconItem(icon));
     item.setOnAction(e -> {
-      Optional<String> result = showAlert(new TextInputDialog(), "Ingrese nombre de la carpeta", null);
-      if (result.isPresent()) {
-        String directoryName = "sin_nombre";
-        String input = result.get();
+      showInput("Ingrese nombre de la carpeta").thenAccept(entry -> {
+        if (entry.getValue() != PopupStage.OPTION.DONE) return;
 
-        if (!input.isEmpty())
-          directoryName = input;
+        String directoryName = "sin_nombre";
+        if (!entry.getKey().isEmpty()) {
+          directoryName = entry.getKey();
+        }
 
         createDirectory(new File(path + "/" + directoryName));
-      }
+      });
     });
     return item;
   }
@@ -409,7 +401,7 @@ public class Lib {
   }
   public static void printErrorAndShow(String message, Exception e) {
     printError(message, e);
-    showAlert(new Alert(Alert.AlertType.ERROR), message, "ERROR");
+    showError(message);
   }
   public static void printError(String message, Exception e) {
     System.out.println("[" + RED + "ERROR" + RESET + "]    " + message);
@@ -435,6 +427,22 @@ public class Lib {
     System.out.println("[" + YELLOW + "EXEC" + RESET + "]     " + message);
   }
 
+  public static void showInfo(String message) {
+    infoPopup.setMessage(message);
+    infoPopup.show();
+  }
+  public static CompletableFuture<Map.Entry<String, PopupStage.OPTION>> showInput(String message) {
+    inputPopup.setMessage(message);
+    return inputPopup.showAndWait();
+  }
+  public static void showError(String message) {
+    errorPopup.setMessage(message);
+    errorPopup.show();
+  }
+  public static CompletableFuture<Map.Entry<String, PopupStage.OPTION>> showWarning(String message) {
+    warningPopup.setMessage(message);
+    return warningPopup.showAndWait();
+  }
   public static CompletableFuture<String> showPasswordStage(String comand) {
     passwordStage.setCommand(comand);
       try {
@@ -446,7 +454,6 @@ public class Lib {
           return null;
       }
   }
-
   public static String stringToPath(String text) {
     String path = text.charAt(0) == '~' ? HOME+text.substring(1) :
                   text.startsWith("trash") ? TRASH_PATH+"files"+text.substring(5) :
@@ -544,20 +551,21 @@ public class Lib {
     }
   }
   public static void createLink(File file) {
-    try {
-      Optional<String> option = showAlert(new TextInputDialog(), "Nombre del enlace", "Crear enlace");
-      if (option.isPresent()) {
-        String linkName = option.get();
+    showInput("Nombre del enlace").thenAccept(entry -> {
+      if (entry.getValue() != PopupStage.OPTION.DONE) return;
+
+      try {
+        String linkName = entry.getKey();
         printExecute("Creando enlace simbolico '" + YELLOW + linkName + "'");
         Files.createSymbolicLink(Path.of(path + linkName), file.toPath());
 
         updateCenter();
         centerPane.select(linkName);
         updateRight();
+      } catch (Exception e) {
+        printErrorAndShow("Error al crear enlace simbolico de '" + file.getName() + "'", e);
       }
-    } catch (Exception e) {
-      printErrorAndShow("Error al crear enlace simbolico de '" + file.getName() + "'", e);
-    }
+    });
   }
 
   public static void renameFile(File file, String newName) {
@@ -838,50 +846,54 @@ public class Lib {
   }
 
   public static void removeFiles(File[] files) {
-    if (files != null) {
-      Optional<ButtonType> result;
+    if (files != null || files.length > 0) {
+
+      // Mensaje
       String message = "";
       if (files.length == 1) {
         String type = files[0].isDirectory() ? "directorio '" : "archivo '";
         message = "El " + type + files[0].getName() + "'\nsera eliminado permanentemente";
-      } else if (files.length > 1)
+      } else if (files.length > 1) {
         message = "Los archivos y/o directorios\nseran eliminados permanentemente";
+      }
 
-      if (files.length > 0) {
-        result = showAlert(new Alert(Alert.AlertType.CONFIRMATION), message, "ADVERTENCIA");
-        if (result.isPresent()) {
-          ButtonBar.ButtonData option = result.get().getButtonData();
-          if (option.equals(ButtonBar.ButtonData.OK_DONE)) {
-            for (File file : files) {
-              if (!(file.getAbsolutePath() + "/").equals(path)) {
-                try {
-                  ProcessBuilder pb;
-                  if (file.isDirectory()) {
-                    printExecute("Eliminando directorio '" + YELLOW + file.getAbsolutePath() + RESET + "'");
-                    pb = new ProcessBuilder("rm", "-Rf", file.getAbsolutePath());
-                  } else {
-                    printExecute("Eliminando archivo '" + YELLOW + file.getAbsolutePath() + RESET + "'");
-                    pb = new ProcessBuilder("rm", "-f", file.getAbsolutePath());
-                  }
-                  pb.start().waitFor();
-                } catch (Exception e) {
-                  printErrorAndShow("Error al eliminar el archivo " + file.getAbsolutePath(), e);
-                  break;
-                }
+      // Popup
+      var result = showWarning(message);
+      result.thenAccept(e -> {
+        PopupStage.OPTION option = e.getValue();
+        if (option == null || option == PopupStage.OPTION.CANCEL) {
+          return;
+        }
+
+        // Eliminar
+        for (File file : files) {
+          if (!(file.getAbsolutePath() + "/").equals(path)) {
+            try {
+              ProcessBuilder pb;
+              if (file.isDirectory()) {
+                printExecute("Eliminando directorio '" + YELLOW + file.getAbsolutePath() + RESET + "'");
+                pb = new ProcessBuilder("rm", "-Rf", file.getAbsolutePath());
+              } else {
+                printExecute("Eliminando archivo '" + YELLOW + file.getAbsolutePath() + RESET + "'");
+                pb = new ProcessBuilder("rm", "-f", file.getAbsolutePath());
               }
+              pb.start().waitFor();
+            } catch (Exception ex) {
+              printErrorAndShow("Error al eliminar el archivo " + file.getAbsolutePath(), ex);
+              break;
             }
           }
         }
-      }
 
-      centerPane.selectionModel.clearSelection();
-      updateCenter();
-      centerPane.selectFirst();
-      updateRight();
+        centerPane.selectionModel.clearSelection();
+        updateCenter();
+        centerPane.selectFirst();
+        updateRight();
+      });
     }
   }
 
-  public static void extractHere(File file) {
+  public static void extractHere(FileProperties file) {
     try {
       printExecute("Descomprimiendo '" + YELLOW + file.getName() + RESET + "'");
       String absolutePath = file.getAbsolutePath();
@@ -889,11 +901,20 @@ public class Lib {
           absolutePath.length() - (file.getName().length() - file.getName().lastIndexOf("."))));
       output.mkdir();
 
-      new ProcessBuilder("tar", "-xzf", file.getName(), "-C", output.getName()).directory(new File(path)).start()
-          .waitFor();
+      if (file.getName().substring(file.getName().lastIndexOf('.')).equals(".zip")) {
+        if (new ProcessBuilder("unzip", file.getAbsolutePath(), "-d", output.getAbsolutePath()).start()
+                .waitFor() != 0) {
+          printErrorAndShow("Error al descomprimir archvo "+file.getName(), null);
+        }
+      } else {
+        if (new ProcessBuilder("tar", "-xzf", file.getAbsolutePath(), "-C", output.getAbsolutePath()).start()
+                .waitFor() != 0) {
+          printErrorAndShow("Error al descomprimir archvo "+file.getName(), null);
+        }
+      }
 
       updateCenter();
-      centerPane.selectFirst();
+      centerPane.select(output.getName());
       updateRight();
     } catch (Exception e) {
       printErrorAndShow("Error al descomprimir archivo '" + file.getName() + "'", e);
@@ -905,40 +926,36 @@ public class Lib {
       paths[i] = files[i].getName();
     }
 
-    try {
-      Optional<String> option = showAlert(new TextInputDialog(), "Nombre del archivo comprimido:",
-          "Comprimir archivos");
-      String name;
+    showInput("Nombre del archivo comprimido:").thenAccept(entry -> {
+      if (entry.getValue() != PopupStage.OPTION.DONE) return;
 
-      if (option.isPresent())
-        name = option.get();
-      else
-        return;
+      try {
+        String name = entry.getKey();
+        if (name.isEmpty()) {
+          return;
+        }
 
-      List<String> command = new ArrayList<>();
-      command.add("tar");
-      command.add("-czf");
-      command.add(path + name);
-      command.addAll(Arrays.asList(paths));
+        List<String> command = new ArrayList<>();
+        command.add("tar");
+        command.add("-czf");
+        command.add(path + name);
+        command.addAll(Arrays.asList(paths));
 
-      printExecute("Creando archivo comprimido '" + YELLOW + name + RESET + "'");
-      new ProcessBuilder(command).directory(new File(path)).start().waitFor();
+        printExecute("Creando archivo comprimido '" + YELLOW + name + RESET + "'");
+        new ProcessBuilder(command).directory(new File(path)).start().waitFor();
 
-      updateCenter();
-      centerPane.select(name);
-      updateRight();
-    } catch (Exception e) {
-      printErrorAndShow("Error al compirmir archivos '" + Arrays.toString(paths) + "'", e);
-    }
+        updateCenter();
+        centerPane.select(name);
+        updateRight();
+      } catch (Exception e) {
+        printErrorAndShow("Error al compirmir archivos '" + Arrays.toString(paths) + "'", e);
+      }
+    });
   }
 
   public static void openShell() {
     try {
       String shellPath = path;
-      File dir = centerPane.selectionModel.getSelectedItem().getFileProperties();
-      if (dir.isDirectory())
-        shellPath = dir.getAbsolutePath();
-
       ProcessBuilder pb = new ProcessBuilder(TERMINAL).directory(new File(shellPath));
       pb.start();
     } catch (IOException ex) {

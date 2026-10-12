@@ -14,7 +14,7 @@ import static main.Lib.*;
 import static panel.MainPane.centerPane;
 import static panel.MainPane.leftPane;
 
-public class GotoStage extends Stage {
+public class GotoStage extends Stage<Void> {
     private final String[] placesIcons;
 
     public GotoStage() {
@@ -26,7 +26,7 @@ public class GotoStage extends Stage {
                 placesIcons[i] = leftPane.placesNodes[i].getIcon();
             }
         } else {
-            placesIcons = null;
+            placesIcons = new String[0];
         }
 
         if (GOTO_PLACES == null) setVisible(false);
@@ -89,7 +89,7 @@ public class GotoStage extends Stage {
 
     public void afterClose() {
         if (!SHOW_PLACES) return;
-        for (int i = 0; i < leftPane.placesNodes.length; i++) {
+        for (int i = 0; i < leftPane.placesNodes.length && i < placesIcons.length; i++) {
             leftPane.placesNodes[i].setIcon(placesIcons[i]);
             leftPane.placesNodes[i].setIconId("LeftNode_icon");
         }
