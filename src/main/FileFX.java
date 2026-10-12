@@ -227,6 +227,8 @@ public class FileFX extends javafx.application.Application {
                 DOWN_STEP = getKeyCombination("down_step", "page down");
                 FIRST = getKeyCombination("first", "home");
                 LAST = getKeyCombination("last", "end");
+                SCROLL_UP = getKeyCombination("scroll_up", "ctrl+up");
+                SCROLL_DOWN = getKeyCombination("scroll_down", "ctrl+down");
 
                 SELECT_UP = getKeyCombination("select_up", "shift+up");
                 SELECT_DOWN = getKeyCombination("select_down", "shift+down");
@@ -275,6 +277,8 @@ public class FileFX extends javafx.application.Application {
             DOWN_STEP = new KeyCombination[]{new KeyCodeCombination(KeyCode.PAGE_DOWN)};
             FIRST = new KeyCombination[]{new KeyCodeCombination(KeyCode.HOME)};
             LAST = new KeyCombination[]{new KeyCodeCombination(KeyCode.END)};
+            SCROLL_UP = new KeyCombination[]{new KeyCodeCombination(KeyCode.UP, KeyCombination.CONTROL_DOWN)};
+            SCROLL_DOWN = new KeyCombination[]{new KeyCodeCombination(KeyCode.DOWN, KeyCombination.CONTROL_DOWN)};
 
             SELECT_UP = new KeyCombination[]{new KeyCodeCombination(KeyCode.UP, KeyCombination.SHIFT_DOWN)};
             SELECT_DOWN = new KeyCombination[]{new KeyCodeCombination(KeyCode.DOWN, KeyCombination.SHIFT_DOWN)};
@@ -622,6 +626,8 @@ public class FileFX extends javafx.application.Application {
     public static KeyCombination[] DOWN_STEP;
     public static KeyCombination[] FIRST;
     public static KeyCombination[] LAST;
+    public static KeyCombination[] SCROLL_UP;
+    public static KeyCombination[] SCROLL_DOWN;
 
     public static KeyCombination[] SELECT_UP;
     public static KeyCombination[] SELECT_DOWN;

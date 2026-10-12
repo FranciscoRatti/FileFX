@@ -203,6 +203,8 @@ propiedades seguidas del valor predeterminado.
   - `down_step=page down` : Abajo 3 posiciones.
   - `first=home` : Primer elemento.
   - `last=end` : Ultimo elemento.
+  - `scroll_up=ctrl+up` : Hacer scroll hacia arriba.
+  - `scroll_down=ctrl+down` : Hacer scroll hacia abajo.
   - `select_up=shift+up` : Seleccionar arriba.
   - `select_down=shift+down` : Seleccionar abajo.
   - `select_up_step=shift+page up` : Seleccionar arriba 3 posiciones.

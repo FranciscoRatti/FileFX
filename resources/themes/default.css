@@ -400,7 +400,7 @@
     -fx-border-radius: 4;
     -fx-border-color: white;
 }
-#Stage_title, #Popup_title_info, #Popup_title_input, #Popup_title_error, #Popup_title_warning {
+#Stage_title, #Popup_title_input, #Popup_title_error, #Popup_title_warning {
      -fx-font-family: "Noto Sans Mono";
      -fx-font-size: 13;
      -fx-background-color: #232323FF;
@@ -657,9 +657,6 @@
     -fx-padding: 10;
 }
 
-#Popup_title_info {
-     -fx-text-fill: #41aeff;
-}
 #Popup_title_input {
      -fx-text-fill: lime;
 }
@@ -670,7 +667,7 @@
      -fx-text-fill: yellow;
 }
 
-#Popup_message_info, #Popup_message_input, #Popup_message_error, #Popup_message_warning {
+#Popup_message {
     -fx-text-fill: white;
     -fx-font-family: "Noto Sans Mono";
     -fx-font-size: 13;

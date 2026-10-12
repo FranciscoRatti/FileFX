@@ -427,10 +427,6 @@ public class Lib {
     System.out.println("[" + YELLOW + "EXEC" + RESET + "]     " + message);
   }
 
-  public static void showInfo(String message) {
-    infoPopup.setMessage(message);
-    infoPopup.show();
-  }
   public static CompletableFuture<Map.Entry<String, PopupStage.OPTION>> showInput(String message) {
     inputPopup.setMessage(message);
     return inputPopup.showAndWait();

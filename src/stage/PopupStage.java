@@ -35,9 +35,8 @@ public class PopupStage extends Stage<Map.Entry<String, PopupStage.OPTION>> {
         super(type == TYPE.INFO ? "Info" : type == TYPE.WARNING ? "Advertencia" : type == TYPE.ERROR ? "Error" : "Input");
 
         this.message = new Label();
-        this.message.setId("Popup_message_" + type.toString().toLowerCase());
+        this.message.setId("Popup_message");
         setTitleId("Popup_title_" + type.toString().toLowerCase());
-        System.out.println("Popup_title_" + type.toString().toLowerCase());
 
         VBox pane = new VBox(message);
         pane.setId("Popup_pane");

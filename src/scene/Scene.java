@@ -52,6 +52,8 @@ public class Scene extends javafx.scene.Scene {
                     if (setKeyBindAction(DOWN_STEP, () -> centerPane.moveCursor(false, 3))) return;
                     if (setKeyBindAction(FIRST, () -> centerPane.moveCursor(false, -centerPane.selectionModel.getSelectedIndex()))) return;
                     if (setKeyBindAction(LAST, () -> centerPane.moveCursor(false, centerPane.items.size()-1 - centerPane.selectionModel.getSelectedIndex()))) return;
+                    if (setKeyBindAction(SCROLL_UP, () -> centerPane.scrollUp())) return;
+                    if (setKeyBindAction(SCROLL_DOWN, () -> centerPane.scrollDown())) return;
 
                     if (setKeyBindAction(SELECT_UP, () -> centerPane.moveCursor(true, -1))) return;
                     if (setKeyBindAction(SELECT_DOWN, () -> centerPane.moveCursor(true, 1))) return;

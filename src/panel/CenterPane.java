@@ -27,6 +27,7 @@ import static panel.MainPane.centerPane;
 
 public class CenterPane extends ListView<CenterNode> {
     public String filter = null;
+    private int scrollDif;
 
     private final ContextMenu menuFile;
     private final ContextMenu menuDirectory;
@@ -264,16 +265,54 @@ public class CenterPane extends ListView<CenterNode> {
         updateRight();
 
         // Hacer scroll
-
+        scrollDif = 0;
         if (isLast) scrollTo(size-1);
         else if (isFirst) scrollTo(0);
         else setSelectedOnCenter();
     }
 
     public void setSelectedOnCenter() {
-        if (items.isEmpty()) return;
-        int visibleCount = (int) Math.floor(getHeight() / itemHeight);
-        scrollTo(selectionModel.getSelectedIndex() - (visibleCount / 2));
+        if (!items.isEmpty()) {
+            int visibleCount = (int) Math.floor(getHeight() / itemHeight);
+            if (visibleCount < items.size()) {
+                scrollTo(selectionModel.getSelectedIndex() - (visibleCount / 2));
+            }
+        }
+    }
+
+    public void scrollUp() {scroll(-1);}
+    public void scrollDown() {scroll(1);}
+    private void scroll(int step) {
+        if (!items.isEmpty()) {
+            int visibleCount = (int) Math.floor(getHeight() / itemHeight);
+            if (visibleCount < items.size()) {
+
+                int visibleCountTwo =  visibleCount / 2;
+                scrollDif += step;
+                int scrollValue = selectionModel.getSelectedIndex() - visibleCountTwo + scrollDif;
+                int max = items.size()-visibleCount;
+
+                if (step > 0) {
+                    if (scrollValue > max) {
+                        scrollValue = max;
+                        scrollDif -= step;
+                    } else if (scrollValue <= 0) {
+                        scrollDif -= scrollValue;
+                        scrollValue = 1;
+                    }
+                } else {
+                    if (scrollValue < 0) {
+                        scrollValue = 0;
+                        scrollDif -= step;
+                    } else if (scrollValue >= max) {
+                        scrollDif -= scrollValue - max + 1;
+                        scrollValue = max-1;
+                    }
+                }
+
+                scrollTo(scrollValue);
+            }
+        }
     }
 
     public void showMenu(Node anchor, double x, double y) {
