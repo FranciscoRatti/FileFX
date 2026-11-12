@@ -25,7 +25,8 @@ import static panel.MainPane.*;
 
 public class Lib {
 
-  // CONSTANTES ----------------------------------------------------------------------------------------------------------
+  // CONSTANTES
+  // ----------------------------------------------------------------------------------------------------------
 
   public static boolean isCut = false;
   public static final String HOME = System.getenv("HOME");
@@ -33,9 +34,10 @@ public class Lib {
 
   public static final String TRASH_PATH = HOME + "/.local/share/Trash/";
   public static final String ABSOLUTE_PATH = "/usr/share/filefx/";
-  //public static final String ABSOLUTE_PATH = HOME+"/Documents/Programacion/Proyectos/FileFX/resources/";
+  // public static final String ABSOLUTE_PATH =
+  // HOME+"/Documents/Programacion/Proyectos/FileFX/resources/";
   public static final String CONFIG_PATH = HOME + "/.config/filefx/";
-  //public static final String CONFIG_PATH = ABSOLUTE_PATH;
+  // public static final String CONFIG_PATH = ABSOLUTE_PATH;
   public static final String LIB_PATH = "/usr/lib/filefx/";
   public static String THEME;
 
@@ -45,8 +47,14 @@ public class Lib {
   public static final String YELLOW = "\u001B[33m";
   public static final String BLUE = "\u001B[34m";
 
-  public enum ORDER {NAME, DATE, SIZE, MIME}
-  public enum COLUMNS {PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATED, TYPE}
+  public enum ORDER {
+    NAME, DATE, SIZE, MIME
+  }
+
+  public enum COLUMNS {
+    PERMISSIONS, OWNER, GROUP, SIZE, MODIFIED, CREATED, TYPE
+  }
+
   public enum ITEMS {
     BACKWARD, FORWARD, OPEN, OPEN_WITH, CREATE_FILE, CREATE_DIR, CREATE_LINK, RENAME, PERMISSIONS,
     COPY, CUT, PASTE, RESTORE, TRASH, REMOVE, EXTRACT, COMPRESS, SHELL, ADMIN, SEPARATOR
@@ -65,16 +73,17 @@ public class Lib {
   public static PermissionsStage permissionsStage;
   public static GotoStage gotoStage;
 
-  // METODOS -------------------------------------------------------------------------------------------------------------
+  // METODOS
+  // -------------------------------------------------------------------------------------------------------------
 
   // Crear componentes
   public static ContextMenu createContextMenu(
-        int backward, int forward,
-        int open, int openWith, int createFile, int createDir, int createLink,
-        int rename, int permissions,
-        int copy, int cut, int paste,
-        int restore, int trash, int remove,
-        int extract, int compress, int shell, int admin) {
+      int backward, int forward,
+      int open, int openWith, int createFile, int createDir, int createLink,
+      int rename, int permissions,
+      int copy, int cut, int paste,
+      int restore, int trash, int remove,
+      int extract, int compress, int shell, int admin) {
     ContextMenu contextMenu = new ContextMenu();
     contextMenu.setAutoHide(true);
     contextMenu.setOnHidden(e -> minusShowing());
@@ -86,26 +95,83 @@ public class Lib {
     for (int i = 0; i < CONTEXT_MENU_ITEMS.length; i++) {
       ITEMS item = CONTEXT_MENU_ITEMS[i];
       switch (item) {
-        case SEPARATOR ->   contextMenuItems.add(new SeparatorMenuItem());
-        case BACKWARD ->    {if (backward == 1)    contextMenuItems.add(createBackwardItem(CONTEXT_MENU_ICONS[i]));}
-        case FORWARD ->     {if (forward == 1)     contextMenuItems.add(createForwardItem(CONTEXT_MENU_ICONS[i]));}
-        case OPEN ->        {if (open == 1)        contextMenuItems.add(createOpenItem(CONTEXT_MENU_ICONS[i]));}
-        case OPEN_WITH ->   {if (openWith == 1)    contextMenuItems.add(createOpenWithItem(CONTEXT_MENU_ICONS[i]));}
-        case CREATE_FILE -> {if (createFile == 1)  contextMenuItems.add(createFileItem(CONTEXT_MENU_ICONS[i]));}
-        case CREATE_DIR ->  {if (createDir == 1)   contextMenuItems.add(createDirectoryItem(CONTEXT_MENU_ICONS[i]));}
-        case CREATE_LINK -> {if (createLink == 1)  contextMenuItems.add(createLinkItem(CONTEXT_MENU_ICONS[i]));}
-        case RENAME ->      {if (rename == 1)      contextMenuItems.add(createRenameItem(CONTEXT_MENU_ICONS[i]));}
-        case PERMISSIONS -> {if (permissions == 1) contextMenuItems.add(createPermissionsItem(CONTEXT_MENU_ICONS[i]));}
-        case COPY ->        {if (copy == 1)        contextMenuItems.add(createCopyItem(CONTEXT_MENU_ICONS[i]));}
-        case CUT ->         {if (cut == 1)         contextMenuItems.add(createCutItem(CONTEXT_MENU_ICONS[i]));}
-        case PASTE ->       {if (paste == 1)       contextMenuItems.add(pasteItem = createPasteItem(CONTEXT_MENU_ICONS[i]));}
-        case RESTORE ->     {if (restore == 1)     contextMenuItems.add(createRestoreItem(CONTEXT_MENU_ICONS[i]));}
-        case TRASH ->       {if (trash == 1)       contextMenuItems.add(createTrashItem(CONTEXT_MENU_ICONS[i]));}
-        case REMOVE ->      {if (remove == 1)      contextMenuItems.add(createRemoveItem(CONTEXT_MENU_ICONS[i]));}
-        case EXTRACT ->     {if (extract == 1)     contextMenuItems.add(extractHereItem = createExtractHereItem(CONTEXT_MENU_ICONS[i]));}
-        case COMPRESS ->    {if (compress == 1)    contextMenuItems.add(createCompressItem(CONTEXT_MENU_ICONS[i]));}
-        case SHELL ->       {if (shell == 1)       contextMenuItems.add(createOpenShellItem(CONTEXT_MENU_ICONS[i]));}
-        case ADMIN ->       {if (admin == 1)       contextMenuItems.add(createAdminItem(CONTEXT_MENU_ICONS[i]));}
+        case SEPARATOR -> contextMenuItems.add(new SeparatorMenuItem());
+        case BACKWARD -> {
+          if (backward == 1)
+            contextMenuItems.add(createBackwardItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case FORWARD -> {
+          if (forward == 1)
+            contextMenuItems.add(createForwardItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case OPEN -> {
+          if (open == 1)
+            contextMenuItems.add(createOpenItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case OPEN_WITH -> {
+          if (openWith == 1)
+            contextMenuItems.add(createOpenWithItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case CREATE_FILE -> {
+          if (createFile == 1)
+            contextMenuItems.add(createFileItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case CREATE_DIR -> {
+          if (createDir == 1)
+            contextMenuItems.add(createDirectoryItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case CREATE_LINK -> {
+          if (createLink == 1)
+            contextMenuItems.add(createLinkItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case RENAME -> {
+          if (rename == 1)
+            contextMenuItems.add(createRenameItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case PERMISSIONS -> {
+          if (permissions == 1)
+            contextMenuItems.add(createPermissionsItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case COPY -> {
+          if (copy == 1)
+            contextMenuItems.add(createCopyItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case CUT -> {
+          if (cut == 1)
+            contextMenuItems.add(createCutItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case PASTE -> {
+          if (paste == 1)
+            contextMenuItems.add(pasteItem = createPasteItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case RESTORE -> {
+          if (restore == 1)
+            contextMenuItems.add(createRestoreItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case TRASH -> {
+          if (trash == 1)
+            contextMenuItems.add(createTrashItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case REMOVE -> {
+          if (remove == 1)
+            contextMenuItems.add(createRemoveItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case EXTRACT -> {
+          if (extract == 1)
+            contextMenuItems.add(extractHereItem = createExtractHereItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case COMPRESS -> {
+          if (compress == 1)
+            contextMenuItems.add(createCompressItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case SHELL -> {
+          if (shell == 1)
+            contextMenuItems.add(createOpenShellItem(CONTEXT_MENU_ICONS[i]));
+        }
+        case ADMIN -> {
+          if (admin == 1)
+            contextMenuItems.add(createAdminItem(CONTEXT_MENU_ICONS[i]));
+        }
       }
     }
 
@@ -118,7 +184,8 @@ public class Lib {
           if (clipboardFiles != null) {
             boolean setDisable = false;
             for (File file : clipboardFiles) {
-              if (!file.exists()) setDisable = true;
+              if (!file.exists())
+                setDisable = true;
             }
             finalPasteItem.setDisable(setDisable);
           } else {
@@ -158,18 +225,21 @@ public class Lib {
     item.setOnAction(e -> backward());
     return item;
   }
+
   private static MenuItem createForwardItem(String icon) {
     MenuItem item = new MenuItem("Rehacer", createIconItem(icon));
     item.setAccelerator(FORWARD[0]);
     item.setOnAction(e -> forward());
     return item;
   }
+
   private static MenuItem createOpenItem(String icon) {
     MenuItem item = new MenuItem("Abrir", createIconItem(icon));
     item.setAccelerator(OPEN[0]);
     item.setOnAction(e -> centerPane.openSelected());
     return item;
   }
+
   private static Menu createOpenWithItem(String icon) {
     Menu menu = new Menu("Abrir con", createIconItem(icon));
     ObservableList<MenuItem> childrens = menu.getItems();
@@ -210,6 +280,7 @@ public class Lib {
 
     return menu;
   }
+
   private static Menu createFileItem(String icon) {
     File[] templates = new File(TEMPLATES_DIR).listFiles();
     MenuItem[] templatesItems = new MenuItem[templates == null ? 0 : templates.length];
@@ -217,10 +288,12 @@ public class Lib {
       templatesItems[i] = createTemplateFileItem(new FileProperties(templates[i]));
     }
 
-    MenuItem withoutFormatItem = new MenuItem("Sin formato", createIconItem((String) iconsMime.getOrDefault("inode/x-empty", "")));
+    MenuItem withoutFormatItem = new MenuItem("Sin formato",
+        createIconItem((String) iconsMime.getOrDefault("inode/x-empty", "")));
     withoutFormatItem.setOnAction(e -> {
       showInput("Ingrese nombre del archivo").thenAccept(entry -> {
-        if (entry.getValue() != PopupStage.OPTION.DONE) return;
+        if (entry.getValue() != PopupStage.OPTION.DONE)
+          return;
 
         String fileName = "sin_nombre";
         if (!entry.getKey().isEmpty()) {
@@ -234,15 +307,18 @@ public class Lib {
     menu.getItems().add(withoutFormatItem);
     return menu;
   }
+
   private static MenuItem createTemplateFileItem(FileProperties template) {
     String name = template.getName();
-    String extension = name.contains(".") && !template.isDirectory ? name.substring(name.lastIndexOf('.')+1) : null;
+    String extension = name.contains(".") && !template.isDirectory ? name.substring(name.lastIndexOf('.') + 1) : null;
 
     String icon;
     if (template.canRead()) {
-      icon = iconsExtension.getProperty("."+extension);
-      if (icon == null) icon = iconsMime.getProperty(template.getMimeType());
-      if (icon == null) icon = iconsMime.getProperty("unknow");
+      icon = iconsExtension.getProperty("." + extension);
+      if (icon == null)
+        icon = iconsMime.getProperty(template.getMimeType());
+      if (icon == null)
+        icon = iconsMime.getProperty("unknow");
     } else {
       icon = iconsMime.getProperty("lock");
     }
@@ -254,7 +330,8 @@ public class Lib {
       editor.setText(name);
       editor.selectAll();
       showInput("Ingrese nombre del archvio").thenAccept(entry -> {
-        if (entry.getValue() != PopupStage.OPTION.DONE) return;
+        if (entry.getValue() != PopupStage.OPTION.DONE)
+          return;
 
         String fileName = "sin_nombre";
         if (!entry.getKey().isEmpty()) {
@@ -262,25 +339,28 @@ public class Lib {
         }
 
         try {
-          printExecute("Creando nuevo archivo a partir de una plantilla '" + YELLOW + template.getAbsolutePath() + RESET + "'");
+          printExecute(
+              "Creando nuevo archivo a partir de una plantilla '" + YELLOW + template.getAbsolutePath() + RESET + "'");
           new ProcessBuilder("cp", template.getAbsolutePath(), new File(path + "/" + fileName).getAbsolutePath())
-                  .start().waitFor();
+              .start().waitFor();
 
           updateCenter();
           centerPane.select(template.getName());
           updateRight();
         } catch (Exception ex) {
-          printErrorAndShow("Error al crear archivo '"+entry.getKey()+"'", ex);
+          printErrorAndShow("Error al crear archivo '" + entry.getKey() + "'", ex);
         }
       });
     });
     return item;
   }
+
   private static MenuItem createDirectoryItem(String icon) {
     MenuItem item = new MenuItem("Crear carpeta", createIconItem(icon));
     item.setOnAction(e -> {
       showInput("Ingrese nombre de la carpeta").thenAccept(entry -> {
-        if (entry.getValue() != PopupStage.OPTION.DONE) return;
+        if (entry.getValue() != PopupStage.OPTION.DONE)
+          return;
 
         String directoryName = "sin_nombre";
         if (!entry.getKey().isEmpty()) {
@@ -292,63 +372,74 @@ public class Lib {
     });
     return item;
   }
+
   private static MenuItem createLinkItem(String icon) {
     MenuItem item = new MenuItem("Crear enlace", createIconItem(icon));
     item.setOnAction(e -> createLink(centerPane.selectionModel.getSelectedItem().getFileProperties()));
     return item;
   }
+
   private static MenuItem createPermissionsItem(String icon) {
     MenuItem item = new MenuItem("Permisos", createIconItem(icon));
     item.setAccelerator(CHANGE_PERMISSIONS[0]);
     item.setOnAction(e -> permissionsStage.show());
     return item;
   }
+
   private static MenuItem createRenameItem(String icon) {
     MenuItem item = new MenuItem("Renombrar", createIconItem(icon));
     item.setAccelerator(RENAME[0]);
     item.setOnAction(e -> RightPane.focusName());
     return item;
   }
+
   private static MenuItem createCopyItem(String icon) {
     MenuItem item = new MenuItem("Copiar", createIconItem(icon));
     item.setAccelerator(COPY[0]);
     item.setOnAction(e -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), false));
     return item;
   }
+
   private static MenuItem createCutItem(String icon) {
     MenuItem item = new MenuItem("Cortar", createIconItem(icon));
     item.setAccelerator(CUT[0]);
     item.setOnAction(e -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), true));
     return item;
   }
+
   private static MenuItem createPasteItem(String icon) {
     MenuItem item = new MenuItem("Pegar", createIconItem(icon));
     item.setAccelerator(PASTE[0]);
     item.setOnAction(e -> pasteFiles(getClipboardFiles()));
     return item;
   }
+
   private static MenuItem createRestoreItem(String icon) {
     MenuItem item = new MenuItem("Restaurar", createIconItem(icon));
     item.setOnAction(e -> restoreSelected());
     return item;
   }
+
   private static MenuItem createTrashItem(String icon) {
     MenuItem item = new MenuItem("Enviar a papelera", createIconItem(icon));
     item.setAccelerator(FileFX.TRASH[0]);
     item.setOnAction(e -> trashFiles(parseCenterNodesToFiles(centerPane.selectedItems)));
     return item;
   }
+
   private static MenuItem createRemoveItem(String icon) {
     MenuItem item = new MenuItem("Eliminar", createIconItem(icon));
     item.setAccelerator(REMOVE[0]);
     item.setOnAction(e -> removeFiles(parseCenterNodesToFiles(centerPane.selectedItems)));
     return item;
   }
+
   private static MenuItem createExtractHereItem(String icon) {
     MenuItem item = new MenuItem("Extraer aqui", createIconItem(icon));
     item.setOnAction(e -> extractHere(centerPane.selectionModel.getSelectedItem().getFileProperties()));
     return item;
   }
+
   private static MenuItem createCompressItem(String icon) {
     MenuItem item = new MenuItem("Comprimir", createIconItem(icon));
     item.setOnAction(e -> {
@@ -357,17 +448,20 @@ public class Lib {
     });
     return item;
   }
+
   private static MenuItem createOpenShellItem(String icon) {
     MenuItem item = new MenuItem("Abrir una terminal ", createIconItem(icon));
     item.setAccelerator(OPEN_SHELL[0]);
     item.setOnAction(e -> openShell());
     return item;
   }
+
   private static MenuItem createAdminItem(String icon) {
     MenuItem item = new MenuItem("Abrir como administrador ", createIconItem(icon));
     item.setOnAction(e -> openWithAdmin());
     return item;
   }
+
   private static Label createIconItem(String text) {
     Label icon = new Label(text);
     icon.setFont(nerdFont);
@@ -378,15 +472,19 @@ public class Lib {
   public static void updateTop() {
     topPane.update();
   }
+
   public static void updateRight() {
     rightPane.update();
   }
+
   public static void updateLeft() {
     leftPane.update();
   }
+
   public static void updateCenter() {
     centerPane.update();
   }
+
   public static void updateAll() {
     updateTop();
     updateLeft();
@@ -399,10 +497,12 @@ public class Lib {
   public static void printInfo(String message) {
     System.out.println("[" + BLUE + "INFO" + RESET + "]     " + message);
   }
+
   public static void printErrorAndShow(String message, Exception e) {
     printError(message, e);
     showError(message);
   }
+
   public static void printError(String message, Exception e) {
     System.out.println("[" + RED + "ERROR" + RESET + "]    " + message);
 
@@ -420,9 +520,11 @@ public class Lib {
       }
     }
   }
+
   public static void printOk(String message) {
     System.out.println("[" + GREEN + " OK " + RESET + "]     " + GREEN + message + RESET);
   }
+
   public static void printExecute(String message) {
     System.out.println("[" + YELLOW + "EXEC" + RESET + "]     " + message);
   }
@@ -431,30 +533,34 @@ public class Lib {
     inputPopup.setMessage(message);
     return inputPopup.showAndWait();
   }
+
   public static void showError(String message) {
     errorPopup.setMessage(message);
     errorPopup.show();
   }
+
   public static CompletableFuture<Map.Entry<String, PopupStage.OPTION>> showWarning(String message) {
     warningPopup.setMessage(message);
     return warningPopup.showAndWait();
   }
+
   public static CompletableFuture<String> showPasswordStage(String comand) {
     passwordStage.setCommand(comand);
-      try {
-          return passwordStage.showAndWait().handle((password, e) -> {
-            if (e != null) return "";
-            return password;
-          });
-      } catch (Exception e) {
-          return null;
-      }
+    try {
+      return passwordStage.showAndWait().handle((password, e) -> {
+        if (e != null)
+          return "";
+        return password;
+      });
+    } catch (Exception e) {
+      return null;
+    }
   }
+
   public static String stringToPath(String text) {
-    String path = text.charAt(0) == '~' ? HOME+text.substring(1) :
-                  text.startsWith("trash") ? TRASH_PATH+"files"+text.substring(5) :
-                  text;
-    return path.endsWith("/") ? path : path+"/";
+    String path = text.charAt(0) == '~' ? HOME + text.substring(1)
+        : text.startsWith("trash") ? TRASH_PATH + "files" + text.substring(5) : text;
+    return path.endsWith("/") ? path : path + "/";
   }
 
   // Acciones
@@ -471,6 +577,7 @@ public class Lib {
       updateRight();
     }
   }
+
   public static void forward() {
     if (!forwardBuffer.isEmpty()) {
       printExecute("Volviendo");
@@ -484,6 +591,7 @@ public class Lib {
       updateRight();
     }
   }
+
   public static void parent() {
     if (!path.equals("/")) {
       printExecute("Yendo al parent");
@@ -531,6 +639,7 @@ public class Lib {
       updateRight();
     }
   }
+
   public static void createDirectory(File directory) {
     if (!path.startsWith(TRASH_PATH + "files")) {
       try {
@@ -546,9 +655,11 @@ public class Lib {
       updateRight();
     }
   }
+
   public static void createLink(File file) {
     showInput("Nombre del enlace").thenAccept(entry -> {
-      if (entry.getValue() != PopupStage.OPTION.DONE) return;
+      if (entry.getValue() != PopupStage.OPTION.DONE)
+        return;
 
       try {
         String linkName = entry.getKey();
@@ -585,47 +696,53 @@ public class Lib {
       }
     }
   }
+
   public static void changePermission(String value, Runnable afterChange) {
     CenterNode selectedItem = centerPane.selectionModel.getSelectedItem();
-    if (selectedItem == null) return;
+    if (selectedItem == null)
+      return;
     FileProperties properties = selectedItem.getFileProperties();
 
     if (properties.getOwner().equals(USER)) {
       try {
-        printExecute("Cambiando permisos de '"+YELLOW+properties.getOctetPermissions()+RESET+"' a '"+YELLOW+value+RESET+"'");
+        printExecute("Cambiando permisos de '" + YELLOW + properties.getOctetPermissions() + RESET + "' a '" + YELLOW
+            + value + RESET + "'");
         new ProcessBuilder("chmod", value, properties.getAbsolutePath())
-                .start()
-                .waitFor();
+            .start()
+            .waitFor();
         afterChange.run();
       } catch (Exception e) {
-        printErrorAndShow("Error al cambiar permisos de '"+selectedItem.getName()+"'", e);
+        printErrorAndShow("Error al cambiar permisos de '" + selectedItem.getName() + "'", e);
       }
     } else {
-      CompletableFuture<String> waitFuture = showPasswordStage("sudo chmod "+value+" "+properties.getName());
-      if (waitFuture != null) waitFuture.thenAccept(password -> {
-        try {
-          printExecute("Cambiando permisos de '"+YELLOW+properties.getOctetPermissions()+RESET+"' a '"+YELLOW+value+RESET+"'");
-          if (password.isEmpty()) return;
-          password += "\n";
+      CompletableFuture<String> waitFuture = showPasswordStage("sudo chmod " + value + " " + properties.getName());
+      if (waitFuture != null)
+        waitFuture.thenAccept(password -> {
+          try {
+            printExecute("Cambiando permisos de '" + YELLOW + properties.getOctetPermissions() + RESET + "' a '"
+                + YELLOW + value + RESET + "'");
+            if (password.isEmpty())
+              return;
+            password += "\n";
 
-          Process process = new ProcessBuilder("sudo", "-k", "-S", "chmod", value, properties.getAbsolutePath())
-                  .start();
+            Process process = new ProcessBuilder("sudo", "-k", "-S", "chmod", value, properties.getAbsolutePath())
+                .start();
 
-          try (OutputStream output = process.getOutputStream()) {
-            output.write(password.getBytes());
-            output.flush();
+            try (OutputStream output = process.getOutputStream()) {
+              output.write(password.getBytes());
+              output.flush();
+            }
+
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+              printErrorAndShow("Contraseña incorrecta", null);
+              return;
+            }
+            afterChange.run();
+          } catch (Exception e) {
+            printErrorAndShow("Error al cambiar permisos de '" + selectedItem.getName() + "'", e);
           }
-
-          int exitCode = process.waitFor();
-          if (exitCode != 0) {
-            printErrorAndShow("Contraseña incorrecta", null);
-            return;
-          }
-          afterChange.run();
-        } catch (Exception e) {
-          printErrorAndShow("Error al cambiar permisos de '"+selectedItem.getName()+"'", e);
-        }
-      });
+        });
     }
   }
 
@@ -643,6 +760,7 @@ public class Lib {
       }
     }
   }
+
   public static void copyFilesToClipBoard(File[] files, boolean isCut) {
     if (files != null) {
       Lib.isCut = isCut;
@@ -695,6 +813,7 @@ public class Lib {
       centerPane.select(new ArrayList<>(Arrays.stream(files).map(f -> f.getName()).toList()));
     }
   }
+
   public static File[] getClipboardFiles() {
     try {
       printExecute("Leyendo porpapeles");
@@ -715,6 +834,7 @@ public class Lib {
       return null;
     }
   }
+
   public static String getClipboard() {
     try {
       Process process = new ProcessBuilder("xclip", "-o", "-selection", "c").start();
@@ -773,6 +893,7 @@ public class Lib {
         file.delete();
     }
   }
+
   public static void restoreSelected() {
     if (centerPane.selectedItems != null && !centerPane.selectedItems.isEmpty()) {
       File[] files = new File[centerPane.selectedItems.size()];
@@ -818,6 +939,7 @@ public class Lib {
       removeFiles(files);
     }
   }
+
   private static void createTrashInfo(File[] files) {
     if (files != null) {
       for (File file : files) {
@@ -842,7 +964,7 @@ public class Lib {
   }
 
   public static void removeFiles(File[] files) {
-    if (files != null || files.length > 0) {
+    if (files != null && files.length > 0) {
 
       // Mensaje
       String message = "";
@@ -899,13 +1021,13 @@ public class Lib {
 
       if (file.getName().substring(file.getName().lastIndexOf('.')).equals(".zip")) {
         if (new ProcessBuilder("unzip", file.getAbsolutePath(), "-d", output.getAbsolutePath()).start()
-                .waitFor() != 0) {
-          printErrorAndShow("Error al descomprimir archvo "+file.getName(), null);
+            .waitFor() != 0) {
+          printErrorAndShow("Error al descomprimir archvo " + file.getName(), null);
         }
       } else {
         if (new ProcessBuilder("tar", "-xzf", file.getAbsolutePath(), "-C", output.getAbsolutePath()).start()
-                .waitFor() != 0) {
-          printErrorAndShow("Error al descomprimir archvo "+file.getName(), null);
+            .waitFor() != 0) {
+          printErrorAndShow("Error al descomprimir archvo " + file.getName(), null);
         }
       }
 
@@ -916,6 +1038,7 @@ public class Lib {
       printErrorAndShow("Error al descomprimir archivo '" + file.getName() + "'", e);
     }
   }
+
   public static void compress(File[] files) {
     String[] paths = new String[files.length];
     for (int i = 0; i < files.length; i++) {
@@ -923,7 +1046,8 @@ public class Lib {
     }
 
     showInput("Nombre del archivo comprimido:").thenAccept(entry -> {
-      if (entry.getValue() != PopupStage.OPTION.DONE) return;
+      if (entry.getValue() != PopupStage.OPTION.DONE)
+        return;
 
       try {
         String name = entry.getKey();
@@ -958,25 +1082,28 @@ public class Lib {
       printErrorAndShow("Error al abrir la terminal '" + TERMINAL + "'", ex);
     }
   }
+
   public static void openWithAdmin() {
     CompletableFuture<String> waitFuture = showPasswordStage("sudo filefx");
-    if (waitFuture != null) waitFuture.thenAccept(password -> {
-      if (password.isEmpty()) return;
-      password += "\n";
+    if (waitFuture != null)
+      waitFuture.thenAccept(password -> {
+        if (password.isEmpty())
+          return;
+        password += "\n";
 
-      try {
-        Process process = new ProcessBuilder("sudo", "-k", "-S", "filefx").start();
+        try {
+          Process process = new ProcessBuilder("sudo", "-k", "-S", "filefx").start();
 
-        try (OutputStream output = process.getOutputStream()) {
-          output.write(password.getBytes());
-          output.flush();
+          try (OutputStream output = process.getOutputStream()) {
+            output.write(password.getBytes());
+            output.flush();
+          }
+
+          if (process.waitFor() != 0)
+            printErrorAndShow("Contraseña incorrecta", null);
+        } catch (Exception e) {
+          printErrorAndShow("Error al abrir como administrador", e);
         }
-
-        if (process.waitFor() != 0)
-          printErrorAndShow("Contraseña incorrecta", null);
-      } catch (Exception e) {
-        printErrorAndShow("Error al abrir como administrador", e);
-      }
-    });
+      });
   }
 }
