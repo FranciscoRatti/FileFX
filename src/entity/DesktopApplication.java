@@ -11,134 +11,153 @@ import java.io.IOException;
 import static main.Lib.*;
 
 public class DesktopApplication {
-    private final File desktopFile;
-    private String exec;
-    private boolean hasParameter = false;
-    private String name;
-    private String[] mimeTypes;
-    private boolean isDisplay = true;
-    private String iconText;
-    private Image icon;
+  private final File desktopFile;
+  private String exec;
+  private boolean hasParameter = false;
+  private String name;
+  private String[] mimeTypes;
+  private boolean isDisplay = true;
+  private String iconText;
+  private Image icon;
 
-    public DesktopApplication(File desktopFile) {
-        this.desktopFile=desktopFile;
-        iconText = "";
+  public DesktopApplication(File desktopFile) {
+    this.desktopFile = desktopFile;
+    iconText = "";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(desktopFile))) {
-            String line;
+    try (BufferedReader reader = new BufferedReader(new FileReader(desktopFile))) {
+      String line;
 
-            boolean isNameFound = false;
-            do {
-                line = reader.readLine();
+      boolean isNameFound = false;
+      do {
+        line = reader.readLine();
 
-                if (line != null && !line.isEmpty()) {
-                    if (exec == null && line.startsWith("Exec")) {
-                        exec = line.substring(5);
-                        hasParameter = exec.contains("%f") || exec.contains("%F") || exec.contains("%u") || exec.contains("%U");
-                    }
-                    if (!isNameFound && line.startsWith("Name")) {
-                        if (line.charAt(4) == '[') {
-                            if (line.startsWith("es]", 5)) {
-                                name = line.substring(9);
-                                isNameFound = true;
-                            }
-                        } else if (name == null) {
-                            name = line.substring(5);
-                        }
-                    }
-                    if (mimeTypes == null && line.startsWith("MimeType")) {
-                        mimeTypes = line.substring(9).split(";");
-                    }
-                    if (line.startsWith("NoDisplay")) {
-                        isDisplay = !Boolean.parseBoolean(line.substring(10, 14));
-                    }
-                    if (iconText.isEmpty() && line.startsWith("Icon")) {
-                        iconText = line.substring(5);
-                    }
-                }
-            } while(line != null);
-        } catch (IOException e) {
-            printErrorAndShow("Error al leer archivo '"+desktopFile.getAbsolutePath()+"'", e);
+        if (line != null && !line.isEmpty()) {
+          if (exec == null && line.startsWith("Exec")) {
+            exec = line.substring(5);
+            hasParameter = exec.contains("%f") || exec.contains("%F") || exec.contains("%u") || exec.contains("%U");
+          }
+          if (!isNameFound && line.startsWith("Name")) {
+            if (line.charAt(4) == '[') {
+              if (line.startsWith("es]", 5)) {
+                name = line.substring(9);
+                isNameFound = true;
+              }
+            } else if (name == null) {
+              name = line.substring(5);
+            }
+          }
+          if (mimeTypes == null && line.startsWith("MimeType")) {
+            mimeTypes = line.substring(9).split(";");
+          }
+          if (line.startsWith("NoDisplay")) {
+            isDisplay = !Boolean.parseBoolean(line.substring(10, 14));
+          }
+          if (iconText.isEmpty() && line.startsWith("Icon")) {
+            iconText = line.substring(5);
+          }
         }
-
-        if (name == null) name = "";
+      } while (line != null);
+    } catch (IOException e) {
+      printErrorAndShow("Error al leer archivo '" + desktopFile.getAbsolutePath() + "'", e);
     }
 
-    public void openWith(CenterNode selectedItem) {
-        if (hasParameter) {
-            File file = selectedItem.getFileProperties();
-            String parameterPath = file.getAbsolutePath();
-            String parameterUrl = "file://"+file.getAbsolutePath();
+    if (name == null)
+      name = "";
+  }
 
-            String comand = exec;
-            comand = comand
-                    .replaceAll("%f", parameterPath)
-                    .replaceAll("%u", parameterUrl)
-                    .replaceAll("%F", parameterPath)
-                    .replaceAll("%U", parameterUrl);
+  public void openWith(CenterNode selectedItem) {
+    if (hasParameter) {
+      File file = selectedItem.getFileProperties();
+      String parameterPath = file.getAbsolutePath();
+      String parameterUrl = "file://" + file.getAbsolutePath();
 
+      String comand = exec;
+      comand = comand
+          .replaceAll("%f", parameterPath)
+          .replaceAll("%u", parameterUrl)
+          .replaceAll("%F", parameterPath)
+          .replaceAll("%U", parameterUrl);
+
+      try {
+        printExecute("Abriendo archivo '" + YELLOW + parameterPath + RESET + "' con " + YELLOW + getName() + RESET);
+        ProcessBuilder pb = new ProcessBuilder(comand.split("\\s+"));
+        pb.start();
+      } catch (Exception e) {
+        printErrorAndShow("Error al abrir ejecutando '" + comand + "'", e);
+      }
+    } else {
+      printErrorAndShow("El comando no recibe parametros", null);
+    }
+  }
+
+  public Image getIcon() {
+    if (icon == null) {
+      if (new File(iconText).exists()) {
+        icon = new Image("file://" + iconText);
+      } else {
+        try {
+          printExecute("Buscando icono de '" + YELLOW + name + RESET + "'");
+
+          Process process = new ProcessBuilder(
+              "python3", "-c",
+              """
+                  import gi, sys
+                  gi.require_version('Gtk', '3.0')
+                  from gi.repository import Gtk
+                  theme = Gtk.IconTheme.get_default()
+                  icon = theme.lookup_icon(sys.argv[1], int(24), 0)
+                  print(icon.get_filename() if icon else '')
+                  """,
+              iconText).start();
+
+          String iconPath = new String(process.getInputStream().readAllBytes()).strip();
+          if (iconPath.endsWith(".svg")) {
+            File png = new File(CONFIG_PATH + "tmp.png");
             try {
-                printExecute("Abriendo archivo '"+YELLOW+parameterPath+RESET+"' con "+YELLOW+getName()+RESET);
-                ProcessBuilder pb = new ProcessBuilder(comand.split("\\s+"));
-                pb.start();
+              Process parseSvg = new ProcessBuilder("rsvg-convert", "-w", "24", "-h", "24", "-o",
+                  png.getAbsolutePath(), iconPath).start();
+              parseSvg.waitFor();
+
+              icon = new Image("file://" + png.getAbsolutePath());
             } catch (Exception e) {
-                printErrorAndShow("Error al abrir ejecutando '"+comand+"'", e);
+              printErrorAndShow("Error al parsear " + RED + iconPath + RESET + " a .svg", e);
+              icon = new Image("file://" + ABSOLUTE_PATH + "notFound.png");
+            } finally {
+              png.delete();
             }
-        } else {
-            printErrorAndShow("El comando no recibe parametros", null);
+          } else if (!iconPath.isEmpty())
+            icon = new Image("file://" + iconPath);
+          else
+            icon = new Image("file://" + ABSOLUTE_PATH + "notFound.png");
+        } catch (IOException e) {
+          printErrorAndShow("Error al carga icono de " + name, e);
         }
+      }
     }
+    return icon;
+  }
 
-    public Image getIcon() {
-        if (icon == null) {
-            if (new File(iconText).exists()) {
-                icon = new Image("file://"+iconText);
-            } else {
-                try {
-                    printExecute("Buscando icono de '" + YELLOW + name + RESET + "'");
+  public File getDesktopFile() {
+    return desktopFile;
+  }
 
-                    Process process = new ProcessBuilder(
-                            "python3", "-c",
-                            """
-                                    import gi, sys
-                                    gi.require_version('Gtk', '3.0')
-                                    from gi.repository import Gtk
-                                    theme = Gtk.IconTheme.get_default()
-                                    icon = theme.lookup_icon(sys.argv[1], int(24), 0)
-                                    print(icon.get_filename() if icon else '')
-                                    """,
-                            iconText
-                    ).start();
+  public String getExec() {
+    return exec;
+  }
 
-                    String iconPath = new String(process.getInputStream().readAllBytes()).strip();
-                    if (iconPath.endsWith(".svg")) {
-                        File png = new File(CONFIG_PATH + "tmp.png");
-                        try {
-                            Process parseSvg = new ProcessBuilder("rsvg-convert", "-w", "24", "-h", "24", "-o",
-                                    png.getAbsolutePath(), iconPath).start();
-                            parseSvg.waitFor();
+  public boolean hasParameter() {
+    return hasParameter;
+  }
 
-                            icon = new Image("file://"+png.getAbsolutePath());
-                        } catch (Exception e) {
-                            printErrorAndShow("Error al parsear " + RED + iconPath + RESET + " a .svg", e);
-                            icon = new Image("file://" + ABSOLUTE_PATH + "notFound.png");
-                        } finally {
-                            png.delete();
-                        }
-                    } else if (!iconPath.isEmpty()) icon = new Image("file://" + iconPath);
-                    else icon = new Image("file://" + ABSOLUTE_PATH + "notFound.png");
-                } catch (IOException e) {
-                    printErrorAndShow("Error al carga icono de " + name, e);
-                }
-            }
-        }
-        return icon;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public File getDesktopFile() {return desktopFile;}
-    public String getExec() {return exec;}
-    public boolean hasParameter() {return hasParameter;}
-    public String getName() {return name;}
-    public String[] getMimeTypes() {return mimeTypes;}
-    public boolean isDisplay() {return isDisplay;}
+  public String[] getMimeTypes() {
+    return mimeTypes;
+  }
+
+  public boolean isDisplay() {
+    return isDisplay;
+  }
 }

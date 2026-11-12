@@ -18,112 +18,122 @@ import static main.Lib.*;
 import static panel.MainPane.*;
 
 public class TopPane extends HBox {
-    private static Button back;
-    private static Button forward;
-    private static Button parent;
-    private static TextField search;
-    private static Button clean;
-    private static Button reload;
+  private static Button back;
+  private static Button forward;
+  private static Button parent;
+  private static TextField search;
+  private static Button clean;
+  private static Button reload;
 
-    public enum BUTTONS {BACKWARD,FORWARD,PARENT,SEARCH,CLEAN,RELOAD}
+  public enum BUTTONS {
+    BACKWARD, FORWARD, PARENT, SEARCH, CLEAN, RELOAD
+  }
 
-    public TopPane() {
-        setId("TopPane");
+  public TopPane() {
+    setId("TopPane");
 
-        for (String[] button : TOP_BUTTONS) {
-            BUTTONS top_button = BUTTONS.valueOf(button[0]);
-            switch (top_button) {
-                case BACKWARD -> back = new Button(button[1], "Deshacer", "TopNode", e -> backward());
-                case FORWARD -> forward = new Button(button[1], "Rehacer", "TopNode", e -> forward());
-                case PARENT -> parent = new Button(button[1], "Ir arriba", "TopNode", e -> parent());
-                case SEARCH -> {
-                    search = new TextField();
-                    search.setId("Top_search");
-                    search.setFocusTraversable(false);
-                    search.setPrefColumnCount(200);
-                    search.focusedProperty().addListener((obs, before, now) -> {
-                        if (now) addFocused();
-                        else minusFocused();
-                    });
-                    search.setOnKeyPressed(e -> {
-                        KeyCode key = e.getCode();
+    for (String[] button : TOP_BUTTONS) {
+      BUTTONS top_button = BUTTONS.valueOf(button[0]);
+      switch (top_button) {
+        case BACKWARD -> back = new Button(button[1], "Deshacer", "TopNode", e -> backward());
+        case FORWARD -> forward = new Button(button[1], "Rehacer", "TopNode", e -> forward());
+        case PARENT -> parent = new Button(button[1], "Ir arriba", "TopNode", e -> parent());
+        case SEARCH -> {
+          search = new TextField();
+          search.setId("Top_search");
+          search.setFocusTraversable(false);
+          search.setPrefColumnCount(200);
+          search.focusedProperty().addListener((obs, before, now) -> {
+            if (now)
+              addFocused();
+            else
+              minusFocused();
+          });
+          search.setOnKeyPressed(e -> {
+            KeyCode key = e.getCode();
 
-                        if (key.equals(KeyCode.ENTER)) {
-                            String text = stringToPath(search.getText());
+            if (key.equals(KeyCode.ENTER)) {
+              String text = stringToPath(search.getText());
 
-                            if (!new File(text).exists()) {
-                                printErrorAndShow("El archivo o directorio "+text+" no existe", null);
-                            } else {
-                                path = text;
-                                printInfo("Actualizando path a '"+BLUE+path+RESET+"'");
+              if (!new File(text).exists()) {
+                printErrorAndShow("El archivo o directorio " + text + " no existe", null);
+              } else {
+                path = text;
+                printInfo("Actualizando path a '" + BLUE + path + RESET + "'");
 
-                                updateTop();
-                                updateCenter();
-                                if (!centerPane.items.isEmpty()) {
-                                    CenterNode first = centerPane.items.getFirst();
-                                    first.setSelected(true);
-                                }
-                                centerPane.requestFocus();
-                                updateRight();
-                            }
-                        }
-                    });
+                updateTop();
+                updateCenter();
+                if (!centerPane.items.isEmpty()) {
+                  CenterNode first = centerPane.items.getFirst();
+                  first.setSelected(true);
                 }
-                case CLEAN -> {
-                    clean = new Button(button[1], "Limpiar papelera", "TopNode", e -> restoreSelected());
-                    clean.setOnAction(e -> {
-                        showWarning("Todos los archivos de la papelera\nseran eliminados permanentemente").thenAccept(entry -> {
-                            if (entry.getValue() != PopupStage.OPTION.DONE) return;
-
-                            // Eliminar
-                            try {
-                                printExecute("Limpiando la papelera");
-                                new ProcessBuilder("rm", "-Rf", Lib.TRASH_PATH +"files", Lib.TRASH_PATH +"info").start().waitFor();
-                                new ProcessBuilder("mkdir", Lib.TRASH_PATH +"files", Lib.TRASH_PATH +"info").start().waitFor();
-                            } catch (Exception ex) {
-                                printErrorAndShow("Error al eliminar archivo", ex);
-                            }
-
-                            path = Lib.TRASH_PATH +"files/";
-
-                            updateTop();
-                            updateCenter();
-                            centerPane.selectFirst();
-                            updateRight();
-                        });
-                    });
-                }
-                case RELOAD -> reload = new Button(button[1], "Recargar", "TopNode", e -> updateAll());
+                centerPane.requestFocus();
+                updateRight();
+                updateBottom();
+              }
             }
+          });
         }
+        case CLEAN -> {
+          clean = new Button(button[1], "Limpiar papelera", "TopNode", e -> restoreSelected());
+          clean.setOnAction(e -> {
+            showWarning("Todos los archivos de la papelera\nseran eliminados permanentemente").thenAccept(entry -> {
+              if (entry.getValue() != PopupStage.OPTION.DONE)
+                return;
 
-        update();
+              // Eliminar
+              try {
+                printExecute("Limpiando la papelera");
+                new ProcessBuilder("rm", "-Rf", Lib.TRASH_PATH + "files", Lib.TRASH_PATH + "info").start().waitFor();
+                new ProcessBuilder("mkdir", Lib.TRASH_PATH + "files", Lib.TRASH_PATH + "info").start().waitFor();
+              } catch (Exception ex) {
+                printErrorAndShow("Error al eliminar archivo", ex);
+              }
+
+              path = Lib.TRASH_PATH + "files/";
+
+              updateCenter();
+              centerPane.selectFirst();
+              updateRight();
+            });
+          });
+        }
+        case RELOAD -> reload = new Button(button[1], "Recargar", "TopNode", e -> updateAll());
+      }
     }
 
-    public void update() {
-        printInfo("Actualizando panel superior");
+    update();
+  }
 
-        ObservableList<Node> children = getChildren();
-        children.clear();
+  public void update() {
+    printInfo("Actualizando panel superior");
 
-        for (String[] button : TOP_BUTTONS) {
-            BUTTONS top_button = BUTTONS.valueOf(button[0]);
-            switch (top_button) {
-                case BACKWARD    -> children.add(back);
-                case FORWARD -> children.add(forward);
-                case PARENT  -> children.add(parent);
-                case SEARCH  -> {
-                    children.add(search);
-                    search.setText(
-                            path.startsWith(Lib.TRASH_PATH +"files") ? "trash"+path.substring(HOME.length()+25) :
-                            path.startsWith(HOME) ? "~"+ (path.length() <= HOME.length() ? "/" : path.substring(HOME.length())) :
-                            path);
-                }
-                case CLEAN -> {if (path.startsWith(Lib.TRASH_PATH +"files")) children.add(clean);}
-                case RELOAD  -> children.add(reload);
-            }
+    ObservableList<Node> children = getChildren();
+    children.clear();
+
+    for (String[] button : TOP_BUTTONS) {
+      BUTTONS top_button = BUTTONS.valueOf(button[0]);
+      switch (top_button) {
+        case BACKWARD -> children.add(back);
+        case FORWARD -> children.add(forward);
+        case PARENT -> children.add(parent);
+        case SEARCH -> {
+          children.add(search);
+          search.setText(
+              path.startsWith(Lib.TRASH_PATH + "files") ? "trash" + path.substring(HOME.length() + 25)
+                  : path.startsWith(HOME) ? "~" + (path.length() <= HOME.length() ? "/" : path.substring(HOME.length()))
+                      : path);
         }
+        case CLEAN -> {
+          if (path.startsWith(Lib.TRASH_PATH + "files"))
+            children.add(clean);
+        }
+        case RELOAD -> children.add(reload);
+      }
     }
+  }
 
-    public static void focusSearch() {search.requestFocus();}
+  public static void focusSearch() {
+    search.requestFocus();
+  }
 }

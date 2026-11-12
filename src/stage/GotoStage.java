@@ -15,83 +15,88 @@ import static panel.MainPane.centerPane;
 import static panel.MainPane.leftPane;
 
 public class GotoStage extends Stage<Void> {
-    private final String[] placesIcons;
+  private final String[] placesIcons;
 
-    public GotoStage() {
-        super("Go To");
+  public GotoStage() {
+    super("Go To");
 
-        if (SHOW_PLACES) {
-            placesIcons = new String[leftPane.placesNodes.length];
-            for (int i = 0; i < leftPane.placesNodes.length; i++) {
-                placesIcons[i] = leftPane.placesNodes[i].getIcon();
-            }
-        } else {
-            placesIcons = new String[0];
-        }
-
-        if (GOTO_PLACES == null) setVisible(false);
-        else {
-            FlowPane pane = new FlowPane();
-            ObservableList<Node> childrenPane = pane.getChildren();
-            pane.setId("GotoStage_pane");
-            getChildren().add(pane);
-
-            KeyCombination[] gotoKeys = new KeyCombination[GOTO_PLACES.length];
-
-            for (int i = 0; i < GOTO_PLACES.length; i++) {
-                gotoKeys[i] = KeyCodeCombination.valueOf(GOTO_PLACES[i][1]);
-                childrenPane.add(new GotoNode(GOTO_PLACES[i][0], gotoKeys[i]));
-            }
-
-            setOnKeyPressed(e -> {
-                KeyCombination key = Scene.getKeyCombination(e);
-                if (key == null) return;
-
-                for (int i = 0; i < gotoKeys.length; i++) {
-                    if (key.equals(gotoKeys[i])) {
-                        forwardBuffer.clear();
-                        backBuffer.add(FileFX.path);
-                        path = stringToPath(GOTO_PLACES[i][0]);
-
-                        printExecute("Yendo a '"+BLUE+path+RESET+"'");
-
-                        updateTop();
-                        updateCenter();
-                        centerPane.selectFirst();
-                        updateRight();
-
-                        close();
-                        return;
-                    }
-                }
-
-                for (int i = 0; i < leftPane.placesNodes.length; i++) {
-                    if (key.equals(KeyCombination.valueOf(String.valueOf(i+1)))) {
-                        leftPane.placesNodes[i].open();
-
-                        close();
-                        return;
-                    }
-                }
-            });
-        }
+    if (SHOW_PLACES) {
+      placesIcons = new String[leftPane.placesNodes.length];
+      for (int i = 0; i < leftPane.placesNodes.length; i++) {
+        placesIcons[i] = leftPane.placesNodes[i].getIcon();
+      }
+    } else {
+      placesIcons = new String[0];
     }
 
-    public void afterShow() {
-        requestFocus();
+    if (GOTO_PLACES == null)
+      setVisible(false);
+    else {
+      FlowPane pane = new FlowPane();
+      ObservableList<Node> childrenPane = pane.getChildren();
+      pane.setId("GotoStage_pane");
+      getChildren().add(pane);
 
-        if (!SHOW_PLACES) return;
+      KeyCombination[] gotoKeys = new KeyCombination[GOTO_PLACES.length];
+
+      for (int i = 0; i < GOTO_PLACES.length; i++) {
+        gotoKeys[i] = KeyCodeCombination.valueOf(GOTO_PLACES[i][1]);
+        childrenPane.add(new GotoNode(GOTO_PLACES[i][0], gotoKeys[i]));
+      }
+
+      setOnKeyPressed(e -> {
+        KeyCombination key = Scene.getKeyCombination(e);
+        if (key == null)
+          return;
+
+        for (int i = 0; i < gotoKeys.length; i++) {
+          if (key.equals(gotoKeys[i])) {
+            forwardBuffer.clear();
+            backBuffer.add(FileFX.path);
+            path = stringToPath(GOTO_PLACES[i][0]);
+
+            printExecute("Yendo a '" + BLUE + path + RESET + "'");
+
+            updateTop();
+            updateCenter();
+            centerPane.selectFirst();
+            updateRight();
+            updateBottom();
+
+            close();
+            return;
+          }
+        }
+
         for (int i = 0; i < leftPane.placesNodes.length; i++) {
-            leftPane.placesNodes[i].setIcon(String.valueOf(i+1));
-            leftPane.placesNodes[i].setIconId("GotoNode_key");
-        }
-    }
+          if (key.equals(KeyCombination.valueOf(String.valueOf(i + 1)))) {
+            leftPane.placesNodes[i].open();
 
-    public void afterClose() {
-        if (!SHOW_PLACES) return;
-        for (int i = 0; i < leftPane.placesNodes.length && i < placesIcons.length; i++) {
-            leftPane.placesNodes[i].setIcon(placesIcons[i]);
-            leftPane.placesNodes[i].setIconId("LeftNode_icon");
+            close();
+            return;
+          }
         }
+      });
     }
+  }
+
+  public void afterShow() {
+    requestFocus();
+
+    if (!SHOW_PLACES)
+      return;
+    for (int i = 0; i < leftPane.placesNodes.length; i++) {
+      leftPane.placesNodes[i].setIcon(String.valueOf(i + 1));
+      leftPane.placesNodes[i].setIconId("GotoNode_key");
+    }
+  }
+
+  public void afterClose() {
+    if (!SHOW_PLACES)
+      return;
+    for (int i = 0; i < leftPane.placesNodes.length && i < placesIcons.length; i++) {
+      leftPane.placesNodes[i].setIcon(placesIcons[i]);
+      leftPane.placesNodes[i].setIconId("LeftNode_icon");
+    }
+  }
 }

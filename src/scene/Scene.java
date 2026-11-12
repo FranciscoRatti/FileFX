@@ -19,120 +19,179 @@ import static panel.MainPane.*;
 import static panel.RightPane.changeShow;
 
 public class Scene extends javafx.scene.Scene {
-    public Scene() {
-        super(mainPane, Double.parseDouble(initValues.getProperty("width")), Double.parseDouble(initValues.getProperty("height")));
+  public Scene() {
+    super(mainPane, Double.parseDouble(initValues.getProperty("width")),
+        Double.parseDouble(initValues.getProperty("height")));
 
-        printInfo("Cargando hoja de estilos");
-        getStylesheets().add("file://" + THEME);
+    printInfo("Cargando hoja de estilos");
+    getStylesheets().add("file://" + THEME);
 
-        updateKeyBinding();
-    }
+    updateKeyBinding();
+  }
 
-    private KeyCombination key;
-    public void updateKeyBinding() {
-        addEventFilter(KeyEvent.KEY_PRESSED, e -> {
-            key = getKeyCombination(e);
-            if (key == null) return;
+  private KeyCombination key;
 
-            if (!MainPane.isAnyFocus() && !MainPane.isAnyShowing()) {
-                e.consume();
-                try {
-                    if (setKeyBindAction(CUT, () -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), true))) return;
-                    if (setKeyBindAction(COPY, () -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), false))) return;
-                    if (setKeyBindAction(PASTE, () -> pasteFiles(getClipboardFiles()))) return;
-                    if (setKeyBindAction(REMOVE, () -> removeFiles(parseCenterNodesToFiles(centerPane.selectedItems)))) return;
-                    if (setKeyBindAction(FileFX.TRASH, () -> trashFiles(parseCenterNodesToFiles(centerPane.selectedItems)))) return;
-                    if (setKeyBindAction(RENAME, () -> RightPane.focusName())) return;
+  public void updateKeyBinding() {
+    addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+      key = getKeyCombination(e);
+      if (key == null)
+        return;
 
-                    if (setKeyBindAction(UP, () -> centerPane.moveCursor(false, -1))) return;
-                    if (setKeyBindAction(OPEN, () -> centerPane.openSelected())) return;
-                    if (setKeyBindAction(DOWN, () -> centerPane.moveCursor(false, 1))) return;
-                    if (setKeyBindAction(PARENT, () -> parent())) return;
-                    if (setKeyBindAction(UP_STEP, () -> centerPane.moveCursor(false, -3))) return;
-                    if (setKeyBindAction(DOWN_STEP, () -> centerPane.moveCursor(false, 3))) return;
-                    if (setKeyBindAction(FIRST, () -> centerPane.moveCursor(false, -centerPane.selectionModel.getSelectedIndex()))) return;
-                    if (setKeyBindAction(LAST, () -> centerPane.moveCursor(false, centerPane.items.size()-1 - centerPane.selectionModel.getSelectedIndex()))) return;
-                    if (setKeyBindAction(SCROLL_UP, () -> centerPane.scrollUp())) return;
-                    if (setKeyBindAction(SCROLL_DOWN, () -> centerPane.scrollDown())) return;
-
-                    if (setKeyBindAction(SELECT_UP, () -> centerPane.moveCursor(true, -1))) return;
-                    if (setKeyBindAction(SELECT_DOWN, () -> centerPane.moveCursor(true, 1))) return;
-                    if (setKeyBindAction(SELECT_UP_STEP, () -> centerPane.moveCursor(true, -5))) return;
-                    if (setKeyBindAction(SELECT_DOWN_STEP, () -> centerPane.moveCursor(true, 5))) return;
-                    if (setKeyBindAction(SELECT_FIRST, () -> centerPane.moveCursor(true, -centerPane.selectionModel.getSelectedIndex()))) return;
-                    if (setKeyBindAction(SELECT_LAST, () -> centerPane.moveCursor(true, centerPane.items.size()-1 - centerPane.selectionModel.getSelectedIndex()))) return;
-                    if (setKeyBindAction(DESELECT_ALL, () ->{
-                        centerPane.getSelectionModel().clearSelection();
-                        centerPane.selectThis();
-                        updateRight();
-                    })) return;
-
-                    if (setKeyBindAction(GOTO, () -> gotoStage.show())) return;
-                    if (setKeyBindAction(BACKWARD, () -> backward())) return;
-                    if (setKeyBindAction(FORWARD, () -> forward())) return;
-
-                    if (setKeyBindAction(SHOW_MENU, () -> centerPane.showMenu())) return;
-                    if (setKeyBindAction(SHOW_MENU_CREATE, () -> centerPane.showMenuCreate())) return;
-                    if (setKeyBindAction(CHANGE_SHOW_RIGHT_PANE, () -> changeShow())) return;
-                    if (setKeyBindAction(CHANGE_SHOW_HIDDEN, () -> {
-                        SHOW_HIDDEN = !SHOW_HIDDEN;
-                        updateCenter();
-                        centerPane.selectFirst();
-                    })) return;
-                    if (setKeyBindAction(CHANGE_PERMISSIONS, () -> permissionsStage.show())) return;
-                    if (setKeyBindAction(UPDATE_ALL, () -> updateAll())) return;
-
-                    if (setKeyBindAction(FOCUS_PATH, () -> Platform.runLater(() -> TopPane.focusSearch()))) return;
-                    if (setKeyBindAction(FOCUS_FILTER, () -> Platform.runLater(() -> BottomPane.focusFilter()))) return;
-                    if (setKeyBindAction(FOCUS_INSIDE, () -> Platform.runLater(() -> RightPane.focusInside()))) return;
-                    if (setKeyBindAction(SAVE_INSIDE, () -> RightPane.saveInside())) return;
-
-                    setKeyBindAction(OPEN_SHELL, () -> openShell());
-                } catch (IllegalArgumentException ignored) {}
-            } else if (isAnyFocus()) {
-                try {
-                    setKeyBindAction(CLOSE, () -> centerPane.requestFocus());
-                } catch (IllegalArgumentException ignored) {}
-            } else {
-                try {
-                    setKeyBindAction(CLOSE, () -> {
-                        if (passwordStage.isShowing()) passwordStage.close();
-                        else {
-                            if (infoPopup.isShowing()) infoPopup.close();
-                            if (inputPopup.isShowing()) inputPopup.close();
-                            if (errorPopup.isShowing()) errorPopup.close();
-                            if (warningPopup.isShowing()) warningPopup.close();
-                            if (othersApplicationsStage.isShowing()) othersApplicationsStage.close();
-                            if (permissionsStage.isShowing()) permissionsStage.close();
-                            if (gotoStage.isShowing()) gotoStage.close();
-                            for (PartitionStage partitionStage : leftPane.partitionStages)
-                                if (partitionStage.isShowing()) partitionStage.close();
-                        }
-                    });
-                } catch (IllegalArgumentException ignored) {}
-            }
-        });
-    }
-
-    public boolean setKeyBindAction(KeyCombination[] keyCombinations, Runnable action) {
-        for (KeyCombination keyCombination : keyCombinations) {
-            if (keyCombination.equals(key)) {
-                action.run();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static KeyCombination getKeyCombination(KeyEvent e) {
+      if (!MainPane.isAnyFocus() && !MainPane.isAnyShowing()) {
+        e.consume();
         try {
-            KeyCode keyCode = e.getCode();
-            return e.isControlDown() ? new KeyCodeCombination(keyCode, KeyCombination.CONTROL_DOWN) :
-                    e.isShiftDown() ? new KeyCodeCombination(keyCode, KeyCombination.SHIFT_DOWN) :
-                    e.isAltDown() ? new KeyCodeCombination(keyCode, KeyCombination.ALT_DOWN) :
-                    e.isMetaDown() ? new KeyCodeCombination(keyCode, KeyCombination.META_DOWN) :
-                    e.isShortcutDown() ? new KeyCodeCombination(keyCode, KeyCombination.SHORTCUT_DOWN) :
-                    new KeyCodeCombination(keyCode);
-        } catch (IllegalArgumentException ignored) {return null;}
+          if (setKeyBindAction(CUT,
+              () -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), true)))
+            return;
+          if (setKeyBindAction(COPY,
+              () -> copyFilesToClipBoard(parseCenterNodesToFiles(centerPane.selectedItems), false)))
+            return;
+          if (setKeyBindAction(PASTE, () -> pasteFiles(getClipboardFiles())))
+            return;
+          if (setKeyBindAction(REMOVE, () -> removeFiles(parseCenterNodesToFiles(centerPane.selectedItems))))
+            return;
+          if (setKeyBindAction(FileFX.TRASH, () -> trashFiles(parseCenterNodesToFiles(centerPane.selectedItems))))
+            return;
+          if (setKeyBindAction(RENAME, () -> RightPane.focusName()))
+            return;
+
+          if (setKeyBindAction(UP, () -> centerPane.moveCursor(false, -1)))
+            return;
+          if (setKeyBindAction(OPEN, () -> centerPane.openSelected()))
+            return;
+          if (setKeyBindAction(DOWN, () -> centerPane.moveCursor(false, 1)))
+            return;
+          if (setKeyBindAction(PARENT, () -> parent()))
+            return;
+          if (setKeyBindAction(UP_STEP, () -> centerPane.moveCursor(false, -3)))
+            return;
+          if (setKeyBindAction(DOWN_STEP, () -> centerPane.moveCursor(false, 3)))
+            return;
+          if (setKeyBindAction(FIRST,
+              () -> centerPane.moveCursor(false, -centerPane.selectionModel.getSelectedIndex())))
+            return;
+          if (setKeyBindAction(LAST, () -> centerPane.moveCursor(false,
+              centerPane.items.size() - 1 - centerPane.selectionModel.getSelectedIndex())))
+            return;
+          if (setKeyBindAction(SCROLL_UP, () -> centerPane.scrollUp()))
+            return;
+          if (setKeyBindAction(SCROLL_DOWN, () -> centerPane.scrollDown()))
+            return;
+
+          if (setKeyBindAction(SELECT_UP, () -> centerPane.moveCursor(true, -1)))
+            return;
+          if (setKeyBindAction(SELECT_DOWN, () -> centerPane.moveCursor(true, 1)))
+            return;
+          if (setKeyBindAction(SELECT_UP_STEP, () -> centerPane.moveCursor(true, -5)))
+            return;
+          if (setKeyBindAction(SELECT_DOWN_STEP, () -> centerPane.moveCursor(true, 5)))
+            return;
+          if (setKeyBindAction(SELECT_FIRST,
+              () -> centerPane.moveCursor(true, -centerPane.selectionModel.getSelectedIndex())))
+            return;
+          if (setKeyBindAction(SELECT_LAST, () -> centerPane.moveCursor(true,
+              centerPane.items.size() - 1 - centerPane.selectionModel.getSelectedIndex())))
+            return;
+          if (setKeyBindAction(DESELECT_ALL, () -> {
+            centerPane.getSelectionModel().clearSelection();
+            centerPane.selectThis();
+            updateRight();
+          }))
+            return;
+
+          if (setKeyBindAction(GOTO, () -> gotoStage.show()))
+            return;
+          if (setKeyBindAction(BACKWARD, () -> backward()))
+            return;
+          if (setKeyBindAction(FORWARD, () -> forward()))
+            return;
+
+          if (setKeyBindAction(SHOW_MENU, () -> centerPane.showMenu()))
+            return;
+          if (setKeyBindAction(SHOW_MENU_CREATE, () -> centerPane.showMenuCreate()))
+            return;
+          if (setKeyBindAction(CHANGE_SHOW_RIGHT_PANE, () -> changeShow()))
+            return;
+          if (setKeyBindAction(CHANGE_SHOW_HIDDEN, () -> {
+            SHOW_HIDDEN = !SHOW_HIDDEN;
+            updateCenter();
+            centerPane.selectFirst();
+          }))
+            return;
+          if (setKeyBindAction(CHANGE_PERMISSIONS, () -> permissionsStage.show()))
+            return;
+          if (setKeyBindAction(UPDATE_ALL, () -> updateAll()))
+            return;
+
+          if (setKeyBindAction(FOCUS_PATH, () -> Platform.runLater(() -> TopPane.focusSearch())))
+            return;
+          if (setKeyBindAction(FOCUS_FILTER, () -> Platform.runLater(() -> BottomPane.focusFilter())))
+            return;
+          if (setKeyBindAction(FOCUS_INSIDE, () -> Platform.runLater(() -> RightPane.focusInside())))
+            return;
+          if (setKeyBindAction(SAVE_INSIDE, () -> RightPane.saveInside()))
+            return;
+
+          setKeyBindAction(OPEN_SHELL, () -> openShell());
+        } catch (IllegalArgumentException ignored) {
+        }
+      } else if (isAnyFocus()) {
+        try {
+          setKeyBindAction(CLOSE, () -> centerPane.requestFocus());
+        } catch (IllegalArgumentException ignored) {
+        }
+      } else {
+        try {
+          setKeyBindAction(CLOSE, () -> {
+            if (passwordStage.isShowing())
+              passwordStage.close();
+            else {
+              if (infoPopup.isShowing())
+                infoPopup.close();
+              if (inputPopup.isShowing())
+                inputPopup.close();
+              if (errorPopup.isShowing())
+                errorPopup.close();
+              if (warningPopup.isShowing())
+                warningPopup.close();
+              if (othersApplicationsStage.isShowing())
+                othersApplicationsStage.close();
+              if (permissionsStage.isShowing())
+                permissionsStage.close();
+              if (gotoStage.isShowing())
+                gotoStage.close();
+              for (PartitionStage partitionStage : leftPane.partitionStages)
+                if (partitionStage.isShowing())
+                  partitionStage.close();
+            }
+          });
+        } catch (IllegalArgumentException ignored) {
+        }
+      }
+    });
+  }
+
+  public boolean setKeyBindAction(KeyCombination[] keyCombinations, Runnable action) {
+    for (KeyCombination keyCombination : keyCombinations) {
+      if (keyCombination.equals(key)) {
+        action.run();
+        return true;
+      }
     }
+    return false;
+  }
+
+  public static KeyCombination getKeyCombination(KeyEvent e) {
+    try {
+      KeyCode keyCode = e.getCode();
+      return e.isControlDown() ? new KeyCodeCombination(keyCode, KeyCombination.CONTROL_DOWN)
+          : e.isShiftDown() ? new KeyCodeCombination(keyCode, KeyCombination.SHIFT_DOWN)
+              : e.isAltDown() ? new KeyCodeCombination(keyCode, KeyCombination.ALT_DOWN)
+                  : e.isMetaDown() ? new KeyCodeCombination(keyCode, KeyCombination.META_DOWN)
+                      : e.isShortcutDown() ? new KeyCodeCombination(keyCode, KeyCombination.SHORTCUT_DOWN)
+                          : new KeyCodeCombination(keyCode);
+    } catch (IllegalArgumentException ignored) {
+      return null;
+    }
+  }
 }

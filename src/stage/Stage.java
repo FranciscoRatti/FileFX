@@ -11,54 +11,65 @@ import java.util.concurrent.CompletableFuture;
 import static main.FileFX.mainPane;
 import static panel.MainPane.*;
 
-public abstract class Stage <T> extends StackPane {
-    private final Label titleLabel;
-    private boolean isShowing = false;
-    private CompletableFuture<T> waitFuture;
+public abstract class Stage<T> extends StackPane {
+  private final Label titleLabel;
+  private boolean isShowing = false;
+  private CompletableFuture<T> waitFuture;
 
-    public Stage(String title) {
-        setId("Stage_pane");
-        setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+  public Stage(String title) {
+    setId("Stage_pane");
+    setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
-        titleLabel = new Label(title);
-        titleLabel.setId("Stage_title");
-        StackPane.setAlignment(titleLabel, Pos.TOP_CENTER);
-        getChildren().add(titleLabel);
-    }
+    titleLabel = new Label(title);
+    titleLabel.setId("Stage_title");
+    StackPane.setAlignment(titleLabel, Pos.TOP_CENTER);
+    getChildren().add(titleLabel);
+  }
 
-    protected void setTitleId(String id) {
-        titleLabel.setId(id);
-    }
+  protected void setTitleId(String id) {
+    titleLabel.setId(id);
+  }
 
-    public final CompletableFuture<T> showAndWait() {
-        show(false);
-        waitFuture = new CompletableFuture<>();
-        return waitFuture;
-    }
-    protected final CompletableFuture<T> getCompletable() {return waitFuture;}
+  public final CompletableFuture<T> showAndWait() {
+    show(false);
+    waitFuture = new CompletableFuture<>();
+    return waitFuture;
+  }
 
-    private void show(boolean closeAll) {
-        centerPane.hideAll();
-        if (closeAll) MainPane.closeAll();
+  protected final CompletableFuture<T> getCompletable() {
+    return waitFuture;
+  }
 
-        isShowing = true;
-        addShowing();
-        mainPane.getChildren().add(this);
+  private void show(boolean closeAll) {
+    centerPane.hideAll();
+    if (closeAll)
+      MainPane.closeAll();
 
-        afterShow();
-        titleLabel.toFront();
-    }
-    public final void show() {show(true);}
-    public abstract void afterShow();
+    isShowing = true;
+    addShowing();
+    mainPane.getChildren().add(this);
 
-    public final void close() {
-        isShowing = false;
-        minusShowing();
-        mainPane.getChildren().remove(this);
+    afterShow();
+    titleLabel.toFront();
+  }
 
-        afterClose();
-    }
-    public abstract void afterClose();
+  public final void show() {
+    show(true);
+  }
 
-    public final boolean isShowing() {return isShowing;}
+  public abstract void afterShow();
+
+  public final void close() {
+    isShowing = false;
+    minusShowing();
+    mainPane.getChildren().remove(this);
+
+    afterClose();
+  }
+
+  public abstract void afterClose();
+
+  public final boolean isShowing() {
+    return isShowing;
+  }
 }

@@ -17,120 +17,122 @@ import static main.Lib.*;
 import static panel.MainPane.*;
 
 public class BottomPane extends HBox {
-    private static TextField filter;
-    private static Button[] orderButtons;
+  public static ORDER ACTUAL_ORDER = ORDER.NAME;
+  private static TextField filter;
+  private static Button[] orderButtons;
 
-    public BottomPane() {
-        setId("BottomPane");
-        ObservableList<Node> children = getChildren();
+  public BottomPane() {
+    setId("BottomPane");
+    ObservableList<Node> children = getChildren();
 
-        for (String button : BOTTOM_BUTTONS) {
-            if (button.equals("ORDER")) {
-                orderButtons = new Button[]{
-                        new Button(ORDER_ICONS[0], "Nombre", "BottomNode", e -> changeOrder(ORDER.NAME)),
-                        new Button(ORDER_ICONS[1], "Fecha", "BottomNode", e -> changeOrder(ORDER.DATE)),
-                        new Button(ORDER_ICONS[2], "Tamaño", "BottomNode", e -> changeOrder(ORDER.SIZE)),
-                        new Button(ORDER_ICONS[3], "Tipo", "BottomNode", e -> changeOrder(ORDER.MIME))
-                };
-                selectOrder();
-                children.add(new HBox(2, orderButtons));
+    for (String button : BOTTOM_BUTTONS) {
+      if (button.equals("ORDER")) {
+        orderButtons = new Button[] {
+            new Button(ORDER_ICONS[0], "Nombre", "BottomNode", e -> changeOrder(ORDER.NAME)),
+            new Button(ORDER_ICONS[1], "Fecha", "BottomNode", e -> changeOrder(ORDER.DATE)),
+            new Button(ORDER_ICONS[2], "Tamaño", "BottomNode", e -> changeOrder(ORDER.SIZE)),
+            new Button(ORDER_ICONS[3], "Tipo", "BottomNode", e -> changeOrder(ORDER.MIME))
+        };
+        selectOrder();
+        children.add(new HBox(2, orderButtons));
 
-            } else if (button.equals("FILTER")) {
-                filter = new TextField("");
-                filter.setId("Bottom_textfield");
-                filter.setPromptText("Filtro");
-                filter.setFocusTraversable(false);
-                filter.setMaxWidth(Double.MAX_VALUE);
-                HBox.setHgrow(filter, Priority.ALWAYS);
-                filter.focusedProperty().addListener((obs, before, now) -> {
-                    if (now) addFocused();
-                    else minusFocused();
-                });
-                filter.setOnKeyPressed(e -> {
-                    KeyCode key = e.getCode();
+      } else if (button.equals("FILTER")) {
+        filter = new TextField("");
+        filter.setId("Bottom_textfield");
+        filter.setPromptText("Filtro");
+        filter.setFocusTraversable(false);
+        filter.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(filter, Priority.ALWAYS);
+        filter.focusedProperty().addListener((obs, before, now) -> {
+          if (now)
+            addFocused();
+          else
+            minusFocused();
+        });
+        filter.setOnKeyPressed(e -> {
+          KeyCode key = e.getCode();
 
-                    if (key.equals(KeyCode.ENTER)) {
-                        centerPane.filter = filter.getText();
-                        if (centerPane.filter.isEmpty()) {
-                            centerPane.filter = null;
-                        }
-
-                        ArrayList<CenterNode> preSelectedList = new ArrayList<>(List.copyOf(centerPane.selectedItems));
-                        updateCenter();
-                        centerPane.requestFocus();
-                        for (CenterNode centerNode : centerPane.items) {
-                            for (CenterNode preSelected : preSelectedList) {
-                                if (preSelected.getName().equals(centerNode.getName())) {
-                                    preSelectedList.remove(preSelected);
-                                    centerNode.setSelected(true);
-                                    break;
-                                }
-                            }
-                            if (preSelectedList.isEmpty()) break;
-                        }
-                        if (centerPane.getSelectionModel().getSelectedItem() == null && centerPane.selectedItems.isEmpty())
-                            centerPane.selectFirst();
-                        updateRight();
-                    }
-                });
-
-                children.add(filter);
+          if (key.equals(KeyCode.ENTER)) {
+            centerPane.filter = filter.getText();
+            if (centerPane.filter.isEmpty()) {
+              centerPane.filter = null;
             }
-        }
+
+            ArrayList<CenterNode> preSelectedList = new ArrayList<>(List.copyOf(centerPane.selectedItems));
+            updateCenter();
+            centerPane.requestFocus();
+            for (CenterNode centerNode : centerPane.items) {
+              for (CenterNode preSelected : preSelectedList) {
+                if (preSelected.getName().equals(centerNode.getName())) {
+                  preSelectedList.remove(preSelected);
+                  centerNode.setSelected(true);
+                  break;
+                }
+              }
+              if (preSelectedList.isEmpty())
+                break;
+            }
+            if (centerPane.getSelectionModel().getSelectedItem() == null && centerPane.selectedItems.isEmpty())
+              centerPane.selectFirst();
+            updateRight();
+          }
+        });
+
+        children.add(filter);
+      }
     }
+  }
 
-    public static void focusFilter() {filter.requestFocus();}
+  public static void focusFilter() {
+    filter.requestFocus();
+  }
 
-    public void changeOrder(ORDER order) {
-        switch (order) {
-            case DATE -> {
-                DEFAULT_ORDER = ORDER.DATE;
-                selectOrder();
-                updateCenter();
-            }
-            case SIZE -> {
-                DEFAULT_ORDER = ORDER.SIZE;
-                selectOrder();
-                updateCenter();
-            }
-            case MIME -> {
-                DEFAULT_ORDER = ORDER.MIME;
-                selectOrder();
-                updateCenter();
-            }
-            default -> {
-                DEFAULT_ORDER = ORDER.NAME;
-                selectOrder();
-                updateCenter();
-            }
-        }
+  private static void changeOrder(ORDER order) {
+    switch (order) {
+      case DATE -> {
+        DEFAULT_ORDER = ORDER.DATE;
+      }
+      case SIZE -> {
+        DEFAULT_ORDER = ORDER.SIZE;
+      }
+      case MIME -> {
+        DEFAULT_ORDER = ORDER.MIME;
+      }
+      default -> {
+        DEFAULT_ORDER = ORDER.NAME;
+      }
     }
-    public void selectOrder() {
-        switch (DEFAULT_ORDER) {
-            case DATE -> {
-                orderButtons[0].changeId("BottomNode");
-                orderButtons[1].addSuffixId("-selected");
-                orderButtons[2].changeId("BottomNode");
-                orderButtons[3].changeId("BottomNode");
-            }
-            case SIZE -> {
-                orderButtons[0].changeId("BottomNode");
-                orderButtons[1].changeId("BottomNode");
-                orderButtons[2].addSuffixId("-selected");
-                orderButtons[3].changeId("BottomNode");
-            }
-            case MIME -> {
-                orderButtons[0].changeId("BottomNode");
-                orderButtons[1].changeId("BottomNode");
-                orderButtons[2].changeId("BottomNode");
-                orderButtons[3].addSuffixId("-selected");
-            }
-            default -> {
-                orderButtons[0].addSuffixId("-selected");
-                orderButtons[1].changeId("BottomNode");
-                orderButtons[2].changeId("BottomNode");
-                orderButtons[3].changeId("BottomNode");
-            }
-        }
+    ACTUAL_ORDER = null;
+    selectOrder();
+    updateCenter();
+  }
+
+  public static void selectOrder() {
+    switch (ACTUAL_ORDER != null ? ACTUAL_ORDER : DEFAULT_ORDER) {
+      case DATE -> {
+        orderButtons[0].changeId("BottomNode");
+        orderButtons[1].addSuffixId("-selected");
+        orderButtons[2].changeId("BottomNode");
+        orderButtons[3].changeId("BottomNode");
+      }
+      case SIZE -> {
+        orderButtons[0].changeId("BottomNode");
+        orderButtons[1].changeId("BottomNode");
+        orderButtons[2].addSuffixId("-selected");
+        orderButtons[3].changeId("BottomNode");
+      }
+      case MIME -> {
+        orderButtons[0].changeId("BottomNode");
+        orderButtons[1].changeId("BottomNode");
+        orderButtons[2].changeId("BottomNode");
+        orderButtons[3].addSuffixId("-selected");
+      }
+      default -> {
+        orderButtons[0].addSuffixId("-selected");
+        orderButtons[1].changeId("BottomNode");
+        orderButtons[2].changeId("BottomNode");
+        orderButtons[3].changeId("BottomNode");
+      }
     }
+  }
 }

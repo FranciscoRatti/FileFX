@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import node.CenterNode;
+import panel.BottomPane;
 import panel.RightPane;
 import stage.*;
 
@@ -477,6 +478,10 @@ public class Lib {
     rightPane.update();
   }
 
+  public static void updateBottom() {
+    BottomPane.selectOrder();
+  }
+
   public static void updateLeft() {
     leftPane.update();
   }
@@ -491,6 +496,7 @@ public class Lib {
     updateCenter();
     centerPane.selectFirst();
     updateRight();
+    updateBottom();
   }
 
   // Imprimir informacion
@@ -575,6 +581,7 @@ public class Lib {
       updateCenter();
       centerPane.selectFirst();
       updateRight();
+      updateBottom();
     }
   }
 
@@ -589,6 +596,7 @@ public class Lib {
       updateCenter();
       centerPane.selectFirst();
       updateRight();
+      updateBottom();
     }
   }
 
@@ -621,6 +629,7 @@ public class Lib {
         centerPane.selectFirst();
 
       updateRight();
+      updateBottom();
     }
   }
 
